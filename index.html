@@ -517,6 +517,19 @@
     nav .nav-btn { padding: 6px 10px; font-size: 0.72rem; }
   }
 
+  /* ── BTN SPINNER ── */
+  .btn-spinner {
+    display: inline-block;
+    width: 13px; height: 13px;
+    border: 2px solid rgba(0,0,0,0.25);
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: spin 0.65s linear infinite;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
   /* ── SCROLLBAR ── */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
@@ -758,7 +771,7 @@
           </div>
         </div>
 
-        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitJob()">
+        <button id="postjob-submit-btn" class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitJob()">
           Submit for Review →
         </button>
       </div>
@@ -833,7 +846,7 @@
             <input type="url" id="a-resume" placeholder="https://…">
           </div>
         </div>
-        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitApplication()">
+        <button id="apply-submit-btn" class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitApplication()">
           Submit Application →
         </button>
       </div>
@@ -971,7 +984,7 @@
             </div>
           </div>
         </div>
-        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitRole()">
+        <button id="postrole-submit-btn" class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitRole()">
           Submit Profile for Review →
         </button>
       </div>
@@ -1315,6 +1328,9 @@ function closeJobModal() {
   document.getElementById('job-modal').classList.remove('open');
   document.body.style.overflow = '';
   currentJobId = null;
+  _submitting['apply'] = false;
+  const btn = document.getElementById('apply-submit-btn');
+  if (btn) setSubmitting('apply', btn, false);
 }
 
 function closeModal(e) {
@@ -1440,15 +1456,39 @@ function closeContactOnBg(e) {
   if (e.target.id === 'contact-modal') closeContactModal();
 }
 
+// ── SUBMISSION GUARD ─────────────────────────────────────────
+const _submitting = {};
+
+function setSubmitting(key, btn, loading) {
+  _submitting[key] = loading;
+  if (!btn) return;
+  if (loading) {
+    btn.dataset.origText = btn.innerHTML;
+    btn.innerHTML = '<span class="btn-spinner"></span> Submitting…';
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+    btn.style.cursor = 'not-allowed';
+  } else {
+    btn.innerHTML = btn.dataset.origText || btn.innerHTML;
+    btn.disabled = false;
+    btn.style.opacity = '';
+    btn.style.cursor = '';
+  }
+}
+
 // ── SUBMIT APPLICATION ────────────────────────────────────────
 async function submitApplication() {
   if (!currentJobId) return;
+  if (_submitting['apply']) return;
 
   const name  = document.getElementById('a-name').value.trim();
   const email = document.getElementById('a-email').value.trim();
 
   if (!name)  { toast('Please enter your name.', 'error'); return; }
   if (!email) { toast('Please enter your email.', 'error'); return; }
+
+  const btn = document.getElementById('apply-submit-btn');
+  setSubmitting('apply', btn, true);
 
   const body = {
     applicant_name:  name,
@@ -1472,14 +1512,18 @@ async function submitApplication() {
       closeJobModal();
     } else {
       toast(d.error || 'Submission failed.', 'error');
+      setSubmitting('apply', btn, false);
     }
   } catch(e) {
     toast('Network error. Please try again.', 'error');
+    setSubmitting('apply', btn, false);
   }
 }
 
 // ── SUBMIT JOB ───────────────────────────────────────────────
 async function submitJob() {
+  if (_submitting['postjob']) return;
+
   const name  = document.getElementById('p-employer_name').value.trim();
   const email = document.getElementById('p-employer_email').value.trim();
   const title = document.getElementById('p-title').value.trim();
@@ -1491,6 +1535,9 @@ async function submitJob() {
   if (!title) { toast('Job title is required.', 'error'); return; }
   if (!desc)  { toast('Job description is required.', 'error'); return; }
   if (!loc)   { toast('Please select a location province.', 'error'); return; }
+
+  const btn = document.getElementById('postjob-submit-btn');
+  setSubmitting('postjob', btn, true);
 
   const body = {
     employer_name:  name,
@@ -1519,13 +1566,16 @@ async function submitJob() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       toast(d.error || 'Submission failed.', 'error');
+      setSubmitting('postjob', btn, false);
     }
   } catch(e) {
     toast('Network error. Please try again.', 'error');
+    setSubmitting('postjob', btn, false);
   }
 }
 
 function resetPostForm() {
+  _submitting['postjob'] = false;
   document.getElementById('post-form-wrap').style.display = 'block';
   document.getElementById('post-success').classList.remove('show');
   ['p-employer_name','p-employer_email','p-employer_phone','p-company',
@@ -1537,6 +1587,8 @@ function resetPostForm() {
 
 // ── SUBMIT ROLE (Employee) ───────────────────────────────────
 async function submitRole() {
+  if (_submitting['postrole']) return;
+
   const name  = document.getElementById('r-full_name').value.trim();
   const email = document.getElementById('r-email').value.trim();
   const title = document.getElementById('r-role_title').value.trim();
@@ -1546,6 +1598,9 @@ async function submitRole() {
   if (!email) { toast('Email is required.', 'error'); return; }
   if (!title) { toast('Role / job title is required.', 'error'); return; }
   if (!loc)   { toast('Please select your province.', 'error'); return; }
+
+  const btn = document.getElementById('postrole-submit-btn');
+  setSubmitting('postrole', btn, true);
 
   const body = {
     full_name:    name,
@@ -1573,13 +1628,16 @@ async function submitRole() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       toast(d.error || 'Submission failed.', 'error');
+      setSubmitting('postrole', btn, false);
     }
   } catch(e) {
     toast('Network error. Please try again.', 'error');
+    setSubmitting('postrole', btn, false);
   }
 }
 
 function resetRoleForm() {
+  _submitting['postrole'] = false;
   document.getElementById('role-form-wrap').style.display = 'block';
   document.getElementById('role-success').classList.remove('show');
   ['r-full_name','r-email','r-phone','r-role_title','r-bio','r-experience','r-skills','r-resume_link']
