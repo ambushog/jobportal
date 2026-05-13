@@ -1149,7 +1149,12 @@ async function loadJobs() {
   try {
     const r = await fetch(`${API}/jobs`);
     const d = await r.json();
-    allJobs = d.jobs || [];
+    // Strip sensitive employer contact from in-memory array
+    allJobs = (d.jobs || []).map(j => ({
+      ...j,
+      employer_email: null,
+      employer_phone: null,
+    }));
     buildFilters();
     renderJobs();
     updateStats();
@@ -1167,14 +1172,20 @@ async function loadTalents() {
   try {
     const r = await fetch(`${API}/roles`);
     const d = await r.json();
-    allTalents = d.roles || [];
+    // Strip sensitive talent contact from in-memory array
+    allTalents = (d.roles || []).map(t => ({
+      ...t,
+      email: null,
+      phone: null,
+      applicant_phone: null,
+      resume_link: null,
+    }));
     renderTalents();
   } catch(e) {
     document.getElementById('talent-grid').innerHTML = `
       <div class="empty"><div class="empty-icon">⚠</div><p>Could not reach server.</p></div>`;
   }
 }
-
 function renderTalents() {
   const q = (document.getElementById('talent-search').value || '').toLowerCase();
   const grid = document.getElementById('talent-grid');
@@ -1389,14 +1400,12 @@ function closeCaptcha() {
 function closeCaptchaOnBg(e) {
   if (e.target.id === 'captcha-modal') closeCaptcha();
 }
-
-function verifyCaptcha() {
+async function verifyCaptcha() {
   const val = parseInt(document.getElementById('captcha-answer').value, 10);
   if (isNaN(val) || val !== captchaCorrect) {
     document.getElementById('captcha-error').textContent = 'Incorrect — try again.';
     document.getElementById('captcha-answer').value = '';
     document.getElementById('captcha-answer').focus();
-    // Regenerate question
     const a = Math.floor(Math.random() * 12) + 1;
     const b = Math.floor(Math.random() * 12) + 1;
     const ops = [
@@ -1410,42 +1419,54 @@ function verifyCaptcha() {
     return;
   }
 
-  // Captcha passed — reveal contact details
   const id   = captchaTargetId;
   const type = captchaTargetType;
   document.getElementById('captcha-modal').classList.remove('open');
-  document.body.style.overflow = '';
 
-  if (type === 'talent') {
-    const t = allTalents.find(x => x.id === id);
-    if (!t) return;
-    document.getElementById('cm-name').textContent  = t.full_name || '';
-    document.getElementById('cm-role').textContent  = t.role_title || '';
-    document.getElementById('cm-email').textContent = t.email || '—';
-    document.getElementById('cm-phone').textContent = t.applicant_phone || t.phone || '—';
-    document.getElementById('cm-location').textContent = t.country || '—';
-    const resumeEl = document.getElementById('cm-resume');
-    if (t.resume_link) {
-      resumeEl.textContent = t.resume_link;
-      resumeEl.href = t.resume_link;
-      document.getElementById('cm-resume-row').style.display = 'block';
-    } else {
+  try {
+    if (type === 'talent') {
+      // Fetch full talent details fresh from server
+      const r = await fetch(`${API}/roles/${id}`);
+      const t = await r.json();
+
+      document.getElementById('cm-name').textContent     = t.full_name || '';
+      document.getElementById('cm-role').textContent     = t.role_title || '';
+      document.getElementById('cm-email').textContent    = t.email || '—';
+      document.getElementById('cm-phone').textContent    = t.phone || t.applicant_phone || '—';
+      document.getElementById('cm-location').textContent = t.country || '—';
+      const resumeEl = document.getElementById('cm-resume');
+      if (t.resume_link) {
+        resumeEl.textContent = t.resume_link;
+        resumeEl.href = t.resume_link;
+        document.getElementById('cm-resume-row').style.display = 'block';
+      } else {
+        document.getElementById('cm-resume-row').style.display = 'none';
+      }
+
+    } else if (type === 'employer') {
+      // Fetch full job details fresh from server
+      const r = await fetch(`${API}/jobs/${id}`);
+      const j = await r.json();
+
+      document.getElementById('cm-name').textContent     = j.employer_name || j.company || '';
+      document.getElementById('cm-role').textContent     = j.title || '';
+      document.getElementById('cm-email').textContent    = j.employer_email || '—';
+      document.getElementById('cm-phone').textContent    = j.employer_phone || '—';
+      document.getElementById('cm-location').textContent = j.location || '—';
       document.getElementById('cm-resume-row').style.display = 'none';
     }
+
     document.getElementById('contact-modal').classList.add('open');
     document.body.style.overflow = 'hidden';
-  } else if (type === 'employer') {
-    const j = allJobs.find(x => x.id === id);
-    if (!j) return;
-    document.getElementById('cm-name').textContent  = j.employer_name || j.company || '';
-    document.getElementById('cm-role').textContent  = j.title || '';
-    document.getElementById('cm-email').textContent = j.employer_email || '—';
-    document.getElementById('cm-phone').textContent = j.employer_phone || '—';
-    document.getElementById('cm-location').textContent = j.location || '—';
-    document.getElementById('cm-resume-row').style.display = 'none';
-    document.getElementById('contact-modal').classList.add('open');
-    document.body.style.overflow = 'hidden';
+
+  } catch(e) {
+    toast('Could not load contact details. Please try again.', 'error');
+    document.body.style.overflow = '';
   }
+
+  captchaCorrect    = null;
+  captchaTargetId   = null;
+  captchaTargetType = null;
 }
 
 function closeContactModal() {
