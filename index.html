@@ -540,8 +540,10 @@
     WorkBridge
   </a>
   <nav>
-    <button class="nav-btn active" id="nav-browse" onclick="showView('browse')">Browse Jobs</button>
-    <button class="nav-btn" id="nav-post"   onclick="showView('post')">Post a Job</button>
+    <button class="nav-btn active" id="nav-browse"   onclick="showView('browse')">Browse Jobs</button>
+    <button class="nav-btn"        id="nav-talents"  onclick="showView('talents')">Browse Talent</button>
+    <button class="nav-btn"        id="nav-postrole" onclick="showView('postrole')">Post My Role</button>
+    <button class="nav-btn cta"    id="nav-post"     onclick="showView('post')">Post a Job</button>
   </nav>
 </header>
 
@@ -562,8 +564,11 @@
         <button class="btn btn-primary" onclick="document.getElementById('job-list-anchor').scrollIntoView({behavior:'smooth'})">
           Browse Openings ↓
         </button>
+        <button class="btn btn-outline" onclick="showView('postrole')">
+          I'm Looking for Work
+        </button>
         <button class="btn btn-outline" onclick="showView('post')">
-          Post a Role
+          Hire Someone
         </button>
       </div>
     </div>
@@ -666,8 +671,64 @@
           </div>
           <div class="form-row">
             <div class="field">
-              <label>Location</label>
-              <input type="text" id="p-location" placeholder="Madrid, Spain / Remote">
+              <label>Location <span class="req">*</span></label>
+              <select id="p-location">
+                <option value="">Select province…</option>
+                <optgroup label="Andalucía">
+                  <option>Almería</option><option>Cádiz</option><option>Córdoba</option><option>Granada</option><option>Huelva</option><option>Jaén</option><option>Málaga</option><option>Sevilla</option>
+                </optgroup>
+                <optgroup label="Aragón">
+                  <option>Huesca</option><option>Teruel</option><option>Zaragoza</option>
+                </optgroup>
+                <optgroup label="Asturias">
+                  <option>Asturias</option>
+                </optgroup>
+                <optgroup label="Baleares">
+                  <option>Illes Balears</option>
+                </optgroup>
+                <optgroup label="Canarias">
+                  <option>Las Palmas</option><option>Santa Cruz de Tenerife</option>
+                </optgroup>
+                <optgroup label="Cantabria">
+                  <option>Cantabria</option>
+                </optgroup>
+                <optgroup label="Castilla-La Mancha">
+                  <option>Albacete</option><option>Ciudad Real</option><option>Cuenca</option><option>Guadalajara</option><option>Toledo</option>
+                </optgroup>
+                <optgroup label="Castilla y León">
+                  <option>Ávila</option><option>Burgos</option><option>León</option><option>Palencia</option><option>Salamanca</option><option>Segovia</option><option>Soria</option><option>Valladolid</option><option>Zamora</option>
+                </optgroup>
+                <optgroup label="Cataluña">
+                  <option>Barcelona</option><option>Girona</option><option>Lleida</option><option>Tarragona</option>
+                </optgroup>
+                <optgroup label="Ceuta &amp; Melilla">
+                  <option>Ceuta</option><option>Melilla</option>
+                </optgroup>
+                <optgroup label="Comunidad de Madrid">
+                  <option>Madrid</option>
+                </optgroup>
+                <optgroup label="Comunidad Valenciana">
+                  <option>Alicante</option><option>Castellón</option><option>Valencia</option>
+                </optgroup>
+                <optgroup label="Extremadura">
+                  <option>Badajoz</option><option>Cáceres</option>
+                </optgroup>
+                <optgroup label="Galicia">
+                  <option>A Coruña</option><option>Lugo</option><option>Ourense</option><option>Pontevedra</option>
+                </optgroup>
+                <optgroup label="La Rioja">
+                  <option>La Rioja</option>
+                </optgroup>
+                <optgroup label="Murcia">
+                  <option>Murcia</option>
+                </optgroup>
+                <optgroup label="Navarra">
+                  <option>Navarra</option>
+                </optgroup>
+                <optgroup label="País Vasco">
+                  <option>Álava</option><option>Gipuzkoa</option><option>Bizkaia</option>
+                </optgroup>
+              </select>
             </div>
             <div class="field">
               <label>Job Type</label>
@@ -730,8 +791,11 @@
       <div class="modal-desc" id="m-desc"></div>
 
       <!-- Apply section toggle -->
-      <button class="btn btn-primary" id="apply-toggle-btn" onclick="toggleApply()" style="width:100%;justify-content:center">
+      <button class="btn btn-primary" id="apply-toggle-btn" onclick="toggleApply()" style="width:100%;justify-content:center;margin-bottom:0.75rem">
         Apply for this Role →
+      </button>
+      <button class="btn btn-outline" id="reveal-employer-btn" onclick="openCaptcha(currentJobId,'employer')" style="width:100%;justify-content:center">
+        🔒 Reveal Employer Contact
       </button>
 
       <div id="applySection">
@@ -778,23 +842,283 @@
   </div>
 </div>
 
+<!-- ═══ POST ROLE VIEW (Employee) ═══ -->
+<div class="view" id="view-postrole">
+  <div class="page-wrap">
+    <div class="page-head">
+      <h2>Post Your Role</h2>
+      <p>You're looking for work. Tell employers who you are, what you do, and where in Spain you're available. Your profile is reviewed before going live.</p>
+    </div>
+    <div class="submit-card">
+      <div class="success-banner" id="role-success">
+        <div class="success-icon">✦</div>
+        <h3>Profile submitted</h3>
+        <p>Your role profile is pending admin review.<br>It will appear publicly once approved.</p>
+        <button class="btn btn-outline" style="margin-top:1.5rem" onclick="resetRoleForm()">Submit Another</button>
+      </div>
+      <div id="role-form-wrap">
+        <div class="form-section">
+          <h3>Personal Details</h3>
+          <div class="form-row">
+            <div class="field">
+              <label>Full Name <span class="req">*</span></label>
+              <input type="text" id="r-full_name" placeholder="Your full name">
+            </div>
+            <div class="field">
+              <label>Email <span class="req">*</span></label>
+              <input type="email" id="r-email" placeholder="you@email.com">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label>Phone</label>
+              <input type="text" id="r-phone" placeholder="+34 600 000 000">
+            </div>
+            <div class="field">
+              <label>Location (Province) <span class="req">*</span></label>
+              <select id="r-country">
+                <option value="">Select province…</option>
+                <optgroup label="Andalucía">
+                  <option>Almería</option><option>Cádiz</option><option>Córdoba</option><option>Granada</option><option>Huelva</option><option>Jaén</option><option>Málaga</option><option>Sevilla</option>
+                </optgroup>
+                <optgroup label="Aragón">
+                  <option>Huesca</option><option>Teruel</option><option>Zaragoza</option>
+                </optgroup>
+                <optgroup label="Asturias">
+                  <option>Asturias</option>
+                </optgroup>
+                <optgroup label="Baleares">
+                  <option>Illes Balears</option>
+                </optgroup>
+                <optgroup label="Canarias">
+                  <option>Las Palmas</option><option>Santa Cruz de Tenerife</option>
+                </optgroup>
+                <optgroup label="Cantabria">
+                  <option>Cantabria</option>
+                </optgroup>
+                <optgroup label="Castilla-La Mancha">
+                  <option>Albacete</option><option>Ciudad Real</option><option>Cuenca</option><option>Guadalajara</option><option>Toledo</option>
+                </optgroup>
+                <optgroup label="Castilla y León">
+                  <option>Ávila</option><option>Burgos</option><option>León</option><option>Palencia</option><option>Salamanca</option><option>Segovia</option><option>Soria</option><option>Valladolid</option><option>Zamora</option>
+                </optgroup>
+                <optgroup label="Cataluña">
+                  <option>Barcelona</option><option>Girona</option><option>Lleida</option><option>Tarragona</option>
+                </optgroup>
+                <optgroup label="Ceuta &amp; Melilla">
+                  <option>Ceuta</option><option>Melilla</option>
+                </optgroup>
+                <optgroup label="Comunidad de Madrid">
+                  <option>Madrid</option>
+                </optgroup>
+                <optgroup label="Comunidad Valenciana">
+                  <option>Alicante</option><option>Castellón</option><option>Valencia</option>
+                </optgroup>
+                <optgroup label="Extremadura">
+                  <option>Badajoz</option><option>Cáceres</option>
+                </optgroup>
+                <optgroup label="Galicia">
+                  <option>A Coruña</option><option>Lugo</option><option>Ourense</option><option>Pontevedra</option>
+                </optgroup>
+                <optgroup label="La Rioja">
+                  <option>La Rioja</option>
+                </optgroup>
+                <optgroup label="Murcia">
+                  <option>Murcia</option>
+                </optgroup>
+                <optgroup label="Navarra">
+                  <option>Navarra</option>
+                </optgroup>
+                <optgroup label="País Vasco">
+                  <option>Álava</option><option>Gipuzkoa</option><option>Bizkaia</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <h3>Professional Profile</h3>
+          <div class="field">
+            <label>Role / Job Title <span class="req">*</span></label>
+            <input type="text" id="r-role_title" placeholder="e.g. Full Stack Developer, Electrician, Nurse…">
+          </div>
+          <div class="field">
+            <label>Bio / About You</label>
+            <textarea id="r-bio" rows="4" placeholder="Brief description of who you are and what you bring to a team…"></textarea>
+          </div>
+          <div class="field">
+            <label>Experience</label>
+            <textarea id="r-experience" rows="3" placeholder="Years of experience, past roles, key achievements…"></textarea>
+          </div>
+          <div class="field">
+            <label>Skills</label>
+            <input type="text" id="r-skills" placeholder="e.g. JavaScript, Welding, Patient Care (comma-separated)">
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label>Availability</label>
+              <select id="r-availability">
+                <option value="">Select…</option>
+                <option>Immediately</option>
+                <option>Within 2 weeks</option>
+                <option>Within 1 month</option>
+                <option>Negotiable</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>CV / Portfolio Link</label>
+              <input type="url" id="r-resume_link" placeholder="https://…">
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitRole()">
+          Submit Profile for Review →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ BROWSE TALENT VIEW ═══ -->
+<div class="view" id="view-talents">
+  <div class="main-wrap" style="padding-top:2.5rem">
+    <div class="section-head">
+      <h2>
+        <span>Available Talent</span>
+        People Looking for Work
+      </h2>
+      <div id="talent-count" style="font-family:var(--mono);font-size:0.75rem;color:var(--muted)"></div>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="talent-search" placeholder="Search name, role, skills…" oninput="renderTalents()">
+    </div>
+    <div class="job-grid" id="talent-grid">
+      <div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CAPTCHA MODAL -->
+<div class="modal-bg" id="captcha-modal" onclick="closeCaptchaOnBg(event)">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Verify you're human</div>
+        <div class="modal-company" style="color:var(--muted)">Solve the puzzle to reveal contact details</div>
+      </div>
+      <button class="modal-close" onclick="closeCaptcha()">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:2rem">
+      <div style="font-family:var(--mono);font-size:0.78rem;color:var(--muted);margin-bottom:1.25rem;text-transform:uppercase;letter-spacing:0.08em">Answer the question</div>
+      <div id="captcha-question" style="font-family:'Instrument Serif',serif;font-size:2rem;color:var(--cream);margin-bottom:1.5rem;line-height:1.2"></div>
+      <div class="field" style="max-width:180px;margin:0 auto 1.5rem">
+        <input type="number" id="captcha-answer" placeholder="Your answer" style="text-align:center;font-size:1.1rem" onkeydown="if(event.key==='Enter')verifyCaptcha()">
+      </div>
+      <div id="captcha-error" style="font-family:var(--mono);font-size:0.78rem;color:var(--red);margin-bottom:1rem;min-height:1.2em"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="verifyCaptcha()">Verify →</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT REVEAL MODAL -->
+<div class="modal-bg" id="contact-modal" onclick="closeContactOnBg(event)">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="cm-name"></div>
+        <div class="modal-company" id="cm-role"></div>
+      </div>
+      <button class="modal-close" onclick="closeContactModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;gap:1rem;margin-bottom:1rem">
+        <div class="info-block" id="cm-email-row">
+          <label>Email</label>
+          <span id="cm-email" style="color:var(--gold)"></span>
+        </div>
+        <div class="info-block" id="cm-phone-row">
+          <label>Phone</label>
+          <span id="cm-phone"></span>
+        </div>
+        <div class="info-block" id="cm-location-row">
+          <label>Location</label>
+          <span id="cm-location"></span>
+        </div>
+        <div class="info-block" id="cm-resume-row">
+          <label>CV / Portfolio</label>
+          <a id="cm-resume" href="#" target="_blank" style="color:var(--gold);font-size:0.85rem;font-family:var(--mono)"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST CONTAINER -->
 <div class="toast-wrap" id="toast-wrap"></div>
+
+<style>
+/* ── TALENT CARD (reuses job-card styles + additions) ── */
+.talent-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.5rem 1.75rem;
+  cursor: default; transition: all 0.2s;
+  position: relative; overflow: hidden;
+  animation: fadeUp 0.4s both;
+}
+.talent-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--green-lt);
+  transform: scaleY(0); transition: transform 0.2s; transform-origin: bottom;
+}
+.talent-card:hover { border-color: var(--border2); background: #141412; }
+.talent-card:hover::before { transform: scaleY(1); }
+
+.talent-name { font-size: 1.05rem; font-weight: 700; color: var(--cream); }
+.talent-role { font-family: var(--mono); font-size: 0.8rem; color: var(--green-lt); margin-top: 4px; }
+.talent-avail {
+  font-family: var(--mono); font-size: 0.68rem;
+  padding: 4px 10px; border-radius: 20px; white-space: nowrap;
+  background: rgba(46,125,92,0.14); color: var(--green-lt);
+  border: 1px solid rgba(46,125,92,0.25); letter-spacing: 0.06em;
+  text-transform: uppercase; flex-shrink: 0;
+}
+.reveal-btn {
+  background: none; border: 1px solid var(--border2);
+  color: var(--muted); font-family: var(--mono); font-size: 0.72rem;
+  padding: 6px 14px; border-radius: var(--radius);
+  cursor: pointer; transition: all 0.2s; letter-spacing: 0.04em;
+  margin-top: 1rem;
+}
+.reveal-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* CAPTCHA input arrows hide */
+#captcha-answer::-webkit-outer-spin-button,
+#captcha-answer::-webkit-inner-spin-button { -webkit-appearance: none; }
+#captcha-answer[type=number] { -moz-appearance: textfield; }
+</style>
 
 <script>
 const API = 'https://backdata.amriksinghspain.com';
 
-let allJobs = [];
+let allJobs    = [];
+let allTalents = [];
 let activeFilter = 'All';
 let currentJobId = null;
+
+// CAPTCHA state
+let captchaCorrect = null;
+let captchaCallback = null;
 
 // ── NAVIGATION ─────────────────────────────────────────────
 function showView(view) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('view-' + view).classList.add('active');
-  document.getElementById('nav-' + view).classList.add('active');
+  const nb = document.getElementById('nav-' + view);
+  if (nb) nb.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (view === 'talents' && allTalents.length === 0) loadTalents();
 }
 
 // ── TOAST ───────────────────────────────────────────────────
@@ -825,13 +1149,62 @@ async function loadJobs() {
   }
 }
 
+// ── FETCH TALENTS ───────────────────────────────────────────
+async function loadTalents() {
+  try {
+    const r = await fetch(`${API}/roles`);
+    const d = await r.json();
+    allTalents = d.roles || [];
+    renderTalents();
+  } catch(e) {
+    document.getElementById('talent-grid').innerHTML = `
+      <div class="empty"><div class="empty-icon">⚠</div><p>Could not reach server.</p></div>`;
+  }
+}
+
+function renderTalents() {
+  const q = (document.getElementById('talent-search').value || '').toLowerCase();
+  const grid = document.getElementById('talent-grid');
+
+  let list = allTalents.filter(t => {
+    const hay = `${t.full_name} ${t.role_title} ${t.skills} ${t.country}`.toLowerCase();
+    return !q || hay.includes(q);
+  });
+
+  document.getElementById('talent-count').textContent =
+    `${list.length} profile${list.length !== 1 ? 's' : ''} found`;
+
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty"><div class="empty-icon">◯</div><p>No talent profiles found.</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(t => `
+    <div class="talent-card">
+      <div class="job-card-top">
+        <div>
+          <div class="talent-name">${esc(t.full_name)}</div>
+          <div class="talent-role">${esc(t.role_title)}</div>
+        </div>
+        ${t.availability ? `<span class="talent-avail">${esc(t.availability)}</span>` : ''}
+      </div>
+      <div class="job-meta">
+        ${t.country  ? `<span class="job-meta-item">📍 ${esc(t.country)}</span>` : ''}
+      </div>
+      ${t.bio ? `<p class="job-desc">${esc(t.bio)}</p>` : ''}
+      ${t.skills ? `<div class="job-skills">${t.skills.split(',').slice(0,5).map(s=>`<span class="skill-pill">${esc(s.trim())}</span>`).join('')}</div>` : ''}
+      <button class="reveal-btn" onclick="openCaptcha(${t.id}, 'talent')">🔒 Reveal Contact Details</button>
+    </div>
+  `).join('');
+}
+
 // ── FETCH VISITS ────────────────────────────────────────────
 async function loadVisits() {
   try {
     await fetch(`${API}/visits/increment`, { method: 'POST' });
     const r = await fetch(`${API}/visits`);
     const d = await r.json();
-    document.getElementById('stat-visits').textContent = (d.count || 0).toLocaleString();
+    document.getElementById('stat-visits').textContent = (d.count || d.visits || 0).toLocaleString();
   } catch(e) {}
 }
 
@@ -912,13 +1285,13 @@ function openJob(id) {
   if (!j) return;
   currentJobId = id;
 
-  document.getElementById('m-title').textContent   = j.title || '';
-  document.getElementById('m-company').textContent = j.company || j.employer_name || '';
+  document.getElementById('m-title').textContent    = j.title || '';
+  document.getElementById('m-company').textContent  = j.company || j.employer_name || '';
   document.getElementById('m-location').textContent = j.location || '—';
-  document.getElementById('m-type').textContent    = j.job_type || '—';
-  document.getElementById('m-salary').textContent  = j.salary || '—';
+  document.getElementById('m-type').textContent     = j.job_type || '—';
+  document.getElementById('m-salary').textContent   = j.salary || '—';
   document.getElementById('m-deadline').textContent = j.deadline || '—';
-  document.getElementById('m-desc').textContent    = j.description || '';
+  document.getElementById('m-desc').textContent     = j.description || '';
 
   const skillsRow = document.getElementById('m-skills-row');
   const skillsEl  = document.getElementById('m-skills');
@@ -929,7 +1302,7 @@ function openJob(id) {
     skillsRow.style.display = 'none';
   }
 
-  // Reset apply section
+  // Reset apply section & captcha state
   document.getElementById('applySection').classList.remove('open');
   document.getElementById('apply-toggle-btn').textContent = 'Apply for this Role →';
   clearApplyForm();
@@ -960,6 +1333,111 @@ function toggleApply() {
 function clearApplyForm() {
   ['a-name','a-email','a-phone','a-skills','a-experience','a-cover','a-resume']
     .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+}
+
+// ── CAPTCHA ──────────────────────────────────────────────────
+let captchaTargetId   = null;
+let captchaTargetType = null; // 'talent' | 'employer'
+
+function openCaptcha(id, type) {
+  captchaTargetId   = id;
+  captchaTargetType = type;
+
+  // Generate math question
+  const a = Math.floor(Math.random() * 12) + 1;
+  const b = Math.floor(Math.random() * 12) + 1;
+  const ops = [
+    { q: `${a} + ${b}`, ans: a + b },
+    { q: `${a} × ${b}`, ans: a * b },
+    { q: `${Math.max(a,b)} − ${Math.min(a,b)}`, ans: Math.max(a,b) - Math.min(a,b) },
+  ];
+  const chosen = ops[Math.floor(Math.random() * ops.length)];
+  captchaCorrect = chosen.ans;
+
+  document.getElementById('captcha-question').textContent = `What is  ${chosen.q} ?`;
+  document.getElementById('captcha-answer').value = '';
+  document.getElementById('captcha-error').textContent = '';
+  document.getElementById('captcha-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('captcha-answer').focus(), 300);
+}
+
+function closeCaptcha() {
+  document.getElementById('captcha-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  captchaCorrect    = null;
+  captchaTargetId   = null;
+  captchaTargetType = null;
+}
+
+function closeCaptchaOnBg(e) {
+  if (e.target.id === 'captcha-modal') closeCaptcha();
+}
+
+function verifyCaptcha() {
+  const val = parseInt(document.getElementById('captcha-answer').value, 10);
+  if (isNaN(val) || val !== captchaCorrect) {
+    document.getElementById('captcha-error').textContent = 'Incorrect — try again.';
+    document.getElementById('captcha-answer').value = '';
+    document.getElementById('captcha-answer').focus();
+    // Regenerate question
+    const a = Math.floor(Math.random() * 12) + 1;
+    const b = Math.floor(Math.random() * 12) + 1;
+    const ops = [
+      { q: `${a} + ${b}`, ans: a + b },
+      { q: `${a} × ${b}`, ans: a * b },
+      { q: `${Math.max(a,b)} − ${Math.min(a,b)}`, ans: Math.max(a,b) - Math.min(a,b) },
+    ];
+    const chosen = ops[Math.floor(Math.random() * ops.length)];
+    captchaCorrect = chosen.ans;
+    document.getElementById('captcha-question').textContent = `What is  ${chosen.q} ?`;
+    return;
+  }
+
+  // Captcha passed — reveal contact details
+  const id   = captchaTargetId;
+  const type = captchaTargetType;
+  document.getElementById('captcha-modal').classList.remove('open');
+  document.body.style.overflow = '';
+
+  if (type === 'talent') {
+    const t = allTalents.find(x => x.id === id);
+    if (!t) return;
+    document.getElementById('cm-name').textContent  = t.full_name || '';
+    document.getElementById('cm-role').textContent  = t.role_title || '';
+    document.getElementById('cm-email').textContent = t.email || '—';
+    document.getElementById('cm-phone').textContent = t.applicant_phone || t.phone || '—';
+    document.getElementById('cm-location').textContent = t.country || '—';
+    const resumeEl = document.getElementById('cm-resume');
+    if (t.resume_link) {
+      resumeEl.textContent = t.resume_link;
+      resumeEl.href = t.resume_link;
+      document.getElementById('cm-resume-row').style.display = 'block';
+    } else {
+      document.getElementById('cm-resume-row').style.display = 'none';
+    }
+    document.getElementById('contact-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  } else if (type === 'employer') {
+    const j = allJobs.find(x => x.id === id);
+    if (!j) return;
+    document.getElementById('cm-name').textContent  = j.employer_name || j.company || '';
+    document.getElementById('cm-role').textContent  = j.title || '';
+    document.getElementById('cm-email').textContent = j.employer_email || '—';
+    document.getElementById('cm-phone').textContent = j.employer_phone || '—';
+    document.getElementById('cm-location').textContent = j.location || '—';
+    document.getElementById('cm-resume-row').style.display = 'none';
+    document.getElementById('contact-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeContactModal() {
+  document.getElementById('contact-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeContactOnBg(e) {
+  if (e.target.id === 'contact-modal') closeContactModal();
 }
 
 // ── SUBMIT APPLICATION ────────────────────────────────────────
@@ -1006,11 +1484,13 @@ async function submitJob() {
   const email = document.getElementById('p-employer_email').value.trim();
   const title = document.getElementById('p-title').value.trim();
   const desc  = document.getElementById('p-description').value.trim();
+  const loc   = document.getElementById('p-location').value;
 
   if (!name)  { toast('Employer name is required.', 'error'); return; }
   if (!email) { toast('Employer email is required.', 'error'); return; }
   if (!title) { toast('Job title is required.', 'error'); return; }
   if (!desc)  { toast('Job description is required.', 'error'); return; }
+  if (!loc)   { toast('Please select a location province.', 'error'); return; }
 
   const body = {
     employer_name:  name,
@@ -1019,7 +1499,7 @@ async function submitJob() {
     company:        document.getElementById('p-company').value.trim(),
     title,
     description:    desc,
-    location:       document.getElementById('p-location').value.trim(),
+    location:       loc,
     job_type:       document.getElementById('p-job_type').value,
     salary:         document.getElementById('p-salary').value.trim(),
     deadline:       document.getElementById('p-deadline').value.trim(),
@@ -1049,14 +1529,72 @@ function resetPostForm() {
   document.getElementById('post-form-wrap').style.display = 'block';
   document.getElementById('post-success').classList.remove('show');
   ['p-employer_name','p-employer_email','p-employer_phone','p-company',
-   'p-title','p-description','p-location','p-salary','p-deadline','p-skills']
+   'p-title','p-description','p-salary','p-deadline','p-skills']
     .forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
   document.getElementById('p-job_type').value = '';
+  document.getElementById('p-location').value = '';
+}
+
+// ── SUBMIT ROLE (Employee) ───────────────────────────────────
+async function submitRole() {
+  const name  = document.getElementById('r-full_name').value.trim();
+  const email = document.getElementById('r-email').value.trim();
+  const title = document.getElementById('r-role_title').value.trim();
+  const loc   = document.getElementById('r-country').value;
+
+  if (!name)  { toast('Full name is required.', 'error'); return; }
+  if (!email) { toast('Email is required.', 'error'); return; }
+  if (!title) { toast('Role / job title is required.', 'error'); return; }
+  if (!loc)   { toast('Please select your province.', 'error'); return; }
+
+  const body = {
+    full_name:    name,
+    email:        email,
+    phone:        document.getElementById('r-phone').value.trim(),
+    country:      loc,
+    role_title:   title,
+    bio:          document.getElementById('r-bio').value.trim(),
+    experience:   document.getElementById('r-experience').value.trim(),
+    skills:       document.getElementById('r-skills').value.trim(),
+    availability: document.getElementById('r-availability').value,
+    resume_link:  document.getElementById('r-resume_link').value.trim(),
+  };
+
+  try {
+    const r = await fetch(`${API}/role`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const d = await r.json();
+    if (r.ok && (d.success || d.id)) {
+      document.getElementById('role-form-wrap').style.display = 'none';
+      document.getElementById('role-success').classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      toast(d.error || 'Submission failed.', 'error');
+    }
+  } catch(e) {
+    toast('Network error. Please try again.', 'error');
+  }
+}
+
+function resetRoleForm() {
+  document.getElementById('role-form-wrap').style.display = 'block';
+  document.getElementById('role-success').classList.remove('show');
+  ['r-full_name','r-email','r-phone','r-role_title','r-bio','r-experience','r-skills','r-resume_link']
+    .forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('r-country').value = '';
+  document.getElementById('r-availability').value = '';
 }
 
 // ── KEYBOARD ESC ─────────────────────────────────────────────
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeJobModal();
+  if (e.key === 'Escape') {
+    closeJobModal();
+    closeCaptcha();
+    closeContactModal();
+  }
 });
 
 // ── INIT ─────────────────────────────────────────────────────
