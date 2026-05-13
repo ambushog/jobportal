@@ -807,9 +807,7 @@
       <button class="btn btn-primary" id="apply-toggle-btn" onclick="toggleApply()" style="width:100%;justify-content:center;margin-bottom:0.75rem">
         Apply for this Role →
       </button>
-      <button class="btn btn-outline" id="reveal-employer-btn" onclick="openCaptcha(currentJobId,'employer')" style="width:100%;justify-content:center">
-        🔒 Reveal Employer Contact
-      </button>
+
 
       <div id="applySection">
         <hr class="divider">
@@ -1217,7 +1215,7 @@ function renderTalents() {
       </div>
       ${t.bio ? `<p class="job-desc">${esc(t.bio)}</p>` : ''}
       ${t.skills ? `<div class="job-skills">${t.skills.split(',').slice(0,5).map(s=>`<span class="skill-pill">${esc(s.trim())}</span>`).join('')}</div>` : ''}
-      <button class="reveal-btn" onclick="openCaptcha(${t.id}, 'talent')">🔒 Reveal Contact Details</button>
+ 
     </div>
   `).join('');
 }
