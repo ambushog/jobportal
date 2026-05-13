@@ -807,7 +807,9 @@
       <button class="btn btn-primary" id="apply-toggle-btn" onclick="toggleApply()" style="width:100%;justify-content:center;margin-bottom:0.75rem">
         Apply for this Role →
       </button>
-
+      <button class="btn btn-outline" id="reveal-employer-btn" onclick="openCaptcha(currentJobId,'employer')" style="width:100%;justify-content:center">
+        🔒 Reveal Employer Contact
+      </button>
 
       <div id="applySection">
         <hr class="divider">
@@ -1204,7 +1206,7 @@ function renderTalents() {
       </div>
       ${t.bio ? `<p class="job-desc">${esc(t.bio)}</p>` : ''}
       ${t.skills ? `<div class="job-skills">${t.skills.split(',').slice(0,5).map(s=>`<span class="skill-pill">${esc(s.trim())}</span>`).join('')}</div>` : ''}
-     
+      <button class="reveal-btn" onclick="openCaptcha(${t.id}, 'talent')">🔒 Reveal Contact Details</button>
     </div>
   `).join('');
 }
@@ -1414,33 +1416,37 @@ function verifyCaptcha() {
   document.getElementById('captcha-modal').classList.remove('open');
   document.body.style.overflow = '';
 
-if (type === 'talent') {
+  if (type === 'talent') {
     const t = allTalents.find(x => x.id === id);
     if (!t) return;
-    document.getElementById('cm-name').textContent     = t.full_name || '';
-    document.getElementById('cm-role').textContent     = t.role_title || '';
-    document.getElementById('cm-email').textContent    = '';
-    document.getElementById('cm-phone').textContent    = '';
+    document.getElementById('cm-name').textContent  = t.full_name || '';
+    document.getElementById('cm-role').textContent  = t.role_title || '';
+    document.getElementById('cm-email').textContent = t.email || '—';
+    document.getElementById('cm-phone').textContent = t.applicant_phone || t.phone || '—';
     document.getElementById('cm-location').textContent = t.country || '—';
-    document.getElementById('cm-email-row').style.display  = 'none';
-    document.getElementById('cm-phone-row').style.display  = 'none';
-    document.getElementById('cm-resume-row').style.display = 'none';
+    const resumeEl = document.getElementById('cm-resume');
+    if (t.resume_link) {
+      resumeEl.textContent = t.resume_link;
+      resumeEl.href = t.resume_link;
+      document.getElementById('cm-resume-row').style.display = 'block';
+    } else {
+      document.getElementById('cm-resume-row').style.display = 'none';
+    }
     document.getElementById('contact-modal').classList.add('open');
     document.body.style.overflow = 'hidden';
   } else if (type === 'employer') {
     const j = allJobs.find(x => x.id === id);
     if (!j) return;
-    document.getElementById('cm-name').textContent     = j.employer_name || j.company || '';
-    document.getElementById('cm-role').textContent     = j.title || '';
-    document.getElementById('cm-email').textContent    = '';
-    document.getElementById('cm-phone').textContent    = '';
+    document.getElementById('cm-name').textContent  = j.employer_name || j.company || '';
+    document.getElementById('cm-role').textContent  = j.title || '';
+    document.getElementById('cm-email').textContent = j.employer_email || '—';
+    document.getElementById('cm-phone').textContent = j.employer_phone || '—';
     document.getElementById('cm-location').textContent = j.location || '—';
-    document.getElementById('cm-email-row').style.display  = 'none';
-    document.getElementById('cm-phone-row').style.display  = 'none';
     document.getElementById('cm-resume-row').style.display = 'none';
     document.getElementById('contact-modal').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
+}
 
 function closeContactModal() {
   document.getElementById('contact-modal').classList.remove('open');
