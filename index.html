@@ -634,7 +634,7 @@
   <div class="page-wrap">
     <div class="page-head">
       <h2>Post a Position</h2>
-      <p>Submit your job listing for review. Our team approves all postings before they appear publicly — usually within 24 hours.</p>
+      <p>Submit your job listing for review. Our team approves all postings before they appear publicly — usually within 24 hours. <strong style="color:var(--gold)">Email is required</strong> — you'll receive a confirmation and approval notification via email.</p>
     </div>
 
     <div class="submit-card">
@@ -643,6 +643,7 @@
         <div class="success-icon">✦</div>
         <h3>Submission received</h3>
         <p>Your job posting is pending admin review.<br>It will appear publicly once approved.</p>
+        <p style="margin-top:0.75rem;color:var(--gold);font-size:0.78rem">📧 A confirmation email has been sent to your inbox.</p>
         <button class="btn btn-outline" style="margin-top:1.5rem" onclick="resetPostForm()">Post Another</button>
       </div>
 
@@ -657,7 +658,8 @@
             </div>
             <div class="field">
               <label>Email <span class="req">*</span></label>
-              <input type="email" id="p-employer_email" placeholder="you@company.com">
+              <input type="email" id="p-employer_email" placeholder="you@company.com" required>
+              <div style="font-family:var(--mono);font-size:0.68rem;color:var(--gold);margin-top:4px">📧 Confirmation &amp; approval notices sent here</div>
             </div>
           </div>
           <div class="form-row">
@@ -813,6 +815,9 @@
         <hr class="divider">
         <div class="form-section" style="margin-bottom:1.25rem">
           <h3>Your Application</h3>
+          <div style="font-family:var(--mono);font-size:0.72rem;color:var(--gold);margin-bottom:1rem;padding:8px 12px;border:1px solid var(--gold-dim);border-radius:var(--radius);background:rgba(200,162,75,0.05)">
+            📧 All updates — shortlisting, company decisions — arrive by email. Email is required.
+          </div>
           <div class="form-row">
             <div class="field">
               <label>Full Name <span class="req">*</span></label>
@@ -820,7 +825,7 @@
             </div>
             <div class="field">
               <label>Email <span class="req">*</span></label>
-              <input type="email" id="a-email" placeholder="you@email.com">
+              <input type="email" id="a-email" placeholder="you@email.com" required>
             </div>
           </div>
           <div class="field">
@@ -858,13 +863,14 @@
   <div class="page-wrap">
     <div class="page-head">
       <h2>Post Your Role</h2>
-      <p>You're looking for work. Tell employers who you are, what you do, and where in Spain you're available. Your profile is reviewed before going live.</p>
+      <p>You're looking for work. Tell employers who you are, what you do, and where in Spain you're available. Your profile is reviewed before going live. <strong style="color:var(--gold)">Email is required</strong> — you'll get a confirmation and approval notice.</p>
     </div>
     <div class="submit-card">
       <div class="success-banner" id="role-success">
         <div class="success-icon">✦</div>
         <h3>Profile submitted</h3>
         <p>Your role profile is pending admin review.<br>It will appear publicly once approved.</p>
+        <p style="margin-top:0.75rem;color:var(--gold);font-size:0.78rem">📧 A confirmation email has been sent to your inbox.</p>
         <button class="btn btn-outline" style="margin-top:1.5rem" onclick="resetRoleForm()">Submit Another</button>
       </div>
       <div id="role-form-wrap">
@@ -877,7 +883,8 @@
             </div>
             <div class="field">
               <label>Email <span class="req">*</span></label>
-              <input type="email" id="r-email" placeholder="you@email.com">
+              <input type="email" id="r-email" placeholder="you@email.com" required>
+              <div style="font-family:var(--mono);font-size:0.68rem;color:var(--gold);margin-top:4px">📧 Confirmation &amp; approval notices sent here</div>
             </div>
           </div>
           <div class="form-row">
@@ -1504,7 +1511,8 @@ async function submitApplication() {
   const email = document.getElementById('a-email').value.trim();
 
   if (!name)  { toast('Please enter your name.', 'error'); return; }
-  if (!email) { toast('Please enter your email.', 'error'); return; }
+  if (!email) { toast('Email is required — you will receive updates by email.', 'error'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email address.', 'error'); return; }
 
   const btn = document.getElementById('apply-submit-btn');
   setSubmitting('apply', btn, true);
@@ -1527,7 +1535,7 @@ async function submitApplication() {
     });
     const d = await r.json();
     if (r.ok && d.success) {
-      toast('Application submitted! Awaiting review.', 'success');
+      toast('Application submitted! Check your email for confirmation.', 'success');
       closeJobModal();
     } else {
       toast(d.error || 'Submission failed.', 'error');
@@ -1550,7 +1558,8 @@ async function submitJob() {
   const loc   = document.getElementById('p-location').value;
 
   if (!name)  { toast('Employer name is required.', 'error'); return; }
-  if (!email) { toast('Employer email is required.', 'error'); return; }
+  if (!email) { toast('Email is required — you will receive confirmation and approval notices.', 'error'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email address.', 'error'); return; }
   if (!title) { toast('Job title is required.', 'error'); return; }
   if (!desc)  { toast('Job description is required.', 'error'); return; }
   if (!loc)   { toast('Please select a location province.', 'error'); return; }
@@ -1614,7 +1623,8 @@ async function submitRole() {
   const loc   = document.getElementById('r-country').value;
 
   if (!name)  { toast('Full name is required.', 'error'); return; }
-  if (!email) { toast('Email is required.', 'error'); return; }
+  if (!email) { toast('Email is required — you will receive confirmation and approval notices.', 'error'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email address.', 'error'); return; }
   if (!title) { toast('Role / job title is required.', 'error'); return; }
   if (!loc)   { toast('Please select your province.', 'error'); return; }
 
