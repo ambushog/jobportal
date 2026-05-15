@@ -1669,7 +1669,7 @@ async function submitRole() {
   };
 
   try {
-    const r = await fetch(`${API}/role`, {
+    const r = await fetch(`${API}/roles/post`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
