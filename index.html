@@ -854,6 +854,14 @@
         </button>
       </div>
 
+      <!-- Contact employer -->
+      <div style="border-top:1px solid var(--border);margin-top:1.25rem;padding-top:1.25rem;text-align:center">
+        <button class="reveal-btn" onclick="openCaptcha(currentJobId,'employer')" style="font-size:0.75rem">
+          📧 Get Employer Contact Details
+        </button>
+        <div style="font-family:var(--mono);font-size:0.67rem;color:var(--muted);margin-top:6px">Contact info sent once to your email after verification</div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -1017,57 +1025,57 @@
   </div>
 </div>
 
-<!-- CAPTCHA MODAL -->
+<!-- CONTACT REQUEST MODAL (Step 1 — enter email + captcha) -->
 <div class="modal-bg" id="captcha-modal" onclick="closeCaptchaOnBg(event)">
-  <div class="modal" style="max-width:400px">
+  <div class="modal" style="max-width:420px">
     <div class="modal-header">
       <div>
-        <div class="modal-title">Verify you're human</div>
-        <div class="modal-company" style="color:var(--muted)">Solve the puzzle to reveal contact details</div>
+        <div class="modal-title">Get Contact Details</div>
+        <div class="modal-company" style="color:var(--muted)">Enter your email — contact info sent once, privately</div>
       </div>
       <button class="modal-close" onclick="closeCaptcha()">✕</button>
     </div>
-    <div class="modal-body" style="text-align:center;padding:2rem">
-      <div style="font-family:var(--mono);font-size:0.78rem;color:var(--muted);margin-bottom:1.25rem;text-transform:uppercase;letter-spacing:0.08em">Answer the question</div>
-      <div id="captcha-question" style="font-family:'Instrument Serif',serif;font-size:2rem;color:var(--cream);margin-bottom:1.5rem;line-height:1.2"></div>
-      <div class="field" style="max-width:180px;margin:0 auto 1.5rem">
-        <input type="number" id="captcha-answer" placeholder="Your answer" style="text-align:center;font-size:1.1rem" onkeydown="if(event.key==='Enter')verifyCaptcha()">
-      </div>
-      <div id="captcha-error" style="font-family:var(--mono);font-size:0.78rem;color:var(--red);margin-bottom:1rem;min-height:1.2em"></div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="verifyCaptcha()">Verify →</button>
-    </div>
-  </div>
-</div>
+    <div class="modal-body" style="padding:1.75rem 2rem">
 
-<!-- CONTACT REVEAL MODAL -->
-<div class="modal-bg" id="contact-modal" onclick="closeContactOnBg(event)">
-  <div class="modal" style="max-width:480px">
-    <div class="modal-header">
-      <div>
-        <div class="modal-title" id="cm-name"></div>
-        <div class="modal-company" id="cm-role"></div>
+      <!-- Step 1: Email input -->
+      <div id="captcha-step-email">
+        <div style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.6rem">Your Email Address</div>
+        <input type="email" id="captcha-requester-email" placeholder="you@email.com"
+          style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.88rem;padding:11px 14px;border-radius:6px;outline:none;margin-bottom:0.6rem"
+          onkeydown="if(event.key==='Enter')proceedToCaptcha()">
+        <div style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.5">
+          📧 Contact details will be emailed to you <strong style="color:var(--gold)">once</strong>. No account needed.
+        </div>
+        <div id="captcha-email-error" style="font-family:var(--mono);font-size:0.75rem;color:var(--red);margin-bottom:0.75rem;min-height:1em"></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="proceedToCaptcha()">Continue →</button>
       </div>
-      <button class="modal-close" onclick="closeContactModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div style="display:grid;gap:1rem;margin-bottom:1rem">
-        <div class="info-block" id="cm-email-row">
-          <label>Email</label>
-          <span id="cm-email" style="color:var(--gold)"></span>
+
+      <!-- Step 2: Captcha verify -->
+      <div id="captcha-step-puzzle" style="display:none;text-align:center">
+        <div style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem">Prove you're human</div>
+        <div id="captcha-question" style="font-family:'Instrument Serif',serif;font-size:2.2rem;color:var(--cream);margin-bottom:1.5rem;line-height:1.2;letter-spacing:-0.01em"></div>
+        <div style="max-width:180px;margin:0 auto 0.75rem">
+          <input type="number" id="captcha-answer" placeholder="Answer"
+            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:1.15rem;padding:12px 14px;border-radius:6px;outline:none;text-align:center"
+            onkeydown="if(event.key==='Enter')verifyCaptcha()">
         </div>
-        <div class="info-block" id="cm-phone-row">
-          <label>Phone</label>
-          <span id="cm-phone"></span>
-        </div>
-        <div class="info-block" id="cm-location-row">
-          <label>Location</label>
-          <span id="cm-location"></span>
-        </div>
-        <div class="info-block" id="cm-resume-row">
-          <label>CV / Portfolio</label>
-          <a id="cm-resume" href="#" target="_blank" style="color:var(--gold);font-size:0.85rem;font-family:var(--mono)"></a>
-        </div>
+        <div id="captcha-error" style="font-family:var(--mono);font-size:0.75rem;color:var(--red);margin-bottom:0.75rem;min-height:1.2em"></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="verifyCaptcha()">Send Contact Details →</button>
+        <button onclick="backToEmail()" style="background:none;border:none;color:var(--muted);font-family:var(--mono);font-size:0.72rem;cursor:pointer;margin-top:0.75rem;text-decoration:underline">← Change email</button>
       </div>
+
+      <!-- Step 3: Sent confirmation -->
+      <div id="captcha-step-done" style="display:none;text-align:center;padding:1rem 0">
+        <div style="font-size:2.5rem;margin-bottom:1rem">✉️</div>
+        <div style="font-family:'Instrument Serif',serif;font-size:1.4rem;color:var(--cream);margin-bottom:0.75rem">Check your inbox</div>
+        <div style="font-family:var(--mono);font-size:0.78rem;color:var(--muted);line-height:1.65">
+          Contact details have been sent to<br>
+          <strong id="captcha-sent-to" style="color:var(--gold)"></strong><br><br>
+          This link is <strong style="color:var(--cream)">one-time only</strong> — it will not work again.
+        </div>
+        <button class="btn btn-outline" style="margin-top:1.5rem" onclick="closeCaptcha()">Close</button>
+      </div>
+
     </div>
   </div>
 </div>
@@ -1123,10 +1131,6 @@ let allJobs    = [];
 let allTalents = [];
 let activeFilter = 'All';
 let currentJobId = null;
-
-// CAPTCHA state
-let captchaCorrect = null;
-let captchaCallback = null;
 
 // ── NAVIGATION ─────────────────────────────────────────────
 function showView(view) {
@@ -1222,7 +1226,7 @@ function renderTalents() {
       </div>
       ${t.bio ? `<p class="job-desc">${esc(t.bio)}</p>` : ''}
       ${t.skills ? `<div class="job-skills">${t.skills.split(',').slice(0,5).map(s=>`<span class="skill-pill">${esc(s.trim())}</span>`).join('')}</div>` : ''}
- 
+      <button class="reveal-btn" onclick="event.stopPropagation();openCaptcha(${t.id},'talent')">📧 Get Contact Details</button>
     </div>
   `).join('');
 }
@@ -1367,31 +1371,119 @@ function clearApplyForm() {
     .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
 }
 
-// ── CAPTCHA ──────────────────────────────────────────────────
+// ── CAPTCHA / CONTACT REQUEST ─────────────────────────────────
+let captchaCorrect    = null;
 let captchaTargetId   = null;
 let captchaTargetType = null; // 'talent' | 'employer'
+
+function _newCaptchaQuestion() {
+  const a = Math.floor(Math.random() * 12) + 1;
+  const b = Math.floor(Math.random() * 12) + 1;
+  const ops = [
+    { q: `${a} + ${b}`,                         ans: a + b },
+    { q: `${a} × ${b}`,                         ans: a * b },
+    { q: `${Math.max(a,b)} − ${Math.min(a,b)}`, ans: Math.max(a,b) - Math.min(a,b) },
+  ];
+  return ops[Math.floor(Math.random() * ops.length)];
+}
 
 function openCaptcha(id, type) {
   captchaTargetId   = id;
   captchaTargetType = type;
+  captchaCorrect    = null;
 
-  // Generate math question
-  const a = Math.floor(Math.random() * 12) + 1;
-  const b = Math.floor(Math.random() * 12) + 1;
-  const ops = [
-    { q: `${a} + ${b}`, ans: a + b },
-    { q: `${a} × ${b}`, ans: a * b },
-    { q: `${Math.max(a,b)} − ${Math.min(a,b)}`, ans: Math.max(a,b) - Math.min(a,b) },
-  ];
-  const chosen = ops[Math.floor(Math.random() * ops.length)];
+  // Reset all steps
+  document.getElementById('captcha-step-email').style.display  = 'block';
+  document.getElementById('captcha-step-puzzle').style.display = 'none';
+  document.getElementById('captcha-step-done').style.display   = 'none';
+  document.getElementById('captcha-requester-email').value     = '';
+  document.getElementById('captcha-email-error').textContent   = '';
+  document.getElementById('captcha-answer').value              = '';
+  document.getElementById('captcha-error').textContent         = '';
+
+  document.getElementById('captcha-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('captcha-requester-email').focus(), 280);
+}
+
+function proceedToCaptcha() {
+  const email = document.getElementById('captcha-requester-email').value.trim();
+  if (!email) {
+    document.getElementById('captcha-email-error').textContent = 'Please enter your email address.';
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    document.getElementById('captcha-email-error').textContent = 'Please enter a valid email address.';
+    return;
+  }
+  document.getElementById('captcha-email-error').textContent = '';
+
+  // Load captcha puzzle
+  const chosen = _newCaptchaQuestion();
   captchaCorrect = chosen.ans;
-
   document.getElementById('captcha-question').textContent = `What is  ${chosen.q} ?`;
   document.getElementById('captcha-answer').value = '';
   document.getElementById('captcha-error').textContent = '';
-  document.getElementById('captcha-modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  setTimeout(() => document.getElementById('captcha-answer').focus(), 300);
+
+  document.getElementById('captcha-step-email').style.display  = 'none';
+  document.getElementById('captcha-step-puzzle').style.display = 'block';
+  setTimeout(() => document.getElementById('captcha-answer').focus(), 200);
+}
+
+function backToEmail() {
+  document.getElementById('captcha-step-email').style.display  = 'block';
+  document.getElementById('captcha-step-puzzle').style.display = 'none';
+  captchaCorrect = null;
+  setTimeout(() => document.getElementById('captcha-requester-email').focus(), 200);
+}
+
+async function verifyCaptcha() {
+  const val = parseInt(document.getElementById('captcha-answer').value, 10);
+  if (isNaN(val) || val !== captchaCorrect) {
+    document.getElementById('captcha-error').textContent = 'Incorrect — try again.';
+    document.getElementById('captcha-answer').value = '';
+    document.getElementById('captcha-answer').focus();
+    // Regenerate question
+    const chosen = _newCaptchaQuestion();
+    captchaCorrect = chosen.ans;
+    document.getElementById('captcha-question').textContent = `What is  ${chosen.q} ?`;
+    return;
+  }
+  document.getElementById('captcha-error').textContent = '';
+
+  const requesterEmail = document.getElementById('captcha-requester-email').value.trim();
+  const id   = captchaTargetId;
+  const type = captchaTargetType;
+
+  // Disable button during request
+  const btn = document.querySelector('#captcha-step-puzzle .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
+  try {
+    const r = await fetch(`${API}/contact/request`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ requester_email: requesterEmail, target_id: id, target_type: type }),
+    });
+    const d = await r.json();
+
+    if (r.ok && d.success) {
+      // Show done step
+      document.getElementById('captcha-step-puzzle').style.display = 'none';
+      document.getElementById('captcha-step-done').style.display   = 'block';
+      document.getElementById('captcha-sent-to').textContent       = requesterEmail;
+    } else {
+      document.getElementById('captcha-error').textContent = d.error || 'Failed to send. Please try again.';
+      if (btn) { btn.disabled = false; btn.textContent = 'Send Contact Details →'; }
+    }
+  } catch(e) {
+    document.getElementById('captcha-error').textContent = 'Network error. Please try again.';
+    if (btn) { btn.disabled = false; btn.textContent = 'Send Contact Details →'; }
+  }
+
+  captchaCorrect    = null;
+  captchaTargetId   = null;
+  captchaTargetType = null;
 }
 
 function closeCaptcha() {
@@ -1405,77 +1497,9 @@ function closeCaptcha() {
 function closeCaptchaOnBg(e) {
   if (e.target.id === 'captcha-modal') closeCaptcha();
 }
-async function verifyCaptcha() {
-  const val = parseInt(document.getElementById('captcha-answer').value, 10);
-  if (isNaN(val) || val !== captchaCorrect) {
-    document.getElementById('captcha-error').textContent = 'Incorrect — try again.';
-    document.getElementById('captcha-answer').value = '';
-    document.getElementById('captcha-answer').focus();
-    const a = Math.floor(Math.random() * 12) + 1;
-    const b = Math.floor(Math.random() * 12) + 1;
-    const ops = [
-      { q: `${a} + ${b}`, ans: a + b },
-      { q: `${a} × ${b}`, ans: a * b },
-      { q: `${Math.max(a,b)} − ${Math.min(a,b)}`, ans: Math.max(a,b) - Math.min(a,b) },
-    ];
-    const chosen = ops[Math.floor(Math.random() * ops.length)];
-    captchaCorrect = chosen.ans;
-    document.getElementById('captcha-question').textContent = `What is  ${chosen.q} ?`;
-    return;
-  }
-
-  const id   = captchaTargetId;
-  const type = captchaTargetType;
-  document.getElementById('captcha-modal').classList.remove('open');
-
-  try {
-    if (type === 'talent') {
-      // Fetch full talent details fresh from server
-      const r = await fetch(`${API}/roles/${id}`);
-      const t = await r.json();
-
-      document.getElementById('cm-name').textContent     = t.full_name || '';
-      document.getElementById('cm-role').textContent     = t.role_title || '';
-      document.getElementById('cm-email').textContent    = t.email || '—';
-      document.getElementById('cm-phone').textContent    = t.phone || t.applicant_phone || '—';
-      document.getElementById('cm-location').textContent = t.country || '—';
-      const resumeEl = document.getElementById('cm-resume');
-      if (t.resume_link) {
-        resumeEl.textContent = t.resume_link;
-        resumeEl.href = t.resume_link;
-        document.getElementById('cm-resume-row').style.display = 'block';
-      } else {
-        document.getElementById('cm-resume-row').style.display = 'none';
-      }
-
-    } else if (type === 'employer') {
-      // Fetch full job details fresh from server
-      const r = await fetch(`${API}/jobs/${id}`);
-      const j = await r.json();
-
-      document.getElementById('cm-name').textContent     = j.employer_name || j.company || '';
-      document.getElementById('cm-role').textContent     = j.title || '';
-      document.getElementById('cm-email').textContent    = j.employer_email || '—';
-      document.getElementById('cm-phone').textContent    = j.employer_phone || '—';
-      document.getElementById('cm-location').textContent = j.location || '—';
-      document.getElementById('cm-resume-row').style.display = 'none';
-    }
-
-    document.getElementById('contact-modal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-
-  } catch(e) {
-    toast('Could not load contact details. Please try again.', 'error');
-    document.body.style.overflow = '';
-  }
-
-  captchaCorrect    = null;
-  captchaTargetId   = null;
-  captchaTargetType = null;
-}
 
 function closeContactModal() {
-  document.getElementById('contact-modal').classList.remove('open');
+  document.getElementById('contact-modal')?.classList.remove('open');
   document.body.style.overflow = '';
 }
 function closeContactOnBg(e) {
