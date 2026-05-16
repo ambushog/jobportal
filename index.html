@@ -574,7 +574,9 @@
 
       <!-- Contact employer -->
       <div style="border-top:1px solid var(--border);margin-top:1.25rem;padding-top:1.25rem;text-align:center">
-        <button class="reveal-btn" onclick="openCaptcha(currentJobId,'employer')" style="font-size:0.75rem">
+        <button class="reveal-btn" .secret-box{
+    display: none;
+} onclick="openCaptcha(currentJobId,'employer')" style="font-size:0.75rem">
           📧 Get Employer Contact Details
         </button>
         <div style="font-family:var(--mono);font-size:0.67rem;color:var(--muted);margin-top:6px">Contact info sent once to your email after verification</div>
