@@ -716,22 +716,50 @@
 
 <!-- CONTACT REQUEST MODAL -->
 <div class="modal-bg" id="captcha-modal" onclick="closeCaptchaOnBg(event)">
-  <div class="modal" style="max-width:420px">
+  <div class="modal" style="max-width:480px">
     <div class="modal-header">
       <div>
         <div class="modal-title">Get Contact Details</div>
-        <div class="modal-company" style="color:var(--muted)">Enter your email — contact info sent once, privately</div>
+        <div class="modal-company" style="color:var(--muted)">Fill in your details — contact info sent once to your email</div>
       </div>
       <button class="modal-close" onclick="closeCaptcha()">✕</button>
     </div>
     <div class="modal-body" style="padding:1.75rem 2rem">
       <div id="captcha-step-email">
-        <div style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.6rem">Your Email Address</div>
-        <input type="email" id="captcha-requester-email" placeholder="you@email.com"
-          style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.88rem;padding:11px 14px;border-radius:6px;outline:none;margin-bottom:0.6rem"
-          onkeydown="if(event.key==='Enter')proceedToCaptcha()">
-        <div style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.5">
-          📧 Contact details will be emailed to you <strong style="color:var(--gold)">once</strong>. No account needed.
+        <div style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.5;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);background:rgba(200,162,75,0.04)">
+          📧 Contact details will be emailed to you <strong style="color:var(--gold)">once</strong>. Fill in the details below — no account needed.
+        </div>
+        <div style="margin-bottom:0.9rem">
+          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem">Your Full Name <span style="color:var(--gold)">*</span></div>
+          <input type="text" id="captcha-requester-name" placeholder="Your name"
+            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.85rem;padding:10px 14px;border-radius:6px;outline:none;transition:border-color 0.2s"
+            onfocus="this.style.borderColor='var(--gold-dim)'" onblur="this.style.borderColor='var(--border2)'">
+        </div>
+        <div style="margin-bottom:0.9rem">
+          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem">Your Email Address <span style="color:var(--gold)">*</span></div>
+          <input type="email" id="captcha-requester-email" placeholder="you@email.com"
+            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.85rem;padding:10px 14px;border-radius:6px;outline:none;transition:border-color 0.2s"
+            onfocus="this.style.borderColor='var(--gold-dim)'" onblur="this.style.borderColor='var(--border2)'"
+            onkeydown="if(event.key==='Enter')proceedToCaptcha()">
+        </div>
+        <div style="margin-bottom:0.9rem">
+          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem">Your Location <span style="color:var(--gold)">*</span></div>
+          <input type="text" id="captcha-requester-location" placeholder="City, Country (e.g. Madrid, Spain)"
+            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.85rem;padding:10px 14px;border-radius:6px;outline:none;transition:border-color 0.2s"
+            onfocus="this.style.borderColor='var(--gold-dim)'" onblur="this.style.borderColor='var(--border2)'">
+        </div>
+        <div style="margin-bottom:1.1rem">
+          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem">Purpose of Contact <span style="color:var(--gold)">*</span></div>
+          <select id="captcha-requester-purpose"
+            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.85rem;padding:10px 14px;border-radius:6px;outline:none;transition:border-color 0.2s;appearance:none;cursor:pointer"
+            onfocus="this.style.borderColor='var(--gold-dim)'" onblur="this.style.borderColor='var(--border2)'">
+            <option value="" style="background:#1a1a18">Select purpose…</option>
+            <option value="Hiring / Job Offer" style="background:#1a1a18">💼 Hiring / Job Offer</option>
+            <option value="Partnership / Collaboration" style="background:#1a1a18">🤝 Partnership / Collaboration</option>
+            <option value="Interview Request" style="background:#1a1a18">📅 Interview Request</option>
+            <option value="General Enquiry" style="background:#1a1a18">💬 General Enquiry</option>
+            <option value="Other" style="background:#1a1a18">✦ Other</option>
+          </select>
         </div>
         <div id="captcha-email-error" style="font-family:var(--mono);font-size:0.75rem;color:var(--red);margin-bottom:0.75rem;min-height:1em"></div>
         <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="proceedToCaptcha()">Continue →</button>
@@ -1055,7 +1083,10 @@ function openCaptcha(id, type) {
   document.getElementById('captcha-step-email').style.display  = 'block';
   document.getElementById('captcha-step-puzzle').style.display = 'none';
   document.getElementById('captcha-step-done').style.display   = 'none';
+  document.getElementById('captcha-requester-name').value = '';
   document.getElementById('captcha-requester-email').value = '';
+  document.getElementById('captcha-requester-location').value = '';
+  document.getElementById('captcha-requester-purpose').value = '';
   document.getElementById('captcha-email-error').textContent = '';
   document.getElementById('captcha-answer').value = '';
   document.getElementById('captcha-error').textContent = '';
@@ -1065,10 +1096,17 @@ function openCaptcha(id, type) {
 }
 
 function proceedToCaptcha() {
-  const email = document.getElementById('captcha-requester-email').value.trim();
-  if (!email) { document.getElementById('captcha-email-error').textContent = 'Please enter your email address.'; return; }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('captcha-email-error').textContent = 'Please enter a valid email address.'; return; }
-  document.getElementById('captcha-email-error').textContent = '';
+  const name     = document.getElementById('captcha-requester-name').value.trim();
+  const email    = document.getElementById('captcha-requester-email').value.trim();
+  const location = document.getElementById('captcha-requester-location').value.trim();
+  const purpose  = document.getElementById('captcha-requester-purpose').value;
+  const errEl    = document.getElementById('captcha-email-error');
+  if (!name)    { errEl.textContent = 'Please enter your name.'; return; }
+  if (!email)   { errEl.textContent = 'Please enter your email address.'; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent = 'Please enter a valid email address.'; return; }
+  if (!location){ errEl.textContent = 'Please enter your location.'; return; }
+  if (!purpose) { errEl.textContent = 'Please select your purpose of contact.'; return; }
+  errEl.textContent = '';
   const chosen = _newCaptchaQuestion();
   captchaCorrect = chosen.ans;
   document.getElementById('captcha-question').textContent = `What is  ${chosen.q} ?`;
@@ -1105,7 +1143,14 @@ async function verifyCaptcha() {
   try {
     const r = await fetch(`${API}/contact/request`, {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({requester_email:requesterEmail, target_id:id, target_type:type}),
+      body: JSON.stringify({
+        requester_email: requesterEmail,
+        requester_name: document.getElementById('captcha-requester-name').value.trim(),
+        requester_location: document.getElementById('captcha-requester-location').value.trim(),
+        requester_purpose: document.getElementById('captcha-requester-purpose').value,
+        target_id: id,
+        target_type: type
+      }),
     });
     const d = await r.json();
     if (r.ok && d.success) {
