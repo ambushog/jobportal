@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,8 +43,32 @@
     pointer-events: none; z-index: 0;
   }
 
+  /* ── LANGUAGE SWITCHER ── */
+  .lang-bar {
+    background: rgba(10,10,8,0.95); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: flex-end;
+    padding: 0 clamp(1rem,4vw,3rem); gap: 4px; height: 36px; position: relative; z-index: 200;
+  }
+  .lang-bar-label {
+    font-family: var(--mono); font-size: 0.65rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.1em; margin-right: 6px;
+  }
+  .lang-btn {
+    background: none; border: 1px solid transparent;
+    color: var(--muted); font-family: var(--mono);
+    font-size: 0.68rem; font-weight: 400; letter-spacing: 0.05em;
+    padding: 3px 10px; border-radius: 20px; cursor: pointer;
+    transition: all 0.18s; text-transform: uppercase; white-space: nowrap;
+  }
+  .lang-btn:hover { color: var(--text); border-color: var(--border2); }
+  .lang-btn.active {
+    color: var(--gold); border-color: var(--gold-dim);
+    background: rgba(200,162,75,0.08); font-weight: 400;
+  }
+  .lang-flag { font-size: 0.9rem; line-height: 1; vertical-align: middle; margin-right: 3px; }
+
   header {
-    position: sticky; top: 0; z-index: 100;
+    position: sticky; top: 36px; z-index: 100;
     background: rgba(10,10,8,0.9); backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center; justify-content: space-between;
@@ -60,7 +84,7 @@
     display: grid; place-items: center; font-size: 0.75rem; font-weight: 800;
     color: #000; flex-shrink: 0;
   }
-  nav { display: flex; gap: 6px; align-items: center; }
+  nav { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
   .nav-btn {
     background: none; border: 1px solid transparent;
     color: var(--muted); font-family: 'Syne', sans-serif;
@@ -188,14 +212,12 @@
   .job-skills { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 1rem; }
   .skill-pill { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--muted); font-family: var(--mono); font-size: 0.7rem; padding: 3px 10px; border-radius: 20px; }
 
-  /* Applicant cards have purple accent */
   .applicant-card { cursor: default; }
   .applicant-card::before { background: var(--purple-lt) !important; }
   .applicant-name { font-size: 1.05rem; font-weight: 700; color: var(--cream); }
   .applicant-job-tag { font-size: 0.8rem; color: var(--purple-lt); margin-top: 4px; font-family: var(--mono); font-weight: 300; }
   .company-tag { font-size: 0.75rem; color: var(--gold); font-family: var(--mono); font-weight: 300; }
 
-  /* Company action badge */
   .action-badge { font-family: var(--mono); font-size: 0.65rem; padding: 3px 9px; border-radius: 20px; letter-spacing: 0.07em; text-transform: uppercase; flex-shrink: 0; }
   .action-badge.interview { background: rgba(200,162,75,0.14); color: var(--gold); border: 1px solid rgba(200,162,75,0.25); }
   .action-badge.approved  { background: rgba(46,125,92,0.14); color: var(--green-lt); border: 1px solid rgba(46,125,92,0.25); }
@@ -294,6 +316,8 @@
     .stats-bar { flex-wrap: wrap; }
     .stat { min-width: 50%; }
     nav .nav-btn { padding: 6px 10px; font-size: 0.72rem; }
+    .lang-bar { gap: 2px; }
+    .lang-btn { padding: 2px 7px; font-size: 0.62rem; }
   }
 
   .btn-spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(0,0,0,0.25); border-top-color: #000; border-radius: 50%; animation: spin 0.65s linear infinite; vertical-align: middle; flex-shrink: 0; }
@@ -307,7 +331,6 @@
   .job-card:nth-child(3){animation-delay:.12s} .job-card:nth-child(4){animation-delay:.16s}
   .job-card:nth-child(5){animation-delay:.20s} .job-card:nth-child(n+6){animation-delay:.24s}
 
-  /* Talent cards */
   .talent-card {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 1.5rem 1.75rem;
@@ -324,7 +347,6 @@
   #captcha-answer::-webkit-outer-spin-button, #captcha-answer::-webkit-inner-spin-button { -webkit-appearance: none; }
   #captcha-answer[type=number] { -moz-appearance: textfield; }
 
-  /* Applicants section header banner */
   .applicants-banner {
     background: linear-gradient(135deg, rgba(124,92,191,0.08) 0%, rgba(10,10,8,0) 60%);
     border: 1px solid rgba(124,92,191,0.2); border-radius: var(--radius);
@@ -333,20 +355,33 @@
     display: flex; align-items: center; gap: 12px;
   }
   .applicants-banner strong { color: var(--purple-lt); }
+
+  /* Lang transition */
+  [data-t] { transition: opacity 0.12s; }
 </style>
 </head>
 <body>
+
+<!-- ═══ LANGUAGE BAR ═══ -->
+<div class="lang-bar">
+  <span class="lang-bar-label" id="lb-label">Language / Idioma</span>
+  <button class="lang-btn active" onclick="setLang('es')" id="lb-es"><span class="lang-flag">🇪🇸</span> Castellano</button>
+  <button class="lang-btn" onclick="setLang('ca')" id="lb-ca"><span class="lang-flag">🏴󠁥󠁳󠁣󠁴󠁿</span> Català</button>
+  <button class="lang-btn" onclick="setLang('gl')" id="lb-gl"><span class="lang-flag">🏴󠁥󠁳󠁧󠁡󠁿</span> Galego</button>
+  <button class="lang-btn" onclick="setLang('eu')" id="lb-eu"><span class="lang-flag">🏴󠁥󠁳󠁰󠁶󠁿</span> Euskara</button>
+  <button class="lang-btn" onclick="setLang('va')" id="lb-va"><span class="lang-flag">🏴󠁥󠁳󠁶󠁣󠁿</span> Valencià</button>
+</div>
 
 <header>
   <a class="logo" href="#" onclick="showView('browse')">
     <span class="logo-mark">W</span>WorkBridge
   </a>
   <nav>
-    <button class="nav-btn active" id="nav-browse"      onclick="showView('browse')">Browse Jobs</button>
-    <button class="nav-btn"        id="nav-talents"     onclick="showView('talents')">Browse Talent</button>
-    <button class="nav-btn"        id="nav-applicants"  onclick="showView('applicants')">Applicants</button>
-    <button class="nav-btn"        id="nav-postrole"    onclick="showView('postrole')">Post My Role</button>
-    <button class="nav-btn cta"    id="nav-post"        onclick="showView('post')">Post a Job</button>
+    <button class="nav-btn active" id="nav-browse"     onclick="showView('browse')"     data-t="nav_browse">Browse Jobs</button>
+    <button class="nav-btn"        id="nav-talents"    onclick="showView('talents')"    data-t="nav_talent">Browse Talent</button>
+    <button class="nav-btn"        id="nav-applicants" onclick="showView('applicants')" data-t="nav_applicants">Applicants</button>
+    <button class="nav-btn"        id="nav-postrole"   onclick="showView('postrole')"   data-t="nav_postrole">Post My Role</button>
+    <button class="nav-btn cta"    id="nav-post"       onclick="showView('post')"        data-t="nav_postjob">Post a Job</button>
   </nav>
 </header>
 
@@ -356,32 +391,32 @@
     <div class="hero-grid-lines"></div>
     <div class="hero-glow"></div>
     <div style="position:relative">
-      <div class="hero-tag">Live Opportunities</div>
-      <h1>Find work that <em>matters</em> to you</h1>
-      <p class="hero-sub">Curated job opportunities vetted by our team. Every listing is reviewed before going live.</p>
+      <div class="hero-tag" data-t="hero_tag">Live Opportunities</div>
+      <h1 data-t="hero_h1">Find work that <em>matters</em> to you</h1>
+      <p class="hero-sub" data-t="hero_sub">Curated job opportunities vetted by our team. Every listing is reviewed before going live.</p>
       <div class="hero-actions">
-        <button class="btn btn-primary" onclick="document.getElementById('job-list-anchor').scrollIntoView({behavior:'smooth'})">Browse Openings ↓</button>
-        <button class="btn btn-outline" onclick="showView('postrole')">I'm Looking for Work</button>
-        <button class="btn btn-outline" onclick="showView('post')">Hire Someone</button>
+        <button class="btn btn-primary" data-t="hero_btn_browse" onclick="document.getElementById('job-list-anchor').scrollIntoView({behavior:'smooth'})">Browse Openings ↓</button>
+        <button class="btn btn-outline" data-t="hero_btn_seeking" onclick="showView('postrole')">I'm Looking for Work</button>
+        <button class="btn btn-outline" data-t="hero_btn_hire" onclick="showView('post')">Hire Someone</button>
       </div>
     </div>
   </section>
 
   <div class="stats-bar" id="stats-bar">
-    <div class="stat"><span class="stat-n" id="stat-jobs">—</span><span class="stat-label">Open Roles</span></div>
-    <div class="stat"><span class="stat-n" id="stat-visits">—</span><span class="stat-label">Visitors</span></div>
-    <div class="stat"><span class="stat-n" id="stat-types">—</span><span class="stat-label">Job Types</span></div>
-    <div class="stat"><span class="stat-n" id="stat-applicants">—</span><span class="stat-label">Applicants</span></div>
+    <div class="stat"><span class="stat-n" id="stat-jobs">—</span><span class="stat-label" data-t="stat_jobs">Open Roles</span></div>
+    <div class="stat"><span class="stat-n" id="stat-visits">—</span><span class="stat-label" data-t="stat_visits">Visitors</span></div>
+    <div class="stat"><span class="stat-n" id="stat-types">—</span><span class="stat-label" data-t="stat_types">Job Types</span></div>
+    <div class="stat"><span class="stat-n" id="stat-applicants">—</span><span class="stat-label" data-t="stat_applicants">Applicants</span></div>
   </div>
 
   <div class="main-wrap" id="job-list-anchor">
     <div class="section-head">
-      <h2><span>Current Openings</span>All Positions</h2>
+      <h2><span data-t="sec_openings_sub">Current Openings</span><span data-t="sec_openings_main">All Positions</span></h2>
       <div id="job-count" style="font-family:var(--mono);font-size:0.75rem;color:var(--muted)"></div>
     </div>
     <div class="search-wrap">
       <span class="search-icon">⌕</span>
-      <input type="text" id="search-input" placeholder="Search title, company, skills…" oninput="renderJobs()">
+      <input type="text" id="search-input" data-ph="search_jobs" placeholder="Search title, company, skills…" oninput="renderJobs()">
     </div>
     <div class="filters" id="filters"></div>
     <div class="job-grid" id="job-grid">
@@ -394,58 +429,58 @@
 <div class="view" id="view-post">
   <div class="page-wrap">
     <div class="page-head">
-      <h2>Post a Position</h2>
-      <p>Submit your job listing for review. Our team approves all postings before they appear publicly — usually within 24 hours. <strong style="color:var(--gold)">Email is required</strong> — you'll receive a confirmation and approval notification via email.</p>
+      <h2 data-t="postjob_h2">Post a Position</h2>
+      <p data-t="postjob_desc">Submit your job listing for review. Our team approves all postings before they appear publicly — usually within 24 hours. <strong style="color:var(--gold)">Email is required</strong> — you'll receive a confirmation and approval notification via email.</p>
     </div>
     <div class="submit-card">
       <div class="success-banner" id="post-success">
         <div class="success-icon">✦</div>
-        <h3>Submission received</h3>
-        <p>Your job posting is pending admin review.<br>It will appear publicly once approved.</p>
-        <p style="margin-top:0.75rem;color:var(--gold);font-size:0.78rem">📧 A confirmation email with a WhatsApp contact button has been sent to your inbox.</p>
-        <button class="btn btn-outline" style="margin-top:1.5rem" onclick="resetPostForm()">Post Another</button>
+        <h3 data-t="postjob_success_h3">Submission received</h3>
+        <p data-t="postjob_success_p1">Your job posting is pending admin review.<br>It will appear publicly once approved.</p>
+        <p style="margin-top:0.75rem;color:var(--gold);font-size:0.78rem" data-t="postjob_success_p2">📧 A confirmation email with a WhatsApp contact button has been sent to your inbox.</p>
+        <button class="btn btn-outline" style="margin-top:1.5rem" onclick="resetPostForm()" data-t="postjob_post_another">Post Another</button>
       </div>
       <div id="post-form-wrap">
         <div class="form-section">
-          <h3>Employer Details</h3>
+          <h3 data-t="postjob_sec_employer">Employer Details</h3>
           <div class="form-row">
             <div class="field">
-              <label>Your Name <span class="req">*</span></label>
-              <input type="text" id="p-employer_name" placeholder="Full name">
+              <label data-t="f_your_name">Your Name <span class="req">*</span></label>
+              <input type="text" id="p-employer_name" data-ph="ph_fullname" placeholder="Full name">
             </div>
             <div class="field">
-              <label>Email <span class="req">*</span></label>
-              <input type="email" id="p-employer_email" placeholder="you@company.com">
-              <div style="font-family:var(--mono);font-size:0.68rem;color:var(--gold);margin-top:4px">📧 Confirmation &amp; approval notices sent here</div>
+              <label data-t="f_email">Email <span class="req">*</span></label>
+              <input type="email" id="p-employer_email" data-ph="ph_email_company" placeholder="you@company.com">
+              <div style="font-family:var(--mono);font-size:0.68rem;color:var(--gold);margin-top:4px" data-t="note_email_confirm">📧 Confirmation &amp; approval notices sent here</div>
             </div>
           </div>
           <div class="form-row">
             <div class="field">
-              <label>Phone</label>
-              <input type="text" id="p-employer_phone" placeholder="+34 600 000 000">
+              <label data-t="f_phone">Phone</label>
+              <input type="text" id="p-employer_phone" data-ph="ph_phone" placeholder="+34 600 000 000">
             </div>
             <div class="field">
-              <label>Company Name</label>
-              <input type="text" id="p-company" placeholder="Acme Corp">
+              <label data-t="f_company">Company Name</label>
+              <input type="text" id="p-company" data-ph="ph_company" placeholder="Acme Corp">
             </div>
           </div>
         </div>
 
         <div class="form-section">
-          <h3>Job Details</h3>
+          <h3 data-t="postjob_sec_details">Job Details</h3>
           <div class="field">
-            <label>Job Title <span class="req">*</span></label>
-            <input type="text" id="p-title" placeholder="e.g. Senior Frontend Developer">
+            <label data-t="f_job_title">Job Title <span class="req">*</span></label>
+            <input type="text" id="p-title" data-ph="ph_job_title" placeholder="e.g. Senior Frontend Developer">
           </div>
           <div class="field">
-            <label>Description <span class="req">*</span></label>
-            <textarea id="p-description" rows="6" placeholder="Describe the role, responsibilities, and what makes it unique…"></textarea>
+            <label data-t="f_description">Description <span class="req">*</span></label>
+            <textarea id="p-description" rows="6" data-ph="ph_description" placeholder="Describe the role, responsibilities, and what makes it unique…"></textarea>
           </div>
           <div class="form-row">
             <div class="field">
-              <label>Location <span class="req">*</span></label>
+              <label data-t="f_location">Location <span class="req">*</span></label>
               <select id="p-location">
-                <option value="">Select province…</option>
+                <option value="" data-t="opt_select_province">Select province…</option>
                 <optgroup label="Andalucía"><option>Almería</option><option>Cádiz</option><option>Córdoba</option><option>Granada</option><option>Huelva</option><option>Jaén</option><option>Málaga</option><option>Sevilla</option></optgroup>
                 <optgroup label="Aragón"><option>Huesca</option><option>Teruel</option><option>Zaragoza</option></optgroup>
                 <optgroup label="Asturias"><option>Asturias</option></optgroup>
@@ -467,39 +502,43 @@
               </select>
             </div>
             <div class="field">
-              <label>Job Type</label>
+              <label data-t="f_job_type">Job Type</label>
               <select id="p-job_type">
-                <option value="">Select…</option>
-                <option>Full-time</option><option>Part-time</option><option>Contract</option><option>Remote</option><option>Internship</option>
+                <option value="" data-t="opt_select">Select…</option>
+                <option data-t="jt_fulltime">Full-time</option>
+                <option data-t="jt_parttime">Part-time</option>
+                <option data-t="jt_contract">Contract</option>
+                <option data-t="jt_remote">Remote</option>
+                <option data-t="jt_internship">Internship</option>
               </select>
             </div>
           </div>
           <div class="form-row">
             <div class="field">
-              <label>Salary / Rate</label>
-              <input type="text" id="p-salary" placeholder="e.g. €40,000 / year">
+              <label data-t="f_salary">Salary / Rate</label>
+              <input type="text" id="p-salary" data-ph="ph_salary" placeholder="e.g. €40,000 / year">
             </div>
             <div class="field">
-              <label>Application Deadline</label>
-              <input type="text" id="p-deadline" placeholder="e.g. 31 Dec 2025">
+              <label data-t="f_deadline">Application Deadline</label>
+              <input type="text" id="p-deadline" data-ph="ph_deadline" placeholder="e.g. 31 Dec 2025">
             </div>
           </div>
           <div class="field">
-            <label>Required Skills</label>
-            <input type="text" id="p-skills" placeholder="e.g. JavaScript, Python, SQL (comma-separated)">
+            <label data-t="f_skills">Required Skills</label>
+            <input type="text" id="p-skills" data-ph="ph_skills" placeholder="e.g. JavaScript, Python, SQL (comma-separated)">
           </div>
           <div class="field">
-            <label>Resume / CV Link <span class="req">*</span></label>
-            <input type="url" id="p-resume_link" placeholder="https://drive.google.com/… or LinkedIn">
-            <div style="font-family:var(--mono);font-size:0.68rem;color:var(--gold);margin-top:4px">📎 Required — included in your WhatsApp confirmation message</div>
+            <label data-t="f_resume_link">Resume / CV Link <span class="req">*</span></label>
+            <input type="url" id="p-resume_link" data-ph="ph_cv_link" placeholder="https://drive.google.com/… or LinkedIn">
+            <div style="font-family:var(--mono);font-size:0.68rem;color:var(--gold);margin-top:4px" data-t="note_cv_required">📎 Required — included in your WhatsApp confirmation message</div>
           </div>
           <div class="field">
-            <label>Company Website <span style="color:var(--muted);font-weight:300">(optional)</span></label>
-            <input type="url" id="p-website" placeholder="https://yourcompany.com">
+            <label data-t="f_website">Company Website <span style="color:var(--muted);font-weight:300" data-t="optional">(optional)</span></label>
+            <input type="url" id="p-website" data-ph="ph_website" placeholder="https://yourcompany.com">
           </div>
         </div>
 
-        <button id="postjob-submit-btn" class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitJob()">
+        <button id="postjob-submit-btn" class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitJob()" data-t="btn_submit_review">
           Submit for Review →
         </button>
       </div>
@@ -519,98 +558,93 @@
     </div>
     <div class="modal-body">
       <div class="info-row">
-        <div class="info-block"><label>Location</label><span id="m-location">—</span></div>
-        <div class="info-block"><label>Type</label><span id="m-type">—</span></div>
-        <div class="info-block"><label>Salary</label><span id="m-salary">—</span></div>
-        <div class="info-block"><label>Deadline</label><span id="m-deadline">—</span></div>
+        <div class="info-block"><label data-t="f_location">Location</label><span id="m-location">—</span></div>
+        <div class="info-block"><label data-t="f_job_type">Type</label><span id="m-type">—</span></div>
+        <div class="info-block"><label data-t="f_salary">Salary</label><span id="m-salary">—</span></div>
+        <div class="info-block"><label data-t="f_deadline">Deadline</label><span id="m-deadline">—</span></div>
       </div>
       <div id="m-skills-row" style="margin-bottom:1.25rem;display:none">
-        <label class="modal-desc-label">Skills Required</label>
+        <label class="modal-desc-label" data-t="m_skills_label">Skills Required</label>
         <div class="job-skills" id="m-skills"></div>
       </div>
 
-      <!-- Applicants for this job -->
       <div id="m-applicants-section" style="margin-bottom:1.5rem;display:none">
-        <label class="modal-desc-label">👥 People who applied for this role</label>
+        <label class="modal-desc-label" data-t="m_applicants_label">👥 People who applied for this role</label>
         <div id="m-applicants-list" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
 
-      <span class="modal-desc-label">Job Description</span>
+      <span class="modal-desc-label" data-t="m_desc_label">Job Description</span>
       <div class="modal-desc" id="m-desc"></div>
 
-      <button class="btn btn-primary" id="apply-toggle-btn" onclick="toggleApply()" style="width:100%;justify-content:center;margin-bottom:0.75rem">
+      <button class="btn btn-primary" id="apply-toggle-btn" onclick="toggleApply()" style="width:100%;justify-content:center;margin-bottom:0.75rem" data-t="btn_apply">
         Apply for this Role →
       </button>
 
       <div id="applySection">
         <hr class="divider">
         <div class="form-section" style="margin-bottom:1.25rem">
-          <h3>Your Application</h3>
-          <div style="font-family:var(--mono);font-size:0.72rem;color:var(--gold);margin-bottom:1rem;padding:8px 12px;border:1px solid var(--gold-dim);border-radius:var(--radius);background:rgba(200,162,75,0.05)">
+          <h3 data-t="apply_sec_title">Your Application</h3>
+          <div style="font-family:var(--mono);font-size:0.72rem;color:var(--gold);margin-bottom:1rem;padding:8px 12px;border:1px solid var(--gold-dim);border-radius:var(--radius);background:rgba(200,162,75,0.05)" data-t="apply_email_note">
             📧 All updates — shortlisting, company decisions — arrive by email. Email is required.
           </div>
           <div class="form-row">
-            <div class="field"><label>Full Name <span class="req">*</span></label><input type="text" id="a-name" placeholder="Your name"></div>
-            <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="a-email" placeholder="you@email.com"></div>
+            <div class="field"><label data-t="f_fullname">Full Name <span class="req">*</span></label><input type="text" id="a-name" data-ph="ph_your_name" placeholder="Your name"></div>
+            <div class="field"><label data-t="f_email">Email <span class="req">*</span></label><input type="email" id="a-email" data-ph="ph_your_email" placeholder="you@email.com"></div>
           </div>
-          <div class="field"><label>Phone</label><input type="text" id="a-phone" placeholder="+1 555 000 0000"></div>
-          <div class="field"><label>Skills Summary</label><input type="text" id="a-skills" placeholder="Comma-separated skills"></div>
-          <div class="field"><label>Experience</label><textarea id="a-experience" rows="3" placeholder="Brief summary of relevant experience…"></textarea></div>
-          <div class="field"><label>Cover Letter</label><textarea id="a-cover" rows="4" placeholder="Why are you a great fit for this role?"></textarea></div>
+          <div class="field"><label data-t="f_phone">Phone</label><input type="text" id="a-phone" data-ph="ph_phone" placeholder="+1 555 000 0000"></div>
+          <div class="field"><label data-t="f_skills">Skills Summary</label><input type="text" id="a-skills" data-ph="ph_skills_csv" placeholder="Comma-separated skills"></div>
+          <div class="field"><label data-t="f_experience">Experience</label><textarea id="a-experience" rows="3" data-ph="ph_experience" placeholder="Brief summary of relevant experience…"></textarea></div>
+          <div class="field"><label data-t="f_cover">Cover Letter</label><textarea id="a-cover" rows="4" data-ph="ph_cover" placeholder="Why are you a great fit for this role?"></textarea></div>
           <div class="field">
-            <label>Resume / Portfolio Link <span class="req">*</span></label>
-            <input type="url" id="a-resume" placeholder="https://…">
-            <div style="font-family:var(--mono);font-size:0.68rem;color:var(--gold);margin-top:4px">📎 Required — included in your WhatsApp confirmation</div>
+            <label data-t="f_resume_link">Resume / Portfolio Link <span class="req">*</span></label>
+            <input type="url" id="a-resume" data-ph="ph_cv_link" placeholder="https://…">
+            <div style="font-family:var(--mono);font-size:0.68rem;color:var(--gold);margin-top:4px" data-t="note_cv_required">📎 Required — included in your WhatsApp confirmation</div>
           </div>
           <div class="field">
-            <label>Your Website <span style="color:var(--muted);font-weight:300">(optional)</span></label>
-            <input type="url" id="a-website" placeholder="https://yourportfolio.com">
+            <label data-t="f_website">Your Website <span style="color:var(--muted);font-weight:300" data-t="optional">(optional)</span></label>
+            <input type="url" id="a-website" data-ph="ph_portfolio" placeholder="https://yourportfolio.com">
           </div>
         </div>
-        <button id="apply-submit-btn" class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitApplication()">
+        <button id="apply-submit-btn" class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitApplication()" data-t="btn_submit_application">
           Submit Application →
         </button>
-      </div>
-
-
-
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ POST ROLE VIEW (Employee) ═══ -->
+<!-- ═══ POST ROLE VIEW ═══ -->
 <div class="view" id="view-postrole">
   <div class="page-wrap">
     <div class="page-head">
-      <h2>Post Your Role</h2>
-      <p>You're looking for work. Tell employers who you are, what you do, and where in Spain you're available. Your profile is reviewed before going live. <strong style="color:var(--gold)">Email is required</strong> — you'll get a confirmation and approval notice.</p>
+      <h2 data-t="postrole_h2">Post Your Role</h2>
+      <p data-t="postrole_desc">You're looking for work. Tell employers who you are, what you do, and where in Spain you're available. Your profile is reviewed before going live. <strong style="color:var(--gold)">Email is required</strong> — you'll get a confirmation and approval notice.</p>
     </div>
     <div class="submit-card">
       <div class="success-banner" id="role-success">
         <div class="success-icon">✦</div>
-        <h3>Profile submitted</h3>
-        <p>Your role profile is pending admin review.<br>It will appear publicly once approved.</p>
-        <p style="margin-top:0.75rem;color:var(--gold);font-size:0.78rem">📧 A confirmation email with a WhatsApp contact button has been sent to your inbox.</p>
-        <button class="btn btn-outline" style="margin-top:1.5rem" onclick="resetRoleForm()">Submit Another</button>
+        <h3 data-t="postrole_success_h3">Profile submitted</h3>
+        <p data-t="postrole_success_p1">Your role profile is pending admin review.<br>It will appear publicly once approved.</p>
+        <p style="margin-top:0.75rem;color:var(--gold);font-size:0.78rem" data-t="postrole_success_p2">📧 A confirmation email with a WhatsApp contact button has been sent to your inbox.</p>
+        <button class="btn btn-outline" style="margin-top:1.5rem" onclick="resetRoleForm()" data-t="btn_submit_another">Submit Another</button>
       </div>
       <div id="role-form-wrap">
         <div class="form-section">
-          <h3>Personal Details</h3>
+          <h3 data-t="postrole_sec_personal">Personal Details</h3>
           <div class="form-row">
-            <div class="field"><label>Full Name <span class="req">*</span></label><input type="text" id="r-full_name" placeholder="Your full name"></div>
+            <div class="field"><label data-t="f_fullname">Full Name <span class="req">*</span></label><input type="text" id="r-full_name" data-ph="ph_your_name" placeholder="Your full name"></div>
             <div class="field">
-              <label>Email <span class="req">*</span></label>
-              <input type="email" id="r-email" placeholder="you@email.com">
-              <div style="font-family:var(--mono);font-size:0.68rem;color:var(--gold);margin-top:4px">📧 Confirmation &amp; approval notices sent here</div>
+              <label data-t="f_email">Email <span class="req">*</span></label>
+              <input type="email" id="r-email" data-ph="ph_your_email" placeholder="you@email.com">
+              <div style="font-family:var(--mono);font-size:0.68rem;color:var(--gold);margin-top:4px" data-t="note_email_confirm">📧 Confirmation &amp; approval notices sent here</div>
             </div>
           </div>
           <div class="form-row">
-            <div class="field"><label>Phone</label><input type="text" id="r-phone" placeholder="+34 600 000 000"></div>
+            <div class="field"><label data-t="f_phone">Phone</label><input type="text" id="r-phone" data-ph="ph_phone" placeholder="+34 600 000 000"></div>
             <div class="field">
-              <label>Location (Province) <span class="req">*</span></label>
+              <label data-t="f_province">Location (Province) <span class="req">*</span></label>
               <select id="r-country">
-                <option value="">Select province…</option>
+                <option value="" data-t="opt_select_province">Select province…</option>
                 <optgroup label="Andalucía"><option>Almería</option><option>Cádiz</option><option>Córdoba</option><option>Granada</option><option>Huelva</option><option>Jaén</option><option>Málaga</option><option>Sevilla</option></optgroup>
                 <optgroup label="Aragón"><option>Huesca</option><option>Teruel</option><option>Zaragoza</option></optgroup>
                 <optgroup label="Asturias"><option>Asturias</option></optgroup>
@@ -634,31 +668,34 @@
           </div>
         </div>
         <div class="form-section">
-          <h3>Professional Profile</h3>
-          <div class="field"><label>Role / Job Title <span class="req">*</span></label><input type="text" id="r-role_title" placeholder="e.g. Full Stack Developer, Electrician, Nurse…"></div>
-          <div class="field"><label>Bio / About You</label><textarea id="r-bio" rows="4" placeholder="Brief description of who you are and what you bring to a team…"></textarea></div>
-          <div class="field"><label>Experience</label><textarea id="r-experience" rows="3" placeholder="Years of experience, past roles, key achievements…"></textarea></div>
-          <div class="field"><label>Skills</label><input type="text" id="r-skills" placeholder="e.g. JavaScript, Welding, Patient Care (comma-separated)"></div>
+          <h3 data-t="postrole_sec_profile">Professional Profile</h3>
+          <div class="field"><label data-t="f_role_title">Role / Job Title <span class="req">*</span></label><input type="text" id="r-role_title" data-ph="ph_role_title" placeholder="e.g. Full Stack Developer, Electrician, Nurse…"></div>
+          <div class="field"><label data-t="f_bio">Bio / About You</label><textarea id="r-bio" rows="4" data-ph="ph_bio" placeholder="Brief description of who you are and what you bring to a team…"></textarea></div>
+          <div class="field"><label data-t="f_experience">Experience</label><textarea id="r-experience" rows="3" data-ph="ph_experience_role" placeholder="Years of experience, past roles, key achievements…"></textarea></div>
+          <div class="field"><label data-t="f_skills">Skills</label><input type="text" id="r-skills" data-ph="ph_skills" placeholder="e.g. JavaScript, Welding, Patient Care (comma-separated)"></div>
           <div class="form-row">
             <div class="field">
-              <label>Availability</label>
+              <label data-t="f_availability">Availability</label>
               <select id="r-availability">
-                <option value="">Select…</option>
-                <option>Immediately</option><option>Within 2 weeks</option><option>Within 1 month</option><option>Negotiable</option>
+                <option value="" data-t="opt_select">Select…</option>
+                <option data-t="avail_immediate">Immediately</option>
+                <option data-t="avail_2weeks">Within 2 weeks</option>
+                <option data-t="avail_1month">Within 1 month</option>
+                <option data-t="avail_negotiable">Negotiable</option>
               </select>
             </div>
             <div class="field">
-              <label>CV / Portfolio Link <span class="req">*</span></label>
-              <input type="url" id="r-resume_link" placeholder="https://…">
-              <div style="font-family:var(--mono);font-size:0.68rem;color:var(--gold);margin-top:4px">📎 Required — included in your WhatsApp confirmation</div>
+              <label data-t="f_cv_link">CV / Portfolio Link <span class="req">*</span></label>
+              <input type="url" id="r-resume_link" data-ph="ph_cv_link" placeholder="https://…">
+              <div style="font-family:var(--mono);font-size:0.68rem;color:var(--gold);margin-top:4px" data-t="note_cv_required">📎 Required — included in your WhatsApp confirmation</div>
             </div>
           </div>
           <div class="field">
-            <label>Personal Website <span style="color:var(--muted);font-weight:300">(optional)</span></label>
-            <input type="url" id="r-website" placeholder="https://yourportfolio.com">
+            <label data-t="f_website">Personal Website <span style="color:var(--muted);font-weight:300" data-t="optional">(optional)</span></label>
+            <input type="url" id="r-website" data-ph="ph_portfolio" placeholder="https://yourportfolio.com">
           </div>
         </div>
-        <button id="postrole-submit-btn" class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitRole()">
+        <button id="postrole-submit-btn" class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitRole()" data-t="btn_submit_profile">
           Submit Profile for Review →
         </button>
       </div>
@@ -670,12 +707,12 @@
 <div class="view" id="view-talents">
   <div class="main-wrap" style="padding-top:2.5rem">
     <div class="section-head">
-      <h2><span>Available Talent</span>People Looking for Work</h2>
+      <h2><span data-t="sec_talent_sub">Available Talent</span><span data-t="sec_talent_main">People Looking for Work</span></h2>
       <div id="talent-count" style="font-family:var(--mono);font-size:0.75rem;color:var(--muted)"></div>
     </div>
     <div class="search-wrap">
       <span class="search-icon">⌕</span>
-      <input type="text" id="talent-search" placeholder="Search name, role, skills…" oninput="renderTalents()">
+      <input type="text" id="talent-search" data-ph="search_talent" placeholder="Search name, role, skills…" oninput="renderTalents()">
     </div>
     <div class="job-grid" id="talent-grid">
       <div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
@@ -687,21 +724,20 @@
 <div class="view" id="view-applicants">
   <div class="main-wrap" style="padding-top:2.5rem">
     <div class="section-head">
-      <h2><span>Job Applicants</span>Who Applied · Which Company</h2>
+      <h2><span data-t="sec_applicants_sub">Job Applicants</span><span data-t="sec_applicants_main">Who Applied · Which Company</span></h2>
       <div id="applicant-count" style="font-family:var(--mono);font-size:0.75rem;color:var(--muted)"></div>
     </div>
 
     <div class="applicants-banner">
       <span style="font-size:1.4rem;flex-shrink:0">👥</span>
-      <span>These are <strong>approved applicants</strong> — people who have applied for open roles and been shortlisted by our admin. Each card shows the applicant's name, the <strong>job they applied for</strong>, and the company. Use <strong>Get Contact Details</strong> to receive their email &amp; phone directly.</span>
+      <span data-t="applicants_banner">These are <strong>approved applicants</strong> — people who have applied for open roles and been shortlisted by our admin. Each card shows the applicant's name, the <strong>job they applied for</strong>, and the company. Use <strong>Get Contact Details</strong> to receive their email &amp; phone directly.</span>
     </div>
 
     <div class="search-wrap">
       <span class="search-icon">⌕</span>
-      <input type="text" id="applicant-search" placeholder="Search name, job title, company, skills…" oninput="renderApplicants()">
+      <input type="text" id="applicant-search" data-ph="search_applicants" placeholder="Search name, job title, company, skills…" oninput="renderApplicants()">
     </div>
 
-    <!-- Filter by job -->
     <div class="filters" id="applicant-job-filters"></div>
 
     <div class="job-grid" id="applicant-grid">
@@ -715,72 +751,72 @@
   <div class="modal" style="max-width:480px">
     <div class="modal-header">
       <div>
-        <div class="modal-title">Get Contact Details</div>
-        <div class="modal-company" style="color:var(--muted)">Fill in your details — contact info sent once to your email</div>
+        <div class="modal-title" data-t="captcha_title">Get Contact Details</div>
+        <div class="modal-company" style="color:var(--muted)" data-t="captcha_subtitle">Fill in your details — contact info sent once to your email</div>
       </div>
       <button class="modal-close" onclick="closeCaptcha()">✕</button>
     </div>
     <div class="modal-body" style="padding:1.75rem 2rem">
       <div id="captcha-step-email">
-        <div style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.5;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);background:rgba(200,162,75,0.04)">
+        <div style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.5;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);background:rgba(200,162,75,0.04)" data-t="captcha_note">
           📧 Contact details will be emailed to you <strong style="color:var(--gold)">once</strong>. Fill in the details below — no account needed.
         </div>
         <div style="margin-bottom:0.9rem">
-          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem">Your Full Name <span style="color:var(--gold)">*</span></div>
-          <input type="text" id="captcha-requester-name" placeholder="Your name"
+          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem" data-t="f_fullname">Your Full Name <span style="color:var(--gold)">*</span></div>
+          <input type="text" id="captcha-requester-name" data-ph="ph_your_name" placeholder="Your name"
             style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.85rem;padding:10px 14px;border-radius:6px;outline:none;transition:border-color 0.2s"
             onfocus="this.style.borderColor='var(--gold-dim)'" onblur="this.style.borderColor='var(--border2)'">
         </div>
         <div style="margin-bottom:0.9rem">
-          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem">Your Email Address <span style="color:var(--gold)">*</span></div>
-          <input type="email" id="captcha-requester-email" placeholder="you@email.com"
+          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem" data-t="f_email">Your Email Address <span style="color:var(--gold)">*</span></div>
+          <input type="email" id="captcha-requester-email" data-ph="ph_your_email" placeholder="you@email.com"
             style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.85rem;padding:10px 14px;border-radius:6px;outline:none;transition:border-color 0.2s"
             onfocus="this.style.borderColor='var(--gold-dim)'" onblur="this.style.borderColor='var(--border2)'"
             onkeydown="if(event.key==='Enter')proceedToCaptcha()">
         </div>
         <div style="margin-bottom:0.9rem">
-          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem">Your Location <span style="color:var(--gold)">*</span></div>
-          <input type="text" id="captcha-requester-location" placeholder="City, Country (e.g. Madrid, Spain)"
+          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem" data-t="f_your_location">Your Location <span style="color:var(--gold)">*</span></div>
+          <input type="text" id="captcha-requester-location" data-ph="ph_location_eg" placeholder="City, Country (e.g. Madrid, Spain)"
             style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.85rem;padding:10px 14px;border-radius:6px;outline:none;transition:border-color 0.2s"
             onfocus="this.style.borderColor='var(--gold-dim)'" onblur="this.style.borderColor='var(--border2)'">
         </div>
         <div style="margin-bottom:1.1rem">
-          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem">Purpose of Contact <span style="color:var(--gold)">*</span></div>
+          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem" data-t="f_purpose">Purpose of Contact <span style="color:var(--gold)">*</span></div>
           <select id="captcha-requester-purpose"
             style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.85rem;padding:10px 14px;border-radius:6px;outline:none;transition:border-color 0.2s;appearance:none;cursor:pointer"
             onfocus="this.style.borderColor='var(--gold-dim)'" onblur="this.style.borderColor='var(--border2)'">
-            <option value="" style="background:#1a1a18">Select purpose…</option>
-            <option value="Hiring / Job Offer" style="background:#1a1a18">💼 Hiring / Job Offer</option>
-            <option value="Partnership / Collaboration" style="background:#1a1a18">🤝 Partnership / Collaboration</option>
-            <option value="Interview Request" style="background:#1a1a18">📅 Interview Request</option>
-            <option value="General Enquiry" style="background:#1a1a18">💬 General Enquiry</option>
-            <option value="Other" style="background:#1a1a18">✦ Other</option>
+            <option value="" style="background:#1a1a18" data-t="opt_select_purpose">Select purpose…</option>
+            <option value="Hiring / Job Offer" style="background:#1a1a18" data-t="purpose_hiring">💼 Hiring / Job Offer</option>
+            <option value="Partnership / Collaboration" style="background:#1a1a18" data-t="purpose_partner">🤝 Partnership / Collaboration</option>
+            <option value="Interview Request" style="background:#1a1a18" data-t="purpose_interview">📅 Interview Request</option>
+            <option value="General Enquiry" style="background:#1a1a18" data-t="purpose_general">💬 General Enquiry</option>
+            <option value="Other" style="background:#1a1a18" data-t="purpose_other">✦ Other</option>
           </select>
         </div>
         <div id="captcha-email-error" style="font-family:var(--mono);font-size:0.75rem;color:var(--red);margin-bottom:0.75rem;min-height:1em"></div>
-        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="proceedToCaptcha()">Continue →</button>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="proceedToCaptcha()" data-t="btn_continue">Continue →</button>
       </div>
       <div id="captcha-step-puzzle" style="display:none;text-align:center">
-        <div style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem">Prove you're human</div>
+        <div style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem" data-t="captcha_prove">Prove you're human</div>
         <div id="captcha-question" style="font-family:'Instrument Serif',serif;font-size:2.2rem;color:var(--cream);margin-bottom:1.5rem;line-height:1.2;letter-spacing:-0.01em"></div>
         <div style="max-width:180px;margin:0 auto 0.75rem">
-          <input type="number" id="captcha-answer" placeholder="Answer"
+          <input type="number" id="captcha-answer" data-ph="ph_answer" placeholder="Answer"
             style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:1.15rem;padding:12px 14px;border-radius:6px;outline:none;text-align:center"
             onkeydown="if(event.key==='Enter')verifyCaptcha()">
         </div>
         <div id="captcha-error" style="font-family:var(--mono);font-size:0.75rem;color:var(--red);margin-bottom:0.75rem;min-height:1.2em"></div>
-        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="verifyCaptcha()">Send Contact Details →</button>
-        <button onclick="backToEmail()" style="background:none;border:none;color:var(--muted);font-family:var(--mono);font-size:0.72rem;cursor:pointer;margin-top:0.75rem;text-decoration:underline">← Change email</button>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="verifyCaptcha()" data-t="btn_send_contact">Send Contact Details →</button>
+        <button onclick="backToEmail()" style="background:none;border:none;color:var(--muted);font-family:var(--mono);font-size:0.72rem;cursor:pointer;margin-top:0.75rem;text-decoration:underline" data-t="btn_change_email">← Change email</button>
       </div>
       <div id="captcha-step-done" style="display:none;text-align:center;padding:1rem 0">
         <div style="font-size:2.5rem;margin-bottom:1rem">✉️</div>
-        <div style="font-family:'Instrument Serif',serif;font-size:1.4rem;color:var(--cream);margin-bottom:0.75rem">Check your inbox</div>
+        <div style="font-family:'Instrument Serif',serif;font-size:1.4rem;color:var(--cream);margin-bottom:0.75rem" data-t="captcha_done_title">Check your inbox</div>
         <div style="font-family:var(--mono);font-size:0.78rem;color:var(--muted);line-height:1.65">
-          Contact details have been sent to<br>
+          <span data-t="captcha_sent_to">Contact details have been sent to</span><br>
           <strong id="captcha-sent-to" style="color:var(--gold)"></strong><br><br>
-          This link is <strong style="color:var(--cream)">one-time only</strong> — it will not work again.
+          <span data-t="captcha_one_time">This link is <strong style="color:var(--cream)">one-time only</strong> — it will not work again.</span>
         </div>
-        <button class="btn btn-outline" style="margin-top:1.5rem" onclick="closeCaptcha()">Close</button>
+        <button class="btn btn-outline" style="margin-top:1.5rem" onclick="closeCaptcha()" data-t="btn_close">Close</button>
       </div>
     </div>
   </div>
@@ -789,6 +825,912 @@
 <div class="toast-wrap" id="toast-wrap"></div>
 
 <script>
+// ═══════════════════════════════════════════════════
+//  TRANSLATION DICTIONARY
+//  All 5 co-official languages of Spain:
+//  es = Castellano (Spanish)
+//  ca = Català (Catalan)
+//  gl = Galego (Galician)
+//  eu = Euskara (Basque)
+//  va = Valencià (Valencian — distinct from Catalan)
+// ═══════════════════════════════════════════════════
+const LANGS = {
+  es: {
+    // Language bar
+    'lb-label': 'Idioma',
+    // Nav
+    nav_browse: 'Ver Empleos',
+    nav_talent: 'Ver Talento',
+    nav_applicants: 'Candidatos',
+    nav_postrole: 'Busco Trabajo',
+    nav_postjob: 'Publicar Empleo',
+    // Hero
+    hero_tag: 'Oportunidades en Vivo',
+    hero_h1: 'Encuentra trabajo que <em>importa</em>',
+    hero_sub: 'Oportunidades laborales curadas por nuestro equipo. Cada oferta es revisada antes de publicarse.',
+    hero_btn_browse: 'Ver Ofertas ↓',
+    hero_btn_seeking: 'Busco Empleo',
+    hero_btn_hire: 'Contratar a Alguien',
+    // Stats
+    stat_jobs: 'Empleos Abiertos',
+    stat_visits: 'Visitantes',
+    stat_types: 'Tipos de Empleo',
+    stat_applicants: 'Candidatos',
+    // Section heads
+    sec_openings_sub: 'Ofertas Actuales',
+    sec_openings_main: 'Todos los Puestos',
+    sec_talent_sub: 'Talento Disponible',
+    sec_talent_main: 'Personas que Buscan Empleo',
+    sec_applicants_sub: 'Candidatos',
+    sec_applicants_main: 'Quién Aplicó · Qué Empresa',
+    // Search placeholders
+    search_jobs: 'Buscar título, empresa, habilidades…',
+    search_talent: 'Buscar nombre, puesto, habilidades…',
+    search_applicants: 'Buscar nombre, puesto, empresa, habilidades…',
+    // Counts (template strings — {n} replaced)
+    count_jobs: '{n} puesto(s) encontrado(s)',
+    count_talent: '{n} perfil(es) encontrado(s)',
+    count_applicants: '{n} candidato(s) encontrado(s)',
+    // Filter All
+    filter_all: 'Todos',
+    // Job card meta
+    meta_applied: 'Candidato {n}',
+    // Applicants banner
+    applicants_banner: 'Estos son <strong>candidatos aprobados</strong> — personas que han aplicado a puestos abiertos y han sido preseleccionadas por nuestro equipo. Cada tarjeta muestra el nombre del candidato, el <strong>empleo al que aplicaron</strong> y la empresa. Usa <strong>Obtener Datos de Contacto</strong> para recibir su email y teléfono directamente.',
+    // Card labels
+    card_applied_for: 'Aplicó a:',
+    card_get_contact: '📧 Obtener Datos de Contacto',
+    card_get_contact_mini: '📧 Contacto',
+    // Post Job page
+    postjob_h2: 'Publicar un Puesto',
+    postjob_desc: 'Envía tu oferta de trabajo para revisión. Nuestro equipo aprueba todas las publicaciones antes de que aparezcan — normalmente en 24 horas. <strong style="color:var(--gold)">El email es obligatorio</strong> — recibirás confirmación y notificación de aprobación.',
+    postjob_sec_employer: 'Datos del Empleador',
+    postjob_sec_details: 'Detalles del Empleo',
+    postjob_success_h3: 'Solicitud recibida',
+    postjob_success_p1: 'Tu oferta está pendiente de revisión.<br>Aparecerá públicamente una vez aprobada.',
+    postjob_success_p2: '📧 Se ha enviado un email de confirmación con botón de WhatsApp a tu bandeja de entrada.',
+    postjob_post_another: 'Publicar Otro',
+    // Post Role page
+    postrole_h2: 'Publica tu Perfil',
+    postrole_desc: 'Buscas empleo. Cuéntale a los empleadores quién eres, qué haces y dónde en España estás disponible. Tu perfil se revisa antes de publicarse. <strong style="color:var(--gold)">El email es obligatorio</strong> — recibirás confirmación y notificación de aprobación.',
+    postrole_sec_personal: 'Datos Personales',
+    postrole_sec_profile: 'Perfil Profesional',
+    postrole_success_h3: 'Perfil enviado',
+    postrole_success_p1: 'Tu perfil está pendiente de revisión.<br>Aparecerá públicamente una vez aprobado.',
+    postrole_success_p2: '📧 Se ha enviado un email de confirmación con botón de WhatsApp a tu bandeja.',
+    btn_submit_another: 'Enviar Otro',
+    // Modal labels
+    m_skills_label: 'Habilidades Requeridas',
+    m_applicants_label: '👥 Personas que aplicaron a este puesto',
+    m_desc_label: 'Descripción del Puesto',
+    btn_apply: 'Aplicar a este Puesto →',
+    btn_apply_close: '↑ Cerrar Solicitud',
+    apply_sec_title: 'Tu Solicitud',
+    apply_email_note: '📧 Todas las actualizaciones — preselección, decisiones de empresa — llegan por email. El email es obligatorio.',
+    // Captcha modal
+    captcha_title: 'Obtener Datos de Contacto',
+    captcha_subtitle: 'Completa tus datos — contacto enviado una vez a tu email',
+    captcha_note: '📧 Los datos de contacto te serán enviados <strong style="color:var(--gold)">una vez</strong> por email. Rellena los datos — no necesitas cuenta.',
+    captcha_prove: 'Demuestra que eres humano',
+    captcha_done_title: 'Revisa tu bandeja',
+    captcha_sent_to: 'Los datos de contacto han sido enviados a',
+    captcha_one_time: 'Este enlace es <strong style="color:var(--cream)">de un solo uso</strong> — no funcionará de nuevo.',
+    btn_continue: 'Continuar →',
+    btn_send_contact: 'Enviar Datos de Contacto →',
+    btn_change_email: '← Cambiar email',
+    btn_close: 'Cerrar',
+    btn_submit_review: 'Enviar para Revisión →',
+    btn_submit_application: 'Enviar Solicitud →',
+    btn_submit_profile: 'Enviar Perfil para Revisión →',
+    // Form fields
+    f_your_name: 'Tu Nombre',
+    f_fullname: 'Nombre Completo',
+    f_email: 'Email',
+    f_phone: 'Teléfono',
+    f_company: 'Nombre de la Empresa',
+    f_job_title: 'Título del Puesto',
+    f_description: 'Descripción',
+    f_location: 'Ubicación',
+    f_province: 'Ubicación (Provincia)',
+    f_job_type: 'Tipo de Empleo',
+    f_salary: 'Salario / Tarifa',
+    f_deadline: 'Fecha Límite de Solicitud',
+    f_skills: 'Habilidades',
+    f_resume_link: 'Enlace CV / Currículum',
+    f_website: 'Sitio Web',
+    f_role_title: 'Puesto / Título de Trabajo',
+    f_bio: 'Bio / Sobre Ti',
+    f_experience: 'Experiencia',
+    f_availability: 'Disponibilidad',
+    f_cv_link: 'Enlace CV / Portafolio',
+    f_your_location: 'Tu Ubicación',
+    f_purpose: 'Propósito de Contacto',
+    f_cover: 'Carta de Presentación',
+    // Placeholders
+    ph_fullname: 'Nombre completo',
+    ph_your_name: 'Tu nombre',
+    ph_email_company: 'tu@empresa.com',
+    ph_your_email: 'tu@email.com',
+    ph_phone: '+34 600 000 000',
+    ph_company: 'Acme Corp',
+    ph_job_title: 'ej. Desarrollador Frontend Senior',
+    ph_description: 'Describe el puesto, responsabilidades y lo que lo hace único…',
+    ph_salary: 'ej. 40.000 € / año',
+    ph_deadline: 'ej. 31 Dic 2025',
+    ph_skills: 'ej. JavaScript, Python, SQL (separados por comas)',
+    ph_cv_link: 'https://drive.google.com/… o LinkedIn',
+    ph_website: 'https://tuempresa.com',
+    ph_your_name2: 'Tu nombre completo',
+    ph_role_title: 'ej. Desarrollador Full Stack, Electricista, Enfermero…',
+    ph_bio: 'Breve descripción de quién eres y lo que aportas…',
+    ph_experience_role: 'Años de experiencia, puestos anteriores, logros clave…',
+    ph_skills_csv: 'Habilidades separadas por comas',
+    ph_experience: 'Breve resumen de experiencia relevante…',
+    ph_cover: '¿Por qué encajas perfectamente en este puesto?',
+    ph_portfolio: 'https://tuportafolio.com',
+    ph_location_eg: 'Ciudad, País (ej. Madrid, España)',
+    ph_answer: 'Respuesta',
+    // Select options
+    opt_select_province: 'Selecciona provincia…',
+    opt_select: 'Selecciona…',
+    opt_select_purpose: 'Selecciona propósito…',
+    jt_fulltime: 'Tiempo Completo',
+    jt_parttime: 'Tiempo Parcial',
+    jt_contract: 'Contrato',
+    jt_remote: 'Remoto',
+    jt_internship: 'Prácticas',
+    avail_immediate: 'Inmediatamente',
+    avail_2weeks: 'En 2 semanas',
+    avail_1month: 'En 1 mes',
+    avail_negotiable: 'Negociable',
+    purpose_hiring: '💼 Contratación / Oferta de Empleo',
+    purpose_partner: '🤝 Colaboración / Asociación',
+    purpose_interview: '📅 Solicitud de Entrevista',
+    purpose_general: '💬 Consulta General',
+    purpose_other: '✦ Otro',
+    // Notes
+    note_email_confirm: '📧 Confirmación y avisos de aprobación enviados aquí',
+    note_cv_required: '📎 Obligatorio — incluido en tu mensaje de confirmación de WhatsApp',
+    optional: '(opcional)',
+    // Toast messages
+    toast_app_ok: '¡Solicitud enviada! Revisa tu email para confirmación + botón de WhatsApp.',
+    toast_app_fail: 'El envío falló.',
+    toast_net_err: 'Error de red. Por favor, inténtalo de nuevo.',
+    toast_name_req: 'El nombre es obligatorio.',
+    toast_email_req: 'El email es obligatorio — recibirás actualizaciones por email.',
+    toast_email_invalid: 'Por favor, introduce una dirección de email válida.',
+    toast_resume_req: 'El enlace al CV / Portafolio es obligatorio.',
+    toast_employer_req: 'El nombre del empleador es obligatorio.',
+    toast_title_req: 'El título del puesto es obligatorio.',
+    toast_desc_req: 'La descripción del puesto es obligatoria.',
+    toast_loc_req: 'Por favor, selecciona una provincia.',
+    toast_role_req: 'El puesto / título de trabajo es obligatorio.',
+    toast_province_req: 'Por favor, selecciona tu provincia.',
+    // Captcha errors
+    err_name_req: 'Por favor, introduce tu nombre.',
+    err_email_req: 'Por favor, introduce tu dirección de email.',
+    err_email_invalid: 'Por favor, introduce un email válido.',
+    err_location_req: 'Por favor, introduce tu ubicación.',
+    err_purpose_req: 'Por favor, selecciona el propósito de contacto.',
+    err_captcha: 'Incorrecto — inténtalo de nuevo.',
+    err_captcha_send: 'Error al enviar. Por favor, inténtalo de nuevo.',
+    err_captcha_net: 'Error de red. Por favor, inténtalo de nuevo.',
+    // empty states
+    empty_jobs: 'No se encontraron puestos.',
+    empty_talent: 'No se encontraron perfiles.',
+    empty_applicants: 'No se encontraron candidatos.',
+    server_err: 'No se pudo conectar al servidor. Por favor, inténtalo de nuevo.',
+    // Captcha label
+    captcha_what_is: '¿Cuánto es',
+  },
+
+  ca: {
+    'lb-label': 'Idioma',
+    nav_browse: 'Veure Feines',
+    nav_talent: 'Veure Talent',
+    nav_applicants: 'Candidats',
+    nav_postrole: 'Busco Feina',
+    nav_postjob: 'Publicar Feina',
+    hero_tag: 'Oportunitats en Directe',
+    hero_h1: 'Troba una feina que <em>importen</em>',
+    hero_sub: 'Oportunitats laborals curades pel nostre equip. Cada oferta és revisada abans de publicar-se.',
+    hero_btn_browse: 'Veure Ofertes ↓',
+    hero_btn_seeking: 'Busco Feina',
+    hero_btn_hire: 'Contractar Algú',
+    stat_jobs: 'Llocs Oberts',
+    stat_visits: 'Visitants',
+    stat_types: 'Tipus de Feina',
+    stat_applicants: 'Candidats',
+    sec_openings_sub: 'Ofertes Actuals',
+    sec_openings_main: 'Totes les Posicions',
+    sec_talent_sub: 'Talent Disponible',
+    sec_talent_main: 'Persones que Busquen Feina',
+    sec_applicants_sub: 'Candidats',
+    sec_applicants_main: 'Qui Ha Sol·licitat · Quina Empresa',
+    search_jobs: 'Cercar títol, empresa, habilitats…',
+    search_talent: 'Cercar nom, lloc, habilitats…',
+    search_applicants: 'Cercar nom, títol, empresa, habilitats…',
+    count_jobs: '{n} lloc(s) trobat(s)',
+    count_talent: '{n} perfil(s) trobat(s)',
+    count_applicants: '{n} candidat(s) trobat(s)',
+    filter_all: 'Tots',
+    meta_applied: 'Candidat {n}',
+    applicants_banner: 'Aquests són <strong>candidats aprovats</strong> — persones que han sol·licitat llocs oberts i han estat preseleccionats pel nostre equip. Cada targeta mostra el nom del candidat, la <strong>feina a la qual van aplicar</strong> i l\'empresa. Usa <strong>Obtenir Dades de Contacte</strong> per rebre el seu email i telèfon directament.',
+    card_applied_for: 'Sol·licità:',
+    card_get_contact: '📧 Obtenir Dades de Contacte',
+    card_get_contact_mini: '📧 Contacte',
+    postjob_h2: 'Publicar una Posició',
+    postjob_desc: 'Envia la teva oferta de feina per a revisió. El nostre equip aprova totes les publicacions abans que apareguin — normalment en 24 hores. <strong style="color:var(--gold)">L\'email és obligatori</strong> — rebràs confirmació i notificació d\'aprovació.',
+    postjob_sec_employer: 'Dades de l\'Empresa',
+    postjob_sec_details: 'Detalls de la Feina',
+    postjob_success_h3: 'Sol·licitud rebuda',
+    postjob_success_p1: 'La teva oferta és pendent de revisió.<br>Apareixerà públicament un cop aprovada.',
+    postjob_success_p2: '📧 S\'ha enviat un email de confirmació amb botó de WhatsApp a la teva bústia.',
+    postjob_post_another: 'Publicar una Altra',
+    postrole_h2: 'Publica el Teu Perfil',
+    postrole_desc: 'Busques feina. Explica als empresaris qui ets, què fas i on a Espanya estàs disponible. El teu perfil es revisa abans de publicar-se. <strong style="color:var(--gold)">L\'email és obligatori</strong>.',
+    postrole_sec_personal: 'Dades Personals',
+    postrole_sec_profile: 'Perfil Professional',
+    postrole_success_h3: 'Perfil enviat',
+    postrole_success_p1: 'El teu perfil és pendent de revisió.<br>Apareixerà públicament un cop aprovat.',
+    postrole_success_p2: '📧 S\'ha enviat un email de confirmació amb botó de WhatsApp a la teva bústia.',
+    btn_submit_another: 'Enviar Un Altre',
+    m_skills_label: 'Habilitats Requerides',
+    m_applicants_label: '👥 Persones que han sol·licitat aquest lloc',
+    m_desc_label: 'Descripció del Lloc',
+    btn_apply: 'Sol·licitar aquest Lloc →',
+    btn_apply_close: '↑ Tancar Sol·licitud',
+    apply_sec_title: 'La Teva Sol·licitud',
+    apply_email_note: '📧 Totes les actualitzacions arriben per email. L\'email és obligatori.',
+    captcha_title: 'Obtenir Dades de Contacte',
+    captcha_subtitle: 'Omple les teves dades — contacte enviat una vegada al teu email',
+    captcha_note: '📧 Les dades de contacte t\'enviaran <strong style="color:var(--gold)">una vegada</strong> per email. Omple les dades — no cal compte.',
+    captcha_prove: 'Demostra que ets humà',
+    captcha_done_title: 'Revisa la bústia',
+    captcha_sent_to: 'Les dades de contacte s\'han enviat a',
+    captcha_one_time: 'Aquest enllaç és <strong style="color:var(--cream)">d\'un sol ús</strong> — no funcionarà de nou.',
+    btn_continue: 'Continuar →',
+    btn_send_contact: 'Enviar Dades de Contacte →',
+    btn_change_email: '← Canviar email',
+    btn_close: 'Tancar',
+    btn_submit_review: 'Enviar per Revisió →',
+    btn_submit_application: 'Enviar Sol·licitud →',
+    btn_submit_profile: 'Enviar Perfil per Revisió →',
+    f_your_name: 'El Teu Nom',
+    f_fullname: 'Nom Complet',
+    f_email: 'Email',
+    f_phone: 'Telèfon',
+    f_company: 'Nom de l\'Empresa',
+    f_job_title: 'Títol del Lloc',
+    f_description: 'Descripció',
+    f_location: 'Ubicació',
+    f_province: 'Ubicació (Província)',
+    f_job_type: 'Tipus de Feina',
+    f_salary: 'Salari / Tarifa',
+    f_deadline: 'Data Límit de Sol·licitud',
+    f_skills: 'Habilitats',
+    f_resume_link: 'Enllaç CV / Currículum',
+    f_website: 'Lloc Web',
+    f_role_title: 'Lloc / Títol de Feina',
+    f_bio: 'Bio / Sobre Tu',
+    f_experience: 'Experiència',
+    f_availability: 'Disponibilitat',
+    f_cv_link: 'Enllaç CV / Portafoli',
+    f_your_location: 'La Teva Ubicació',
+    f_purpose: 'Propòsit de Contacte',
+    f_cover: 'Carta de Presentació',
+    ph_fullname: 'Nom complet',
+    ph_your_name: 'El teu nom',
+    ph_email_company: 'tu@empresa.com',
+    ph_your_email: 'tu@email.com',
+    ph_phone: '+34 600 000 000',
+    ph_company: 'Acme Corp',
+    ph_job_title: 'ex. Desenvolupador Frontend Sènior',
+    ph_description: 'Descriu el lloc, responsabilitats i el que el fa únic…',
+    ph_salary: 'ex. 40.000 € / any',
+    ph_deadline: 'ex. 31 Des 2025',
+    ph_skills: 'ex. JavaScript, Python, SQL (separats per comes)',
+    ph_cv_link: 'https://drive.google.com/… o LinkedIn',
+    ph_website: 'https://tueempresa.com',
+    ph_role_title: 'ex. Desenvolupador Full Stack, Electricista, Infermer…',
+    ph_bio: 'Breu descripció de qui ets i el que aportes…',
+    ph_experience_role: 'Anys d\'experiència, llocs anteriors, assoliments clau…',
+    ph_skills_csv: 'Habilitats separades per comes',
+    ph_experience: 'Breu resum d\'experiència rellevant…',
+    ph_cover: 'Per què encaixes perfectament en aquest lloc?',
+    ph_portfolio: 'https://elteportafoli.com',
+    ph_location_eg: 'Ciutat, País (ex. Barcelona, Espanya)',
+    ph_answer: 'Resposta',
+    opt_select_province: 'Selecciona província…',
+    opt_select: 'Selecciona…',
+    opt_select_purpose: 'Selecciona propòsit…',
+    jt_fulltime: 'Temps Complet',
+    jt_parttime: 'Temps Parcial',
+    jt_contract: 'Contracte',
+    jt_remote: 'Remot',
+    jt_internship: 'Pràctiques',
+    avail_immediate: 'Immediatament',
+    avail_2weeks: 'En 2 setmanes',
+    avail_1month: 'En 1 mes',
+    avail_negotiable: 'Negociable',
+    purpose_hiring: '💼 Contractació / Oferta de Feina',
+    purpose_partner: '🤝 Col·laboració / Associació',
+    purpose_interview: '📅 Sol·licitud d\'Entrevista',
+    purpose_general: '💬 Consulta General',
+    purpose_other: '✦ Altre',
+    note_email_confirm: '📧 Confirmació i avisos d\'aprovació enviats aquí',
+    note_cv_required: '📎 Obligatori — inclòs al teu missatge de confirmació de WhatsApp',
+    optional: '(opcional)',
+    toast_app_ok: 'Sol·licitud enviada! Revisa el teu email per a confirmació + botó de WhatsApp.',
+    toast_app_fail: 'L\'enviament ha fallat.',
+    toast_net_err: 'Error de xarxa. Si us plau, torna-ho a intentar.',
+    toast_name_req: 'El nom és obligatori.',
+    toast_email_req: 'L\'email és obligatori — rebràs actualitzacions per email.',
+    toast_email_invalid: 'Si us plau, introdueix una adreça d\'email vàlida.',
+    toast_resume_req: 'L\'enllaç al CV / Portafoli és obligatori.',
+    toast_employer_req: 'El nom de l\'empresa és obligatori.',
+    toast_title_req: 'El títol del lloc és obligatori.',
+    toast_desc_req: 'La descripció del lloc és obligatòria.',
+    toast_loc_req: 'Si us plau, selecciona una província.',
+    toast_role_req: 'El lloc / títol de feina és obligatori.',
+    toast_province_req: 'Si us plau, selecciona la teva província.',
+    err_name_req: 'Si us plau, introdueix el teu nom.',
+    err_email_req: 'Si us plau, introdueix la teva adreça d\'email.',
+    err_email_invalid: 'Si us plau, introdueix un email vàlid.',
+    err_location_req: 'Si us plau, introdueix la teva ubicació.',
+    err_purpose_req: 'Si us plau, selecciona el propòsit de contacte.',
+    err_captcha: 'Incorrecte — torna-ho a intentar.',
+    err_captcha_send: 'Error en enviar. Si us plau, torna-ho a intentar.',
+    err_captcha_net: 'Error de xarxa. Si us plau, torna-ho a intentar.',
+    empty_jobs: 'No s\'han trobat llocs.',
+    empty_talent: 'No s\'han trobat perfils.',
+    empty_applicants: 'No s\'han trobat candidats.',
+    server_err: 'No s\'ha pogut connectar al servidor. Si us plau, torna-ho a intentar.',
+    captcha_what_is: 'Quant és',
+  },
+
+  gl: {
+    'lb-label': 'Idioma',
+    nav_browse: 'Ver Empregos',
+    nav_talent: 'Ver Talento',
+    nav_applicants: 'Candidatos',
+    nav_postrole: 'Busco Traballo',
+    nav_postjob: 'Publicar Emprego',
+    hero_tag: 'Oportunidades en Directo',
+    hero_h1: 'Atopa un traballo que <em>importe</em>',
+    hero_sub: 'Oportunidades laborais curadas polo noso equipo. Cada oferta é revisada antes de publicarse.',
+    hero_btn_browse: 'Ver Ofertas ↓',
+    hero_btn_seeking: 'Busco Emprego',
+    hero_btn_hire: 'Contratar a Alguén',
+    stat_jobs: 'Postos Abertos',
+    stat_visits: 'Visitantes',
+    stat_types: 'Tipos de Emprego',
+    stat_applicants: 'Candidatos',
+    sec_openings_sub: 'Ofertas Actuais',
+    sec_openings_main: 'Todos os Postos',
+    sec_talent_sub: 'Talento Dispoñible',
+    sec_talent_main: 'Persoas que Buscan Traballo',
+    sec_applicants_sub: 'Candidatos',
+    sec_applicants_main: 'Quen Aplicou · Que Empresa',
+    search_jobs: 'Buscar título, empresa, habilidades…',
+    search_talent: 'Buscar nome, posto, habilidades…',
+    search_applicants: 'Buscar nome, título, empresa, habilidades…',
+    count_jobs: '{n} posto(s) atopado(s)',
+    count_talent: '{n} perfil(s) atopado(s)',
+    count_applicants: '{n} candidato(s) atopado(s)',
+    filter_all: 'Todos',
+    meta_applied: 'Candidato {n}',
+    applicants_banner: 'Estes son <strong>candidatos aprobados</strong> — persoas que aplicaron a postos abertos e foron preseleccionados polo noso equipo. Cada tarxeta mostra o nome do candidato, o <strong>traballo ao que aplicaron</strong> e a empresa. Usa <strong>Obter Datos de Contacto</strong> para recibir o seu email e teléfono directamente.',
+    card_applied_for: 'Aplicou a:',
+    card_get_contact: '📧 Obter Datos de Contacto',
+    card_get_contact_mini: '📧 Contacto',
+    postjob_h2: 'Publicar un Posto',
+    postjob_desc: 'Envía a túa oferta de traballo para revisión. O noso equipo aproba todas as publicacións antes de que aparezan — normalmente en 24 horas. <strong style="color:var(--gold)">O email é obrigatorio</strong> — recibirás confirmación e notificación de aprobación.',
+    postjob_sec_employer: 'Datos do Empregador',
+    postjob_sec_details: 'Detalles do Emprego',
+    postjob_success_h3: 'Solicitude recibida',
+    postjob_success_p1: 'A túa oferta está pendente de revisión.<br>Aparecerá publicamente unha vez aprobada.',
+    postjob_success_p2: '📧 Enviouse un email de confirmación con botón de WhatsApp á túa bandexa.',
+    postjob_post_another: 'Publicar Outra',
+    postrole_h2: 'Publica o Teu Perfil',
+    postrole_desc: 'Buscas traballo. Cóntalle aos empresarios quen es, que fas e onde en España estás dispoñible. O teu perfil revísase antes de publicarse. <strong style="color:var(--gold)">O email é obrigatorio</strong>.',
+    postrole_sec_personal: 'Datos Persoais',
+    postrole_sec_profile: 'Perfil Profesional',
+    postrole_success_h3: 'Perfil enviado',
+    postrole_success_p1: 'O teu perfil está pendente de revisión.<br>Aparecerá publicamente unha vez aprobado.',
+    postrole_success_p2: '📧 Enviouse un email de confirmación con botón de WhatsApp á túa bandexa.',
+    btn_submit_another: 'Enviar Outro',
+    m_skills_label: 'Habilidades Requiridas',
+    m_applicants_label: '👥 Persoas que aplicaron a este posto',
+    m_desc_label: 'Descrición do Posto',
+    btn_apply: 'Aplicar a este Posto →',
+    btn_apply_close: '↑ Pechar Solicitude',
+    apply_sec_title: 'A Túa Solicitude',
+    apply_email_note: '📧 Todas as actualizacións chegan por email. O email é obrigatorio.',
+    captcha_title: 'Obter Datos de Contacto',
+    captcha_subtitle: 'Enche os teus datos — contacto enviado unha vez ao teu email',
+    captcha_note: '📧 Os datos de contacto serán enviados <strong style="color:var(--gold)">unha vez</strong> por email. Enche os datos — non precisas conta.',
+    captcha_prove: 'Demostra que es humano',
+    captcha_done_title: 'Revisa a túa bandexa',
+    captcha_sent_to: 'Os datos de contacto foron enviados a',
+    captcha_one_time: 'Este enlace é <strong style="color:var(--cream)">de uso único</strong> — non funcionará de novo.',
+    btn_continue: 'Continuar →',
+    btn_send_contact: 'Enviar Datos de Contacto →',
+    btn_change_email: '← Cambiar email',
+    btn_close: 'Pechar',
+    btn_submit_review: 'Enviar para Revisión →',
+    btn_submit_application: 'Enviar Solicitude →',
+    btn_submit_profile: 'Enviar Perfil para Revisión →',
+    f_your_name: 'O Teu Nome',
+    f_fullname: 'Nome Completo',
+    f_email: 'Email',
+    f_phone: 'Teléfono',
+    f_company: 'Nome da Empresa',
+    f_job_title: 'Título do Posto',
+    f_description: 'Descrición',
+    f_location: 'Localización',
+    f_province: 'Localización (Provincia)',
+    f_job_type: 'Tipo de Emprego',
+    f_salary: 'Salario / Tarifa',
+    f_deadline: 'Prazo de Solicitude',
+    f_skills: 'Habilidades',
+    f_resume_link: 'Enlace CV / Currículum',
+    f_website: 'Sitio Web',
+    f_role_title: 'Posto / Título de Traballo',
+    f_bio: 'Bio / Sobre Ti',
+    f_experience: 'Experiencia',
+    f_availability: 'Dispoñibilidade',
+    f_cv_link: 'Enlace CV / Portafolio',
+    f_your_location: 'A Túa Localización',
+    f_purpose: 'Propósito de Contacto',
+    f_cover: 'Carta de Presentación',
+    ph_fullname: 'Nome completo',
+    ph_your_name: 'O teu nome',
+    ph_email_company: 'ti@empresa.com',
+    ph_your_email: 'ti@email.com',
+    ph_phone: '+34 600 000 000',
+    ph_company: 'Acme Corp',
+    ph_job_title: 'ex. Desenvolvedor Frontend Senior',
+    ph_description: 'Describe o posto, responsabilidades e o que o fai único…',
+    ph_salary: 'ex. 40.000 € / ano',
+    ph_deadline: 'ex. 31 Dec 2025',
+    ph_skills: 'ex. JavaScript, Python, SQL (separados por comas)',
+    ph_cv_link: 'https://drive.google.com/… ou LinkedIn',
+    ph_website: 'https://tuaempresa.com',
+    ph_role_title: 'ex. Desenvolvedor Full Stack, Electricista, Enfermeiro…',
+    ph_bio: 'Breve descrición de quen es e o que aportas…',
+    ph_experience_role: 'Anos de experiencia, postos anteriores, logros clave…',
+    ph_skills_csv: 'Habilidades separadas por comas',
+    ph_experience: 'Breve resumo de experiencia relevante…',
+    ph_cover: 'Por que encaixas perfectamente neste posto?',
+    ph_portfolio: 'https://teuportafolio.com',
+    ph_location_eg: 'Cidade, País (ex. Vigo, España)',
+    ph_answer: 'Resposta',
+    opt_select_province: 'Selecciona provincia…',
+    opt_select: 'Selecciona…',
+    opt_select_purpose: 'Selecciona propósito…',
+    jt_fulltime: 'Xornada Completa',
+    jt_parttime: 'Xornada Parcial',
+    jt_contract: 'Contrato',
+    jt_remote: 'Remoto',
+    jt_internship: 'Prácticas',
+    avail_immediate: 'Inmediatamente',
+    avail_2weeks: 'En 2 semanas',
+    avail_1month: 'En 1 mes',
+    avail_negotiable: 'Negociable',
+    purpose_hiring: '💼 Contratación / Oferta de Emprego',
+    purpose_partner: '🤝 Colaboración / Asociación',
+    purpose_interview: '📅 Solicitude de Entrevista',
+    purpose_general: '💬 Consulta Xeral',
+    purpose_other: '✦ Outro',
+    note_email_confirm: '📧 Confirmación e avisos de aprobación enviados aquí',
+    note_cv_required: '📎 Obrigatorio — incluído na túa mensaxe de confirmación de WhatsApp',
+    optional: '(opcional)',
+    toast_app_ok: 'Solicitude enviada! Revisa o teu email para confirmación + botón de WhatsApp.',
+    toast_app_fail: 'O envío fallou.',
+    toast_net_err: 'Erro de rede. Por favor, téntao de novo.',
+    toast_name_req: 'O nome é obrigatorio.',
+    toast_email_req: 'O email é obrigatorio — recibirás actualizacións por email.',
+    toast_email_invalid: 'Por favor, introduce un enderezo de email válido.',
+    toast_resume_req: 'O enlace ao CV / Portafolio é obrigatorio.',
+    toast_employer_req: 'O nome do empregador é obrigatorio.',
+    toast_title_req: 'O título do posto é obrigatorio.',
+    toast_desc_req: 'A descrición do posto é obrigatoria.',
+    toast_loc_req: 'Por favor, selecciona unha provincia.',
+    toast_role_req: 'O posto / título de traballo é obrigatorio.',
+    toast_province_req: 'Por favor, selecciona a túa provincia.',
+    err_name_req: 'Por favor, introduce o teu nome.',
+    err_email_req: 'Por favor, introduce o teu enderezo de email.',
+    err_email_invalid: 'Por favor, introduce un email válido.',
+    err_location_req: 'Por favor, introduce a túa localización.',
+    err_purpose_req: 'Por favor, selecciona o propósito de contacto.',
+    err_captcha: 'Incorrecto — téntao de novo.',
+    err_captcha_send: 'Erro ao enviar. Por favor, téntao de novo.',
+    err_captcha_net: 'Erro de rede. Por favor, téntao de novo.',
+    empty_jobs: 'Non se atoparon postos.',
+    empty_talent: 'Non se atoparon perfís.',
+    empty_applicants: 'Non se atoparon candidatos.',
+    server_err: 'Non se puido conectar ao servidor. Por favor, téntao de novo.',
+    captcha_what_is: 'Canto é',
+  },
+
+  eu: {
+    'lb-label': 'Hizkuntza',
+    nav_browse: 'Lanak Ikusi',
+    nav_talent: 'Talentua Ikusi',
+    nav_applicants: 'Hautagaiak',
+    nav_postrole: 'Lana Bilatzen',
+    nav_postjob: 'Lana Argitaratu',
+    hero_tag: 'Zuzeneko Aukerak',
+    hero_h1: 'Aurkitu <em>garrantzitsua</em> den lana',
+    hero_sub: 'Gure taldeak hautatutako lan aukerak. Zerrendapen bakoitza berrikusi egiten da argitaratu aurretik.',
+    hero_btn_browse: 'Eskaintzak Ikusi ↓',
+    hero_btn_seeking: 'Lana Bilatzen Nago',
+    hero_btn_hire: 'Norbait Kontratatu',
+    stat_jobs: 'Lanpostu Irekiak',
+    stat_visits: 'Bisitariak',
+    stat_types: 'Lan Motak',
+    stat_applicants: 'Hautagaiak',
+    sec_openings_sub: 'Egungo Eskaintzak',
+    sec_openings_main: 'Lanpostu Guztiak',
+    sec_talent_sub: 'Talentua Eskuragarri',
+    sec_talent_main: 'Lana Bilatzen Duten Pertsonak',
+    sec_applicants_sub: 'Hautagaiak',
+    sec_applicants_main: 'Nork Eskatu Zuen · Zein Enpresa',
+    search_jobs: 'Bilatu izenburua, enpresa, gaitasunak…',
+    search_talent: 'Bilatu izena, lanpostua, gaitasunak…',
+    search_applicants: 'Bilatu izena, izenburua, enpresa, gaitasunak…',
+    count_jobs: '{n} lanpostu aurkitu',
+    count_talent: '{n} profil aurkitu',
+    count_applicants: '{n} hautagaia aurkitu',
+    filter_all: 'Guztiak',
+    meta_applied: 'Hautagaia {n}',
+    applicants_banner: 'Hauek <strong>onartutako hautagaiak</strong> dira — lanpostu irekietara aurkeztu eta gure taldeak hautatu dituen pertsonak. Txartel bakoitzak hautagaiaren izena, <strong>eskatu zuten lana</strong> eta enpresa erakusten ditu. Erabili <strong>Harremanetarako Datuak Lortu</strong> haien emaila eta telefonoa zuzenean jasotzeko.',
+    card_applied_for: 'Eskatu zuen:',
+    card_get_contact: '📧 Harremanetarako Datuak Lortu',
+    card_get_contact_mini: '📧 Harremana',
+    postjob_h2: 'Lanpostu bat Argitaratu',
+    postjob_desc: 'Bidali zure lan eskaintza berrikuspenerako. Gure taldeak argitalpen guztiak onartu aurretik baimendu egiten ditu — normalean 24 ordu barruan. <strong style="color:var(--gold)">Emaila nahitaezkoa da</strong> — berrespena eta onespena jasoko dituzu emailez.',
+    postjob_sec_employer: 'Enpresaren Datuak',
+    postjob_sec_details: 'Lanpostuaren Xehetasunak',
+    postjob_success_h3: 'Eskaera jasota',
+    postjob_success_p1: 'Zure lan eskaintza berrikuspena zain dago.<br>Onartutakoan publikoki agertuko da.',
+    postjob_success_p2: '📧 WhatsApp botoia duen berrespen emaila zure sarreran bidali da.',
+    postjob_post_another: 'Beste Bat Argitaratu',
+    postrole_h2: 'Zure Profila Argitaratu',
+    postrole_desc: 'Lana bilatzen duzu. Esan enpresei nor zaren, zer egiten duzun eta Espainiako non zauden eskuragarri. Zure profila argitaratu aurretik berrikusi egingo da. <strong style="color:var(--gold)">Emaila nahitaezkoa da</strong>.',
+    postrole_sec_personal: 'Datu Pertsonalak',
+    postrole_sec_profile: 'Profil Profesionala',
+    postrole_success_h3: 'Profila bidalita',
+    postrole_success_p1: 'Zure profila berrikuspena zain dago.<br>Onartutakoan publikoki agertuko da.',
+    postrole_success_p2: '📧 WhatsApp botoia duen berrespen emaila zure sarreran bidali da.',
+    btn_submit_another: 'Beste Bat Bidali',
+    m_skills_label: 'Beharrezko Gaitasunak',
+    m_applicants_label: '👥 Lanpostu honetara aurkeztu diren pertsonak',
+    m_desc_label: 'Lanpostuaren Deskribapena',
+    btn_apply: 'Lanpostu honetara Aurkeztu →',
+    btn_apply_close: '↑ Eskaera Itxi',
+    apply_sec_title: 'Zure Eskaera',
+    apply_email_note: '📧 Eguneratze guztiak emailez iritsiko dira. Emaila nahitaezkoa da.',
+    captcha_title: 'Harremanetarako Datuak Lortu',
+    captcha_subtitle: 'Bete zure datuak — emailera behin bidaliko dira',
+    captcha_note: '📧 Harremanetarako datuak <strong style="color:var(--gold)">behin</strong> bidaliko zaizkizu emailez. Bete datuak — ez da konturik behar.',
+    captcha_prove: 'Frogatu gizakia zarela',
+    captcha_done_title: 'Egiaztatu sarrera-ontzia',
+    captcha_sent_to: 'Harremanetarako datuak bidali dira',
+    captcha_one_time: 'Esteka hau <strong style="color:var(--cream)">behin erabiltzeko</strong> da — ez du berriro funtzionatuko.',
+    btn_continue: 'Jarraitu →',
+    btn_send_contact: 'Harremanetarako Datuak Bidali →',
+    btn_change_email: '← Emaila Aldatu',
+    btn_close: 'Itxi',
+    btn_submit_review: 'Berrikuspenerako Bidali →',
+    btn_submit_application: 'Eskaera Bidali →',
+    btn_submit_profile: 'Profila Berrikuspenerako Bidali →',
+    f_your_name: 'Zure Izena',
+    f_fullname: 'Izen Osoa',
+    f_email: 'Emaila',
+    f_phone: 'Telefonoa',
+    f_company: 'Enpresaren Izena',
+    f_job_title: 'Lanpostuaren Izenburua',
+    f_description: 'Deskribapena',
+    f_location: 'Kokapena',
+    f_province: 'Kokapena (Probintzia)',
+    f_job_type: 'Lan Mota',
+    f_salary: 'Soldata / Tarifa',
+    f_deadline: 'Eskaeraren Epemuga',
+    f_skills: 'Gaitasunak',
+    f_resume_link: 'CV / Curriculum Esteka',
+    f_website: 'Webgunea',
+    f_role_title: 'Lanpostua / Lan Izenburua',
+    f_bio: 'Bio / Zu Buruz',
+    f_experience: 'Esperientzia',
+    f_availability: 'Eskuragarritasuna',
+    f_cv_link: 'CV / Portfolio Esteka',
+    f_your_location: 'Zure Kokapena',
+    f_purpose: 'Harremanetarako Helburua',
+    f_cover: 'Aurkezpen Gutuna',
+    ph_fullname: 'Izen osoa',
+    ph_your_name: 'Zure izena',
+    ph_email_company: 'zu@enpresa.com',
+    ph_your_email: 'zu@email.com',
+    ph_phone: '+34 600 000 000',
+    ph_company: 'Acme Corp',
+    ph_job_title: 'ad. Frontend Garatzaile Nagusia',
+    ph_description: 'Deskribatu lanpostua, erantzukizunak eta zer bereizten duen…',
+    ph_salary: 'ad. 40.000 € / urtea',
+    ph_deadline: 'ad. 2025 Abe 31',
+    ph_skills: 'ad. JavaScript, Python, SQL (komaz bereizita)',
+    ph_cv_link: 'https://drive.google.com/… edo LinkedIn',
+    ph_website: 'https://zureenpresa.com',
+    ph_role_title: 'ad. Full Stack Garatzailea, Elektrizista, Erizaina…',
+    ph_bio: 'Nor zaren eta taldeari zer ekartzen diozun labur deskribatu…',
+    ph_experience_role: 'Esperientzia urteak, aurreko lanpostuak, lorpen nagusiak…',
+    ph_skills_csv: 'Gaitasunak komaz bereizita',
+    ph_experience: 'Esperientzia garrantzitsuaren laburpena…',
+    ph_cover: 'Zergatik zara lanpostu honetarako egokia?',
+    ph_portfolio: 'https://zureportfolioa.com',
+    ph_location_eg: 'Hiria, Herrialdea (ad. Bilbo, Espainia)',
+    ph_answer: 'Erantzuna',
+    opt_select_province: 'Hautatu probintzia…',
+    opt_select: 'Hautatu…',
+    opt_select_purpose: 'Hautatu helburua…',
+    jt_fulltime: 'Lanaldi Osoa',
+    jt_parttime: 'Lanaldi Partziala',
+    jt_contract: 'Kontratua',
+    jt_remote: 'Urrutikoa',
+    jt_internship: 'Praktikak',
+    avail_immediate: 'Berehala',
+    avail_2weeks: '2 astetan',
+    avail_1month: 'Hilabete batean',
+    avail_negotiable: 'Negoziagarria',
+    purpose_hiring: '💼 Kontratatzea / Lan Eskaintza',
+    purpose_partner: '🤝 Elkarlana / Lankidetza',
+    purpose_interview: '📅 Elkarrizketa Eskaera',
+    purpose_general: '💬 Kontsulta Orokorra',
+    purpose_other: '✦ Bestea',
+    note_email_confirm: '📧 Berrespena eta onarpen jakinarazpenak hemen bidaliko dira',
+    note_cv_required: '📎 Nahitaezkoa — zure WhatsApp berrespen mezuan sartuta',
+    optional: '(aukerakoa)',
+    toast_app_ok: 'Eskaera bidalita! Egiaztatu zure emaila berrespena + WhatsApp botoia lortzeko.',
+    toast_app_fail: 'Bidalketak huts egin du.',
+    toast_net_err: 'Sare errorea. Mesedez, saiatu berriro.',
+    toast_name_req: 'Izena nahitaezkoa da.',
+    toast_email_req: 'Emaila nahitaezkoa da — eguneratzeak emailez jasoko dituzu.',
+    toast_email_invalid: 'Mesedez, sartu baliozko email helbide bat.',
+    toast_resume_req: 'CV / Portfolio esteka nahitaezkoa da.',
+    toast_employer_req: 'Enpresaren izena nahitaezkoa da.',
+    toast_title_req: 'Lanpostuaren izenburua nahitaezkoa da.',
+    toast_desc_req: 'Lanpostuaren deskribapena nahitaezkoa da.',
+    toast_loc_req: 'Mesedez, hautatu probintzia bat.',
+    toast_role_req: 'Lanpostua / lan izenburua nahitaezkoa da.',
+    toast_province_req: 'Mesedez, hautatu zure probintzia.',
+    err_name_req: 'Mesedez, sartu zure izena.',
+    err_email_req: 'Mesedez, sartu zure email helbidea.',
+    err_email_invalid: 'Mesedez, sartu baliozko email bat.',
+    err_location_req: 'Mesedez, sartu zure kokapena.',
+    err_purpose_req: 'Mesedez, hautatu harremanetarako helburua.',
+    err_captcha: 'Okerra — saiatu berriro.',
+    err_captcha_send: 'Bidaltzean errorea. Mesedez, saiatu berriro.',
+    err_captcha_net: 'Sare errorea. Mesedez, saiatu berriro.',
+    empty_jobs: 'Ez da lanik aurkitu.',
+    empty_talent: 'Ez da profilerik aurkitu.',
+    empty_applicants: 'Ez da hautagairik aurkitu.',
+    server_err: 'Ezin da zerbitzarira konektatu. Mesedez, saiatu berriro.',
+    captcha_what_is: 'Zenbat da',
+  },
+
+  va: {
+    'lb-label': 'Idioma',
+    nav_browse: 'Veure Faenes',
+    nav_talent: 'Veure Talent',
+    nav_applicants: 'Candidats',
+    nav_postrole: 'Busque Faena',
+    nav_postjob: 'Publicar Faena',
+    hero_tag: 'Oportunitats en Directe',
+    hero_h1: 'Troba una faena que <em>importe</em>',
+    hero_sub: 'Oportunitats laborals curades pel nostre equip. Cada oferta és revisada abans de publicar-se.',
+    hero_btn_browse: 'Veure Ofertes ↓',
+    hero_btn_seeking: 'Busque Faena',
+    hero_btn_hire: 'Contractar Algú',
+    stat_jobs: 'Llocs Oberts',
+    stat_visits: 'Visitants',
+    stat_types: 'Tipus de Faena',
+    stat_applicants: 'Candidats',
+    sec_openings_sub: 'Ofertes Actuals',
+    sec_openings_main: 'Totes les Posicions',
+    sec_talent_sub: 'Talent Disponible',
+    sec_talent_main: 'Persones que Busquen Faena',
+    sec_applicants_sub: 'Candidats',
+    sec_applicants_main: 'Qui Ha Sol·licitat · Quina Empresa',
+    search_jobs: 'Cercar títol, empresa, habilitats…',
+    search_talent: 'Cercar nom, lloc, habilitats…',
+    search_applicants: 'Cercar nom, títol, empresa, habilitats…',
+    count_jobs: '{n} lloc(s) trobat(s)',
+    count_talent: '{n} perfil(s) trobat(s)',
+    count_applicants: '{n} candidat(s) trobat(s)',
+    filter_all: 'Tots',
+    meta_applied: 'Candidat {n}',
+    applicants_banner: 'Estos són <strong>candidats aprovats</strong> — persones que han sol·licitat llocs oberts i han sigut preseleccionats pel nostre equip. Cada targeta mostra el nom del candidat, la <strong>faena a la qual van aplicar</strong> i l\'empresa. Utilitza <strong>Obtindre Dades de Contacte</strong> per rebre el seu email i telèfon directament.',
+    card_applied_for: 'Sol·licità:',
+    card_get_contact: '📧 Obtindre Dades de Contacte',
+    card_get_contact_mini: '📧 Contacte',
+    postjob_h2: 'Publicar una Posició',
+    postjob_desc: 'Envia la teua oferta de faena per a revisió. El nostre equip aprova totes les publicacions abans que apareguen — normalment en 24 hores. <strong style="color:var(--gold)">L\'email és obligatori</strong> — rebràs confirmació i notificació d\'aprovació.',
+    postjob_sec_employer: 'Dades de l\'Empresa',
+    postjob_sec_details: 'Detalls de la Faena',
+    postjob_success_h3: 'Sol·licitud rebuda',
+    postjob_success_p1: 'La teua oferta està pendent de revisió.<br>Apareixerà públicament una vegada aprovada.',
+    postjob_success_p2: '📧 S\'ha enviat un email de confirmació amb botó de WhatsApp a la teua bústia.',
+    postjob_post_another: 'Publicar una Altra',
+    postrole_h2: 'Publica el Teu Perfil',
+    postrole_desc: 'Busques faena. Conta als empresaris qui eres, què fas i on d\'Espanya estàs disponible. El teu perfil es revisa abans de publicar-se. <strong style="color:var(--gold)">L\'email és obligatori</strong>.',
+    postrole_sec_personal: 'Dades Personals',
+    postrole_sec_profile: 'Perfil Professional',
+    postrole_success_h3: 'Perfil enviat',
+    postrole_success_p1: 'El teu perfil està pendent de revisió.<br>Apareixerà públicament una vegada aprovat.',
+    postrole_success_p2: '📧 S\'ha enviat un email de confirmació amb botó de WhatsApp a la teua bústia.',
+    btn_submit_another: 'Enviar Un Altre',
+    m_skills_label: 'Habilitats Requerides',
+    m_applicants_label: '👥 Persones que han sol·licitat este lloc',
+    m_desc_label: 'Descripció del Lloc',
+    btn_apply: 'Sol·licitar este Lloc →',
+    btn_apply_close: '↑ Tancar Sol·licitud',
+    apply_sec_title: 'La Teua Sol·licitud',
+    apply_email_note: '📧 Totes les actualitzacions arriben per email. L\'email és obligatori.',
+    captcha_title: 'Obtindre Dades de Contacte',
+    captcha_subtitle: 'Omple les teues dades — contacte enviat una vegada al teu email',
+    captcha_note: '📧 Les dades de contacte et seran enviades <strong style="color:var(--gold)">una vegada</strong> per email. Omple les dades — no cal compte.',
+    captcha_prove: 'Demostra que eres humà',
+    captcha_done_title: 'Revisa la bústia',
+    captcha_sent_to: 'Les dades de contacte s\'han enviat a',
+    captcha_one_time: 'Este enllaç és <strong style="color:var(--cream)">d\'un sol ús</strong> — no funcionarà de nou.',
+    btn_continue: 'Continuar →',
+    btn_send_contact: 'Enviar Dades de Contacte →',
+    btn_change_email: '← Canviar email',
+    btn_close: 'Tancar',
+    btn_submit_review: 'Enviar per a Revisió →',
+    btn_submit_application: 'Enviar Sol·licitud →',
+    btn_submit_profile: 'Enviar Perfil per a Revisió →',
+    f_your_name: 'El Teu Nom',
+    f_fullname: 'Nom Complet',
+    f_email: 'Email',
+    f_phone: 'Telèfon',
+    f_company: 'Nom de l\'Empresa',
+    f_job_title: 'Títol del Lloc',
+    f_description: 'Descripció',
+    f_location: 'Ubicació',
+    f_province: 'Ubicació (Província)',
+    f_job_type: 'Tipus de Faena',
+    f_salary: 'Salari / Tarifa',
+    f_deadline: 'Data Límit de Sol·licitud',
+    f_skills: 'Habilitats',
+    f_resume_link: 'Enllaç CV / Currículum',
+    f_website: 'Lloc Web',
+    f_role_title: 'Lloc / Títol de Faena',
+    f_bio: 'Bio / Sobre Tu',
+    f_experience: 'Experiència',
+    f_availability: 'Disponibilitat',
+    f_cv_link: 'Enllaç CV / Portafoli',
+    f_your_location: 'La Teua Ubicació',
+    f_purpose: 'Propòsit de Contacte',
+    f_cover: 'Carta de Presentació',
+    ph_fullname: 'Nom complet',
+    ph_your_name: 'El teu nom',
+    ph_email_company: 'tu@empresa.com',
+    ph_your_email: 'tu@email.com',
+    ph_phone: '+34 600 000 000',
+    ph_company: 'Acme Corp',
+    ph_job_title: 'ex. Desenvolupador Frontend Sènior',
+    ph_description: 'Descriu el lloc, responsabilitats i el que el fa únic…',
+    ph_salary: 'ex. 40.000 € / any',
+    ph_deadline: 'ex. 31 Des 2025',
+    ph_skills: 'ex. JavaScript, Python, SQL (separats per comes)',
+    ph_cv_link: 'https://drive.google.com/… o LinkedIn',
+    ph_website: 'https://tuempresa.com',
+    ph_role_title: 'ex. Desenvolupador Full Stack, Electricista, Infermer…',
+    ph_bio: 'Breu descripció de qui eres i el que aportes…',
+    ph_experience_role: 'Anys d\'experiència, llocs anteriors, assoliments clau…',
+    ph_skills_csv: 'Habilitats separades per comes',
+    ph_experience: 'Breu resum d\'experiència rellevant…',
+    ph_cover: 'Per què encaixes perfectament en este lloc?',
+    ph_portfolio: 'https://elteportafoli.com',
+    ph_location_eg: 'Ciutat, País (ex. València, Espanya)',
+    ph_answer: 'Resposta',
+    opt_select_province: 'Selecciona província…',
+    opt_select: 'Selecciona…',
+    opt_select_purpose: 'Selecciona propòsit…',
+    jt_fulltime: 'Jornada Completa',
+    jt_parttime: 'Jornada Parcial',
+    jt_contract: 'Contracte',
+    jt_remote: 'Remot',
+    jt_internship: 'Pràctiques',
+    avail_immediate: 'Immediatament',
+    avail_2weeks: 'En 2 setmanes',
+    avail_1month: 'En 1 mes',
+    avail_negotiable: 'Negociable',
+    purpose_hiring: '💼 Contractació / Oferta de Faena',
+    purpose_partner: '🤝 Col·laboració / Associació',
+    purpose_interview: '📅 Sol·licitud d\'Entrevista',
+    purpose_general: '💬 Consulta General',
+    purpose_other: '✦ Altre',
+    note_email_confirm: '📧 Confirmació i avisos d\'aprovació enviats ací',
+    note_cv_required: '📎 Obligatori — inclòs al teu missatge de confirmació de WhatsApp',
+    optional: '(opcional)',
+    toast_app_ok: 'Sol·licitud enviada! Revisa el teu email per a confirmació + botó de WhatsApp.',
+    toast_app_fail: 'L\'enviament ha fallat.',
+    toast_net_err: 'Error de xarxa. Per favor, torna-ho a intentar.',
+    toast_name_req: 'El nom és obligatori.',
+    toast_email_req: 'L\'email és obligatori — rebràs actualitzacions per email.',
+    toast_email_invalid: 'Per favor, introduïx una adreça d\'email vàlida.',
+    toast_resume_req: 'L\'enllaç al CV / Portafoli és obligatori.',
+    toast_employer_req: 'El nom de l\'empresa és obligatori.',
+    toast_title_req: 'El títol del lloc és obligatori.',
+    toast_desc_req: 'La descripció del lloc és obligatòria.',
+    toast_loc_req: 'Per favor, selecciona una província.',
+    toast_role_req: 'El lloc / títol de faena és obligatori.',
+    toast_province_req: 'Per favor, selecciona la teua província.',
+    err_name_req: 'Per favor, introduïx el teu nom.',
+    err_email_req: 'Per favor, introduïx la teua adreça d\'email.',
+    err_email_invalid: 'Per favor, introduïx un email vàlid.',
+    err_location_req: 'Per favor, introduïx la teua ubicació.',
+    err_purpose_req: 'Per favor, selecciona el propòsit de contacte.',
+    err_captcha: 'Incorrecte — torna-ho a intentar.',
+    err_captcha_send: 'Error en enviar. Per favor, torna-ho a intentar.',
+    err_captcha_net: 'Error de xarxa. Per favor, torna-ho a intentar.',
+    empty_jobs: 'No s\'han trobat llocs.',
+    empty_talent: 'No s\'han trobat perfils.',
+    empty_applicants: 'No s\'han trobat candidats.',
+    server_err: 'No s\'ha pogut connectar al servidor. Per favor, torna-ho a intentar.',
+    captcha_what_is: 'Quant és',
+  }
+};
+
+// ═══════════════════════════════════════════════════
+//  TRANSLATION ENGINE
+// ═══════════════════════════════════════════════════
+let currentLang = 'es';
+
+function t(key) {
+  return LANGS[currentLang][key] || LANGS['es'][key] || key;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang === 'eu' ? 'eu' : lang === 'gl' ? 'gl' : lang === 'ca' || lang === 'va' ? 'ca' : 'es';
+
+  // Update language bar buttons
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.getElementById('lb-' + lang);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  // Update label
+  const lbl = document.getElementById('lb-label');
+  if (lbl) lbl.textContent = t('lb-label');
+
+  // Translate all [data-t] text nodes (innerHTML for rich text keys like hero_h1)
+  document.querySelectorAll('[data-t]').forEach(el => {
+    const key = el.getAttribute('data-t');
+    const val = t(key);
+    if (val) el.innerHTML = val;
+  });
+
+  // Translate placeholders via [data-ph]
+  document.querySelectorAll('[data-ph]').forEach(el => {
+    const key = el.getAttribute('data-ph');
+    const val = t(key);
+    if (val) el.placeholder = val;
+  });
+
+  // Re-render dynamic content
+  if (allJobs.length)       renderJobs();
+  if (allTalents.length)    renderTalents();
+  if (allApplicants.length) { buildApplicantJobFilters(); renderApplicants(); }
+  if (allJobs.length)       buildFilters();
+}
+
+// ═══════════════════════════════════════════════════
+//  APP LOGIC
+// ═══════════════════════════════════════════════════
 const API = 'https://backdata.amriksinghspain.com';
 let allJobs = [], allTalents = [], allApplicants = [], activeFilter = 'All', activeApplicantJobFilter = 'All', currentJobId = null;
 
@@ -818,7 +1760,7 @@ async function loadJobs() {
     allJobs = (d.jobs || []).map(j => ({ ...j, employer_email: null, employer_phone: null }));
     buildFilters(); renderJobs(); updateStats();
   } catch(e) {
-    document.getElementById('job-grid').innerHTML = `<div class="empty"><div class="empty-icon">⚠</div><p>Could not reach server. Please try again.</p></div>`;
+    document.getElementById('job-grid').innerHTML = `<div class="empty"><div class="empty-icon">⚠</div><p>${t('server_err')}</p></div>`;
   }
 }
 
@@ -826,10 +1768,10 @@ async function loadTalents() {
   try {
     const r = await fetch(`${API}/roles`);
     const d = await r.json();
-    allTalents = (d.roles || []).map(t => ({ ...t, email: null, phone: null, resume_link: null }));
+    allTalents = (d.roles || []).map(tl => ({ ...tl, email: null, phone: null, resume_link: null }));
     renderTalents();
   } catch(e) {
-    document.getElementById('talent-grid').innerHTML = `<div class="empty"><div class="empty-icon">⚠</div><p>Could not reach server.</p></div>`;
+    document.getElementById('talent-grid').innerHTML = `<div class="empty"><div class="empty-icon">⚠</div><p>${t('server_err')}</p></div>`;
   }
 }
 
@@ -840,17 +1782,21 @@ async function loadApplicants() {
     allApplicants = d.applications || [];
     buildApplicantJobFilters();
     renderApplicants();
-    // Update stat
     document.getElementById('stat-applicants').textContent = allApplicants.length;
   } catch(e) {
-    document.getElementById('applicant-grid').innerHTML = `<div class="empty"><div class="empty-icon">⚠</div><p>Could not load applicants. Please try again.</p></div>`;
+    document.getElementById('applicant-grid').innerHTML = `<div class="empty"><div class="empty-icon">⚠</div><p>${t('server_err')}</p></div>`;
   }
 }
 
 function buildApplicantJobFilters() {
-  const jobs = ['All', ...new Set(allApplicants.map(a => a.job_title).filter(Boolean))];
-  document.getElementById('applicant-job-filters').innerHTML = jobs.map(t =>
-    `<button class="filter-btn ${t === activeApplicantJobFilter ? 'on' : ''}" onclick="setApplicantJobFilter('${t.replace(/'/g,"\\\'")}')">${esc(t)}</button>`
+  const jobs = [t('filter_all'), ...new Set(allApplicants.map(a => a.job_title).filter(Boolean))];
+  const allKey = t('filter_all');
+  // Active filter: if it was "All" previously keep it as localised All
+  if (activeApplicantJobFilter === 'All' || Object.values(LANGS).map(l=>l.filter_all).includes(activeApplicantJobFilter)) {
+    activeApplicantJobFilter = allKey;
+  }
+  document.getElementById('applicant-job-filters').innerHTML = jobs.map(job =>
+    `<button class="filter-btn ${job === activeApplicantJobFilter ? 'on' : ''}" onclick="setApplicantJobFilter(${JSON.stringify(job)})">${esc(job)}</button>`
   ).join('');
 }
 
@@ -863,14 +1809,15 @@ function setApplicantJobFilter(f) {
 function renderApplicants() {
   const q = (document.getElementById('applicant-search').value || '').toLowerCase();
   const grid = document.getElementById('applicant-grid');
+  const allKey = t('filter_all');
   let list = allApplicants.filter(a => {
-    const matchJob = activeApplicantJobFilter === 'All' || a.job_title === activeApplicantJobFilter;
+    const matchJob = activeApplicantJobFilter === allKey || a.job_title === activeApplicantJobFilter;
     const matchQ   = !q || `${a.applicant_name} ${a.job_title} ${a.company} ${a.skills} ${a.job_location}`.toLowerCase().includes(q);
     return matchJob && matchQ;
   });
-  document.getElementById('applicant-count').textContent = `${list.length} applicant${list.length !== 1 ? 's' : ''} found`;
+  document.getElementById('applicant-count').textContent = t('count_applicants').replace('{n}', list.length);
   if (!list.length) {
-    grid.innerHTML = `<div class="empty"><div class="empty-icon">◯</div><p>No applicants found.</p></div>`;
+    grid.innerHTML = `<div class="empty"><div class="empty-icon">◯</div><p>${t('empty_applicants')}</p></div>`;
     return;
   }
   grid.innerHTML = list.map(a => {
@@ -884,7 +1831,7 @@ function renderApplicants() {
       <div class="job-card-top">
         <div>
           <div class="applicant-name">${esc(a.applicant_name)}</div>
-          <div class="applicant-job-tag">Applied for: <strong>${esc(a.job_title || '—')}</strong></div>
+          <div class="applicant-job-tag">${t('card_applied_for')} <strong>${esc(a.job_title || '—')}</strong></div>
           ${a.company ? `<div class="company-tag">🏢 ${esc(a.company)}</div>` : ''}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
@@ -894,11 +1841,11 @@ function renderApplicants() {
       </div>
       <div class="job-meta">
         ${a.job_location ? `<span class="job-meta-item">📍 ${esc(a.job_location)}</span>` : ''}
-        ${a.applied_at   ? `<span class="job-meta-item">📅 Applied ${formatDate(a.applied_at)}</span>` : ''}
+        ${a.applied_at   ? `<span class="job-meta-item">📅 ${formatDate(a.applied_at)}</span>` : ''}
       </div>
       ${a.experience ? `<p class="job-desc">${esc(a.experience)}</p>` : ''}
       ${a.skills ? `<div class="job-skills">${a.skills.split(',').slice(0,5).map(s=>`<span class="skill-pill">${esc(s.trim())}</span>`).join('')}</div>` : ''}
-      <button class="reveal-btn" onclick="event.stopPropagation();openCaptcha(${a.id},'applicant')">📧 Get Contact Details</button>
+      <button class="reveal-btn" onclick="event.stopPropagation();openCaptcha(${a.id},'applicant')">${t('card_get_contact')}</button>
     </div>`;
   }).join('');
 }
@@ -907,26 +1854,26 @@ function formatDate(iso) {
   if (!iso) return '';
   try {
     const d = new Date(iso);
-    return d.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+    return d.toLocaleDateString('es-ES', { day:'numeric', month:'short', year:'numeric' });
   } catch { return ''; }
 }
 
 function renderTalents() {
   const q = (document.getElementById('talent-search').value || '').toLowerCase();
   const grid = document.getElementById('talent-grid');
-  let list = allTalents.filter(t => !q || `${t.full_name} ${t.role_title} ${t.skills} ${t.country}`.toLowerCase().includes(q));
-  document.getElementById('talent-count').textContent = `${list.length} profile${list.length !== 1 ? 's' : ''} found`;
-  if (!list.length) { grid.innerHTML = `<div class="empty"><div class="empty-icon">◯</div><p>No talent profiles found.</p></div>`; return; }
-  grid.innerHTML = list.map(t => `
+  let list = allTalents.filter(tl => !q || `${tl.full_name} ${tl.role_title} ${tl.skills} ${tl.country}`.toLowerCase().includes(q));
+  document.getElementById('talent-count').textContent = t('count_talent').replace('{n}', list.length);
+  if (!list.length) { grid.innerHTML = `<div class="empty"><div class="empty-icon">◯</div><p>${t('empty_talent')}</p></div>`; return; }
+  grid.innerHTML = list.map(tl => `
     <div class="talent-card">
       <div class="job-card-top">
-        <div><div class="talent-name">${esc(t.full_name)}</div><div class="talent-role">${esc(t.role_title)}</div></div>
-        ${t.availability ? `<span class="talent-avail">${esc(t.availability)}</span>` : ''}
+        <div><div class="talent-name">${esc(tl.full_name)}</div><div class="talent-role">${esc(tl.role_title)}</div></div>
+        ${tl.availability ? `<span class="talent-avail">${esc(tl.availability)}</span>` : ''}
       </div>
-      <div class="job-meta">${t.country ? `<span class="job-meta-item">📍 ${esc(t.country)}</span>` : ''}</div>
-      ${t.bio ? `<p class="job-desc">${esc(t.bio)}</p>` : ''}
-      ${t.skills ? `<div class="job-skills">${t.skills.split(',').slice(0,5).map(s=>`<span class="skill-pill">${esc(s.trim())}</span>`).join('')}</div>` : ''}
-      <button class="reveal-btn" onclick="event.stopPropagation();openCaptcha(${t.id},'talent')">📧 Get Contact Details</button>
+      <div class="job-meta">${tl.country ? `<span class="job-meta-item">📍 ${esc(tl.country)}</span>` : ''}</div>
+      ${tl.bio ? `<p class="job-desc">${esc(tl.bio)}</p>` : ''}
+      ${tl.skills ? `<div class="job-skills">${tl.skills.split(',').slice(0,5).map(s=>`<span class="skill-pill">${esc(s.trim())}</span>`).join('')}</div>` : ''}
+      <button class="reveal-btn" onclick="event.stopPropagation();openCaptcha(${tl.id},'talent')">${t('card_get_contact')}</button>
     </div>`).join('');
 }
 
@@ -945,9 +1892,13 @@ function updateStats() {
 }
 
 function buildFilters() {
-  const types = ['All', ...new Set(allJobs.map(j => j.job_type).filter(Boolean))];
-  document.getElementById('filters').innerHTML = types.map(t =>
-    `<button class="filter-btn ${t === activeFilter ? 'on' : ''}" onclick="setFilter('${t}')">${t}</button>`
+  const allKey = t('filter_all');
+  if (activeFilter === 'All' || Object.values(LANGS).map(l=>l.filter_all).includes(activeFilter)) {
+    activeFilter = allKey;
+  }
+  const types = [allKey, ...new Set(allJobs.map(j => j.job_type).filter(Boolean))];
+  document.getElementById('filters').innerHTML = types.map(tp =>
+    `<button class="filter-btn ${tp === activeFilter ? 'on' : ''}" onclick="setFilter(${JSON.stringify(tp)})">${tp}</button>`
   ).join('');
 }
 
@@ -956,15 +1907,15 @@ function setFilter(f) { activeFilter = f; buildFilters(); renderJobs(); }
 function renderJobs() {
   const q = (document.getElementById('search-input').value || '').toLowerCase();
   const grid = document.getElementById('job-grid');
+  const allKey = t('filter_all');
   let jobs = allJobs.filter(j => {
-    const matchType = activeFilter === 'All' || j.job_type === activeFilter;
+    const matchType = activeFilter === allKey || j.job_type === activeFilter;
     const matchQ = !q || `${j.title} ${j.company} ${j.skills} ${j.location}`.toLowerCase().includes(q);
     return matchType && matchQ;
   });
-  document.getElementById('job-count').textContent = `${jobs.length} position${jobs.length !== 1 ? 's' : ''} found`;
-  if (!jobs.length) { grid.innerHTML = `<div class="empty"><div class="empty-icon">◯</div><p>No matching positions found.</p></div>`; return; }
+  document.getElementById('job-count').textContent = t('count_jobs').replace('{n}', jobs.length);
+  if (!jobs.length) { grid.innerHTML = `<div class="empty"><div class="empty-icon">◯</div><p>${t('empty_jobs')}</p></div>`; return; }
   grid.innerHTML = jobs.map(j => {
-    // Count applicants for this job
     const appCount = allApplicants.filter(a => a.job_id === j.id).length;
     return `
     <div class="job-card" onclick="openJob(${j.id})">
@@ -972,7 +1923,7 @@ function renderJobs() {
         <div><div class="job-title">${esc(j.title)}</div><div class="job-company">${esc(j.company || j.employer_name || 'Unknown Company')}</div></div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
           ${j.job_type ? `<span class="job-badge ${badgeClass(j.job_type)}">${esc(j.job_type)}</span>` : ''}
-          ${appCount > 0 ? `<span style="font-family:var(--mono);font-size:0.65rem;color:var(--purple-lt);background:rgba(124,92,191,0.1);border:1px solid rgba(124,92,191,0.2);padding:2px 8px;border-radius:20px">${appCount} applicant${appCount!==1?'s':''}</span>` : ''}
+          ${appCount > 0 ? `<span style="font-family:var(--mono);font-size:0.65rem;color:var(--purple-lt);background:rgba(124,92,191,0.1);border:1px solid rgba(124,92,191,0.2);padding:2px 8px;border-radius:20px">${t('meta_applied').replace('{n}', appCount)}</span>` : ''}
         </div>
       </div>
       <div class="job-meta">
@@ -986,8 +1937,8 @@ function renderJobs() {
   }).join('');
 }
 
-function badgeClass(t) {
-  return {'Full-time':'badge-full','Part-time':'badge-part','Remote':'badge-remote','Contract':'badge-contract'}[t] || 'badge-part';
+function badgeClass(tp) {
+  return {'Full-time':'badge-full','Part-time':'badge-part','Remote':'badge-remote','Contract':'badge-contract'}[tp] || 'badge-part';
 }
 function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
 
@@ -1008,7 +1959,6 @@ function openJob(id) {
     skillsRow.style.display = 'block';
   } else { skillsRow.style.display = 'none'; }
 
-  // Show applicants for this job
   const jobApplicants = allApplicants.filter(a => a.job_id === id);
   const appSection = document.getElementById('m-applicants-section');
   if (jobApplicants.length > 0) {
@@ -1025,7 +1975,7 @@ function openJob(id) {
           ${a.skills ? `<div style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);margin-top:3px">${esc(a.skills.split(',').slice(0,3).join(', '))}</div>` : ''}
         </div>
         ${actionBadge}
-        <button class="reveal-btn" style="margin-top:0;font-size:0.7rem;padding:5px 12px" onclick="openCaptcha(${a.id},'applicant')">📧 Get Contact</button>
+        <button class="reveal-btn" style="margin-top:0;font-size:0.7rem;padding:5px 12px" onclick="openCaptcha(${a.id},'applicant')">${t('card_get_contact_mini')}</button>
       </div>`;
     }).join('');
   } else {
@@ -1033,7 +1983,8 @@ function openJob(id) {
   }
 
   document.getElementById('applySection').classList.remove('open');
-  document.getElementById('apply-toggle-btn').textContent = 'Apply for this Role →';
+  const applyBtn = document.getElementById('apply-toggle-btn');
+  applyBtn.textContent = t('btn_apply');
   clearApplyForm();
   document.getElementById('job-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1053,7 +2004,7 @@ function toggleApply() {
   const sec = document.getElementById('applySection');
   const btn = document.getElementById('apply-toggle-btn');
   const open = sec.classList.toggle('open');
-  btn.textContent = open ? '↑ Close Application' : 'Apply for this Role →';
+  btn.textContent = open ? t('btn_apply_close') : t('btn_apply');
   if (open) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 function clearApplyForm() {
@@ -1097,15 +2048,15 @@ function proceedToCaptcha() {
   const location = document.getElementById('captcha-requester-location').value.trim();
   const purpose  = document.getElementById('captcha-requester-purpose').value;
   const errEl    = document.getElementById('captcha-email-error');
-  if (!name)    { errEl.textContent = 'Please enter your name.'; return; }
-  if (!email)   { errEl.textContent = 'Please enter your email address.'; return; }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent = 'Please enter a valid email address.'; return; }
-  if (!location){ errEl.textContent = 'Please enter your location.'; return; }
-  if (!purpose) { errEl.textContent = 'Please select your purpose of contact.'; return; }
+  if (!name)    { errEl.textContent = t('err_name_req'); return; }
+  if (!email)   { errEl.textContent = t('err_email_req'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent = t('err_email_invalid'); return; }
+  if (!location){ errEl.textContent = t('err_location_req'); return; }
+  if (!purpose) { errEl.textContent = t('err_purpose_req'); return; }
   errEl.textContent = '';
   const chosen = _newCaptchaQuestion();
   captchaCorrect = chosen.ans;
-  document.getElementById('captcha-question').textContent = `What is  ${chosen.q} ?`;
+  document.getElementById('captcha-question').textContent = `${t('captcha_what_is')}  ${chosen.q} ?`;
   document.getElementById('captcha-answer').value = '';
   document.getElementById('captcha-error').textContent = '';
   document.getElementById('captcha-step-email').style.display  = 'none';
@@ -1123,19 +2074,19 @@ function backToEmail() {
 async function verifyCaptcha() {
   const val = parseInt(document.getElementById('captcha-answer').value, 10);
   if (isNaN(val) || val !== captchaCorrect) {
-    document.getElementById('captcha-error').textContent = 'Incorrect — try again.';
+    document.getElementById('captcha-error').textContent = t('err_captcha');
     document.getElementById('captcha-answer').value = '';
     document.getElementById('captcha-answer').focus();
     const chosen = _newCaptchaQuestion();
     captchaCorrect = chosen.ans;
-    document.getElementById('captcha-question').textContent = `What is  ${chosen.q} ?`;
+    document.getElementById('captcha-question').textContent = `${t('captcha_what_is')}  ${chosen.q} ?`;
     return;
   }
   document.getElementById('captcha-error').textContent = '';
   const requesterEmail = document.getElementById('captcha-requester-email').value.trim();
   const id = captchaTargetId, type = captchaTargetType;
   const btn = document.querySelector('#captcha-step-puzzle .btn-primary');
-  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
   try {
     const r = await fetch(`${API}/contact/request`, {
       method: 'POST', headers: {'Content-Type':'application/json'},
@@ -1154,12 +2105,12 @@ async function verifyCaptcha() {
       document.getElementById('captcha-step-done').style.display   = 'block';
       document.getElementById('captcha-sent-to').textContent       = requesterEmail;
     } else {
-      document.getElementById('captcha-error').textContent = d.error || 'Failed to send. Please try again.';
-      if (btn) { btn.disabled = false; btn.textContent = 'Send Contact Details →'; }
+      document.getElementById('captcha-error').textContent = d.error || t('err_captcha_send');
+      if (btn) { btn.disabled = false; btn.textContent = t('btn_send_contact'); }
     }
   } catch(e) {
-    document.getElementById('captcha-error').textContent = 'Network error. Please try again.';
-    if (btn) { btn.disabled = false; btn.textContent = 'Send Contact Details →'; }
+    document.getElementById('captcha-error').textContent = t('err_captcha_net');
+    if (btn) { btn.disabled = false; btn.textContent = t('btn_send_contact'); }
   }
   captchaCorrect = null; captchaTargetId = null; captchaTargetType = null;
 }
@@ -1170,7 +2121,6 @@ function closeCaptcha() {
   captchaCorrect = null; captchaTargetId = null; captchaTargetType = null;
 }
 function closeCaptchaOnBg(e) { if (e.target.id === 'captcha-modal') closeCaptcha(); }
-function closeContactModal() { document.getElementById('contact-modal')?.classList.remove('open'); document.body.style.overflow = ''; }
 
 // ── SUBMIT GUARD ──
 const _submitting = {};
@@ -1179,7 +2129,7 @@ function setSubmitting(key, btn, loading) {
   if (!btn) return;
   if (loading) {
     btn.dataset.origText = btn.innerHTML;
-    btn.innerHTML = '<span class="btn-spinner"></span> Submitting…';
+    btn.innerHTML = '<span class="btn-spinner"></span> …';
     btn.disabled = true; btn.style.opacity = '0.7'; btn.style.cursor = 'not-allowed';
   } else {
     btn.innerHTML = btn.dataset.origText || btn.innerHTML;
@@ -1190,19 +2140,17 @@ function setSubmitting(key, btn, loading) {
 // ── SUBMIT APPLICATION ──
 async function submitApplication() {
   if (!currentJobId || _submitting['apply']) return;
-  const name  = document.getElementById('a-name').value.trim();
-  const email = document.getElementById('a-email').value.trim();
+  const name   = document.getElementById('a-name').value.trim();
+  const email  = document.getElementById('a-email').value.trim();
   const resume = document.getElementById('a-resume').value.trim();
-  if (!name)   { toast('Please enter your name.', 'error'); return; }
-  if (!email)  { toast('Email is required — you will receive updates by email.', 'error'); return; }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email address.', 'error'); return; }
-  if (!resume) { toast('Resume / Portfolio link is required.', 'error'); return; }
+  if (!name)   { toast(t('toast_name_req'), 'error'); return; }
+  if (!email)  { toast(t('toast_email_req'), 'error'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast(t('toast_email_invalid'), 'error'); return; }
+  if (!resume) { toast(t('toast_resume_req'), 'error'); return; }
 
   const btn = document.getElementById('apply-submit-btn');
   setSubmitting('apply', btn, true);
-
   const job = allJobs.find(j => j.id === currentJobId) || {};
-
   const body = {
     applicant_name:  name,
     applicant_email: email,
@@ -1220,14 +2168,14 @@ async function submitApplication() {
     });
     const d = await r.json();
     if (r.ok && d.success) {
-      toast('Application submitted! Check your email for confirmation + WhatsApp button.', 'success');
+      toast(t('toast_app_ok'), 'success');
       closeJobModal();
     } else {
-      toast(d.error || 'Submission failed.', 'error');
+      toast(d.error || t('toast_app_fail'), 'error');
       setSubmitting('apply', btn, false);
     }
   } catch(e) {
-    toast('Network error. Please try again.', 'error');
+    toast(t('toast_net_err'), 'error');
     setSubmitting('apply', btn, false);
   }
 }
@@ -1242,17 +2190,16 @@ async function submitJob() {
   const loc    = document.getElementById('p-location').value;
   const resume = document.getElementById('p-resume_link').value.trim();
 
-  if (!name)   { toast('Employer name is required.', 'error'); return; }
-  if (!email)  { toast('Email is required — you will receive confirmation and approval notices.', 'error'); return; }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email address.', 'error'); return; }
-  if (!title)  { toast('Job title is required.', 'error'); return; }
-  if (!desc)   { toast('Job description is required.', 'error'); return; }
-  if (!loc)    { toast('Please select a location province.', 'error'); return; }
-  if (!resume) { toast('Resume / CV link is required.', 'error'); return; }
+  if (!name)   { toast(t('toast_employer_req'), 'error'); return; }
+  if (!email)  { toast(t('toast_email_req'), 'error'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast(t('toast_email_invalid'), 'error'); return; }
+  if (!title)  { toast(t('toast_title_req'), 'error'); return; }
+  if (!desc)   { toast(t('toast_desc_req'), 'error'); return; }
+  if (!loc)    { toast(t('toast_loc_req'), 'error'); return; }
+  if (!resume) { toast(t('toast_resume_req'), 'error'); return; }
 
   const btn = document.getElementById('postjob-submit-btn');
   setSubmitting('postjob', btn, true);
-
   const body = {
     employer_name:  name,
     employer_email: email,
@@ -1276,11 +2223,11 @@ async function submitJob() {
       document.getElementById('post-success').classList.add('show');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      toast(d.error || 'Submission failed.', 'error');
+      toast(d.error || t('toast_app_fail'), 'error');
       setSubmitting('postjob', btn, false);
     }
   } catch(e) {
-    toast('Network error. Please try again.', 'error');
+    toast(t('toast_net_err'), 'error');
     setSubmitting('postjob', btn, false);
   }
 }
@@ -1305,16 +2252,15 @@ async function submitRole() {
   const loc    = document.getElementById('r-country').value;
   const resume = document.getElementById('r-resume_link').value.trim();
 
-  if (!name)   { toast('Full name is required.', 'error'); return; }
-  if (!email)  { toast('Email is required — you will receive confirmation and approval notices.', 'error'); return; }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email address.', 'error'); return; }
-  if (!title)  { toast('Role / job title is required.', 'error'); return; }
-  if (!loc)    { toast('Please select your province.', 'error'); return; }
-  if (!resume) { toast('CV / Portfolio link is required.', 'error'); return; }
+  if (!name)   { toast(t('toast_name_req'), 'error'); return; }
+  if (!email)  { toast(t('toast_email_req'), 'error'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast(t('toast_email_invalid'), 'error'); return; }
+  if (!title)  { toast(t('toast_role_req'), 'error'); return; }
+  if (!loc)    { toast(t('toast_province_req'), 'error'); return; }
+  if (!resume) { toast(t('toast_resume_req'), 'error'); return; }
 
   const btn = document.getElementById('postrole-submit-btn');
   setSubmitting('postrole', btn, true);
-
   const body = {
     full_name:    name,
     email,
@@ -1338,11 +2284,11 @@ async function submitRole() {
       document.getElementById('role-success').classList.add('show');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      toast(d.error || 'Submission failed.', 'error');
+      toast(d.error || t('toast_app_fail'), 'error');
       setSubmitting('postrole', btn, false);
     }
   } catch(e) {
-    toast('Network error. Please try again.', 'error');
+    toast(t('toast_net_err'), 'error');
     setSubmitting('postrole', btn, false);
   }
 }
@@ -1358,12 +2304,15 @@ function resetRoleForm() {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeJobModal(); closeCaptcha(); closeContactModal(); }
+  if (e.key === 'Escape') { closeJobModal(); closeCaptcha(); }
 });
 
+// Init
 loadJobs();
 loadVisits();
 loadApplicants();
+// Apply initial Spanish translations to placeholders (data-t done via innerHTML)
+setLang('es');
 </script>
 </body>
 </html>
