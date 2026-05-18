@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -144,9 +143,9 @@
     .hamburger { display: flex; }
   }
 
-  /* ── HEADER CORNER LANGUAGE PICKER ── */
-  .lang-picker { position: relative; flex-shrink: 0; }
-  .lang-trigger {
+  /* ── GOOGLE TRANSLATE INTEGRATION ── */
+  .gt-wrap { position: relative; flex-shrink: 0; }
+  .gt-btn {
     display: flex; align-items: center; gap: 7px;
     background: rgba(255,255,255,0.03); border: 1px solid var(--border2);
     border-radius: 24px; padding: 6px 14px 6px 10px; cursor: pointer;
@@ -154,41 +153,64 @@
     font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.07em;
     text-transform: uppercase; white-space: nowrap; user-select: none;
   }
-  .lang-trigger:hover { border-color: var(--gold-dim); background: rgba(200,162,75,0.05); color: var(--text); }
-  .lang-trigger.open { border-color: var(--gold); background: rgba(200,162,75,0.08); color: var(--gold); box-shadow: 0 0 0 3px rgba(200,162,75,0.1); }
-  .lang-trigger svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; transition: transform 0.4s; }
-  .lang-trigger.open svg { transform: rotate(20deg); }
-  .lang-trigger-code { font-weight: 700; letter-spacing: 0.1em; color: inherit; }
-  .lang-trigger-arrow { width: 10px; height: 10px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform 0.25s; flex-shrink: 0; margin-left: 2px; }
-  .lang-trigger.open .lang-trigger-arrow { transform: rotate(-135deg) translateY(-2px); }
+  .gt-btn:hover { border-color: var(--gold-dim); background: rgba(200,162,75,0.05); color: var(--text); }
+  .gt-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .gt-btn-label { font-weight: 700; letter-spacing: 0.1em; color: inherit; }
+  .gt-btn-arrow { width: 10px; height: 10px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform 0.25s; flex-shrink: 0; margin-left: 2px; }
 
-  .lang-dropdown-panel {
-    position: absolute; top: calc(100% + 14px); right: 0;
-    background: var(--surface); border: 1px solid var(--border2);
-    border-radius: 10px; padding: 6px; min-width: 190px;
-    box-shadow: 0 16px 48px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4);
-    z-index: 1010; opacity: 0; transform: translateY(-8px) scale(0.96);
-    transform-origin: top right; pointer-events: none;
-    transition: opacity 0.22s cubic-bezier(.4,0,.2,1), transform 0.22s cubic-bezier(.4,0,.2,1);
+  /* Hide Google Translate bar but keep functionality */
+  .goog-te-banner-frame { display: none !important; }
+  body { top: 0 !important; }
+  .goog-te-gadget { display: none !important; }
+  .skiptranslate { display: none !important; }
+  
+  /* GT Modal */
+  .gt-modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+    align-items: flex-start; justify-content: flex-end;
+    padding-top: 86px; padding-right: clamp(1rem, 5vw, 4rem);
   }
-  .lang-picker.open .lang-dropdown-panel { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
-  .lang-dropdown-panel::before { content: ''; position: absolute; top: -6px; right: 22px; width: 10px; height: 10px; background: var(--surface); border-top: 1px solid var(--border2); border-left: 1px solid var(--border2); transform: rotate(45deg); }
-
-  .lang-opt-row {
+  .gt-modal-overlay.open { display: flex; }
+  .gt-modal {
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: 14px; width: 300px; max-height: 70vh;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.7), 0 2px 8px rgba(0,0,0,0.4);
+    overflow: hidden; display: flex; flex-direction: column;
+    animation: gtSlideIn 0.2s cubic-bezier(0.2,0.8,0.2,1);
+  }
+  @keyframes gtSlideIn { from { opacity: 0; transform: translateY(-10px) scale(0.97); } to { opacity: 1; transform: none; } }
+  .gt-modal-head {
+    padding: 16px 16px 12px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-shrink: 0;
+  }
+  .gt-modal-title { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+  .gt-modal-close {
+    width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border2);
+    background: none; cursor: pointer; color: var(--muted); font-size: 1rem;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s; line-height: 1;
+  }
+  .gt-modal-close:hover { border-color: var(--gold-dim); color: var(--gold); background: rgba(200,162,75,0.06); }
+  .gt-search-wrap { padding: 10px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .gt-search { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 7px 10px; font-family: var(--mono); font-size: 0.78rem; outline: none; }
+  .gt-search:focus { border-color: var(--gold-dim); }
+  .gt-search::placeholder { color: var(--muted); }
+  .gt-lang-list { overflow-y: auto; padding: 6px; flex: 1; }
+  .gt-lang-list::-webkit-scrollbar { width: 4px; }
+  .gt-lang-list::-webkit-scrollbar-track { background: transparent; }
+  .gt-lang-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+  .gt-lang-opt {
     display: flex; align-items: center; gap: 10px; padding: 8px 10px;
     border-radius: 6px; cursor: pointer; border: 1px solid transparent; width: 100%;
-    transition: background 0.14s, border-color 0.14s, color 0.14s;
-    color: var(--muted); font-family: var(--mono); text-align: left;
-    background: transparent;
+    transition: background 0.14s, border-color 0.14s; color: var(--muted);
+    font-family: var(--mono); text-align: left; background: transparent;
   }
-  .lang-opt-row:hover { background: rgba(255,255,255,0.04); border-color: var(--border); color: var(--text); }
-  .lang-opt-row.is-active { background: rgba(200,162,75,0.08); border-color: var(--gold-dim); color: var(--gold); }
-  .lang-opt-flag { font-size: 1.1rem; line-height: 1; flex-shrink: 0; width: 22px; text-align: center; }
-  .lang-opt-label { flex: 1; font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; }
-  .lang-opt-sublabel { font-size: 0.6rem; color: var(--muted); opacity: 0.6; margin-top: 1px; display: block; letter-spacing: 0.04em; }
-  .lang-opt-check { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: border-color 0.14s, background 0.14s; font-size: 0.55rem; color: transparent; }
-  .lang-opt-row.is-active .lang-opt-check { border-color: var(--gold); background: var(--gold); color: #000; }
-  .lang-sep { height: 1px; background: var(--border); margin: 4px 0; }
+  .gt-lang-opt:hover { background: rgba(255,255,255,0.04); border-color: var(--border); color: var(--text); }
+  .gt-lang-opt.active { background: rgba(200,162,75,0.08); border-color: var(--gold-dim); color: var(--gold); }
+  .gt-lang-flag { font-size: 1.05rem; flex-shrink: 0; width: 22px; text-align: center; }
+  .gt-lang-name { flex: 1; font-size: 0.72rem; letter-spacing: 0.04em; }
+  .gt-lang-native { font-size: 0.62rem; color: var(--muted); opacity: 0.7; margin-top: 1px; display: block; }
+  .gt-powered { padding: 8px 14px; border-top: 1px solid var(--border); font-family: var(--mono); font-size: 0.6rem; color: var(--muted); text-align: center; flex-shrink: 0; }
 
   /* ── OTHER SECTIONS ── */
 
@@ -377,6 +399,16 @@
 
   [data-t] { transition: opacity 0.12s; }
 </style>
+  <!-- Google Translate -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        autoDisplay: false,
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </head>
 <body>
 
@@ -400,76 +432,21 @@
   <div class="header-actions">
     <button class="btn btn-primary nav-cta desktop-only" id="nav-post" onclick="showView('post')" data-t="nav_postjob">Post a Job</button>
 
-    <!-- Language Picker -->
-    <div class="lang-picker" id="lang-picker">
-      <button class="lang-trigger" id="lang-trigger-btn" onclick="toggleLangMenu(event)" aria-haspopup="true" aria-expanded="false" aria-label="Change language">
+    <!-- Google Translate Button -->
+    <div class="gt-wrap" id="gt-wrap">
+      <button class="gt-btn" id="gt-btn" onclick="openGTModal()" aria-label="Translate page">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <circle cx="12" cy="12" r="10"/>
           <path d="M2 12h20"/>
           <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
         </svg>
-        <span class="lang-trigger-code" id="lang-trigger-code">EN</span>
-        <span class="lang-trigger-arrow"></span>
+        <span class="gt-btn-label" id="gt-current-label">EN</span>
+        <span class="gt-btn-arrow"></span>
       </button>
-
-      <div class="lang-dropdown-panel" id="lang-dropdown-panel" role="menu">
-          <button class="lang-opt-row" id="lopt-en" onclick="pickLang('en')" role="menuitem">
-          <span class="lang-opt-flag">🇬🇧</span>
-          <span class="lang-opt-label">English<span class="lang-opt-sublabel">Default</span></span>
-          <span class="lang-opt-check">✓</span>
-        </button>
-        <div class="lang-sep"></div>
-        <button class="lang-opt-row" id="lopt-es" onclick="pickLang('es')" role="menuitem">
-          <span class="lang-opt-flag">🇪🇸</span>
-          <span class="lang-opt-label">Castellano<span class="lang-opt-sublabel">Spanish</span></span>
-          <span class="lang-opt-check">✓</span>
-        </button>
-        <button class="lang-opt-row" id="lopt-ca" onclick="pickLang('ca')" role="menuitem">
-          <span class="lang-opt-flag">🟡</span>
-          <span class="lang-opt-label">Català<span class="lang-opt-sublabel">Catalonia · Balearics</span></span>
-          <span class="lang-opt-check">✓</span>
-        </button>
-        <button class="lang-opt-row" id="lopt-gl" onclick="pickLang('gl')" role="menuitem">
-          <span class="lang-opt-flag">🌿</span>
-          <span class="lang-opt-label">Galego<span class="lang-opt-sublabel">Galicia</span></span>
-          <span class="lang-opt-check">✓</span>
-        </button>
-        <button class="lang-opt-row" id="lopt-eu" onclick="pickLang('eu')" role="menuitem">
-          <span class="lang-opt-flag">🟢</span>
-          <span class="lang-opt-label">Euskara<span class="lang-opt-sublabel">País Vasco · Navarra</span></span>
-          <span class="lang-opt-check">✓</span>
-        </button>
-        <button class="lang-opt-row" id="lopt-va" onclick="pickLang('va')" role="menuitem">
-          <span class="lang-opt-flag">🔵</span>
-          <span class="lang-opt-label">Valencià<span class="lang-opt-sublabel">Comunitat Valenciana</span></span>
-          <span class="lang-opt-check">✓</span>
-        </button>
-        
-        <!-- NEW LANGUAGES ADDED HERE -->
-        <div class="lang-sep"></div>
-        
-        <button class="lang-opt-row" id="lopt-hi" onclick="pickLang('hi')" role="menuitem">
-          <span class="lang-opt-flag">🇮🇳</span>
-          <span class="lang-opt-label">हिंदी<span class="lang-opt-sublabel">Hindi</span></span>
-          <span class="lang-opt-check">✓</span>
-        </button>
-        <button class="lang-opt-row" id="lopt-pa" onclick="pickLang('pa')" role="menuitem">
-          <span class="lang-opt-flag">🪯</span>
-          <span class="lang-opt-label">ਪੰਜਾਬੀ<span class="lang-opt-sublabel">Punjabi</span></span>
-          <span class="lang-opt-check">✓</span>
-        </button>
-        <button class="lang-opt-row" id="lopt-bn" onclick="pickLang('bn')" role="menuitem">
-          <span class="lang-opt-flag">🇧🇩</span>
-          <span class="lang-opt-label">বাংলা<span class="lang-opt-sublabel">Bangla</span></span>
-          <span class="lang-opt-check">✓</span>
-        </button>
-        <button class="lang-opt-row" id="lopt-ur" onclick="pickLang('ur')" role="menuitem">
-          <span class="lang-opt-flag">🇵🇰</span>
-          <span class="lang-opt-label">اردو<span class="lang-opt-sublabel">Urdu</span></span>
-          <span class="lang-opt-check">✓</span>
-        </button>
-      </div>
     </div>
+
+    <!-- Hidden Google Translate element -->
+    <div id="google_translate_element" style="display:none"></div>
 
     <!-- Hamburger -->
     <button class="hamburger" id="hamburger-btn" onclick="toggleMobileNav(event)" aria-label="Menu">
@@ -924,634 +901,93 @@
   </div>
 </div>
 
+
+<!-- ═══ GOOGLE TRANSLATE MODAL ═══ -->
+<div class="gt-modal-overlay" id="gt-modal-overlay" onclick="closeGTModal(event)">
+  <div class="gt-modal" role="dialog" aria-label="Select language">
+    <div class="gt-modal-head">
+      <span class="gt-modal-title">🌐 Translate to any language</span>
+      <button class="gt-modal-close" onclick="closeGTModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="gt-search-wrap">
+      <input class="gt-search" id="gt-search" placeholder="Search language…" oninput="filterGTLangs(this.value)" autocomplete="off">
+    </div>
+    <div class="gt-lang-list" id="gt-lang-list"></div>
+    <div class="gt-powered">Powered by Google Translate</div>
+  </div>
+</div>
+
 <div class="toast-wrap" id="toast-wrap"></div>
 
 <script>
 // ═══════════════════════════════════════════════════
-//  TRANSLATION DICTIONARY
+//  TRANSLATION — English keys only (Google Translate handles UI)
 // ═══════════════════════════════════════════════════
-const LANGS = {
-  en: {
-    nav_browse: 'Browse Jobs', nav_talent: 'Browse Talent', nav_applicants: 'Applicants', nav_postrole: 'Post My Role', nav_postjob: 'Post a Job',
-    hero_tag: 'Live Opportunities', hero_h1: 'Find work that <em>matters</em> to you',
-    hero_sub: 'Curated job opportunities vetted by our team. Every listing is reviewed before going live.',
-    hero_btn_browse: 'Browse Openings ↓', hero_btn_seeking: "I'm Looking for Work", hero_btn_hire: 'Hire Someone',
-    stat_jobs: 'Open Roles', stat_visits: 'Visitors', stat_types: 'Job Types', stat_applicants: 'Applicants',
-    sec_openings_sub: 'Current Openings', sec_openings_main: 'All Positions', sec_talent_sub: 'Available Talent',
-    sec_talent_main: 'People Looking for Work', sec_applicants_sub: 'Job Applicants', sec_applicants_main: 'Who Applied · Which Company',
-    search_jobs: 'Search title, company, skills…', search_talent: 'Search name, role, skills…', search_applicants: 'Search name, job title, company, skills…',
-    count_jobs: '{n} position(s) found', count_talent: '{n} profile(s) found', count_applicants: '{n} applicant(s) found',
-    filter_all: 'All', meta_applied: '{n} applicant(s)',
-    applicants_banner: 'These are <strong>approved applicants</strong> — people who have applied for open roles and been shortlisted by our admin. Each card shows the applicant\'s name, the <strong>job they applied for</strong>, and the company. Use <strong>Get Contact Details</strong> to receive their email &amp; phone directly.',
-    card_applied_for: 'Applied for:', card_get_contact: '📧 Get Contact Details', card_get_contact_mini: '📧 Get Contact',
-    postjob_h2: 'Post a Position', postjob_desc: 'Submit your job listing for review. Our team approves all postings before they appear publicly — usually within 24 hours. <strong style="color:var(--gold)">Email is required</strong> — you\'ll receive a confirmation and approval notification via email.',
-    postjob_sec_employer: 'Employer Details', postjob_sec_details: 'Job Details', postjob_success_h3: 'Submission received',
-    postjob_success_p1: 'Your job posting is pending admin review.<br>It will appear publicly once approved.',
-    postjob_success_p2: '📧 A confirmation email with a WhatsApp contact button has been sent to your inbox.', postjob_post_another: 'Post Another',
-    postrole_h2: 'Post Your Role', postrole_desc: "You're looking for work. Tell employers who you are, what you do, and where in Spain you're available. Your profile is reviewed before going live. <strong style=\"color:var(--gold)\">Email is required</strong> — you'll get a confirmation and approval notice.",
-    postrole_sec_personal: 'Personal Details', postrole_sec_profile: 'Professional Profile', postrole_success_h3: 'Profile submitted',
-    postrole_success_p1: 'Your role profile is pending admin review.<br>It will appear publicly once approved.',
-    postrole_success_p2: '📧 A confirmation email with a WhatsApp contact button has been sent to your inbox.', btn_submit_another: 'Submit Another',
-    m_skills_label: 'Skills Required', m_applicants_label: '👥 People who applied for this role', m_desc_label: 'Job Description',
-    btn_apply: 'Apply for this Role →', btn_apply_close: '↑ Close Application', apply_sec_title: 'Your Application',
-    apply_email_note: '📧 All updates — shortlisting, company decisions — arrive by email. Email is required.',
-    captcha_title: 'Get Contact Details', captcha_subtitle: 'Fill in your details — contact info sent once to your email',
-    captcha_note: '📧 Contact details will be emailed to you <strong style="color:var(--gold)">once</strong>. Fill in the details below — no account needed.',
-    captcha_prove: "Prove you're human", captcha_done_title: 'Check your inbox', captcha_sent_to: 'Contact details have been sent to',
-    captcha_one_time: 'This link is <strong style="color:var(--cream)">one-time only</strong> — it will not work again.',
-    btn_continue: 'Continue →', btn_send_contact: 'Send Contact Details →', btn_change_email: '← Change email', btn_close: 'Close',
-    btn_submit_review: 'Submit for Review →', btn_submit_application: 'Submit Application →', btn_submit_profile: 'Submit Profile for Review →',
-    f_your_name: 'Your Name', f_fullname: 'Full Name', f_email: 'Email', f_phone: 'Phone', f_company: 'Company Name',
-    f_job_title: 'Job Title', f_description: 'Description', f_location: 'Location', f_province: 'Location (Province)',
-    f_job_type: 'Job Type', f_salary: 'Salary / Rate', f_deadline: 'Application Deadline', f_skills: 'Required Skills',
-    f_resume_link: 'Resume / CV Link', f_website: 'Website', f_role_title: 'Role / Job Title', f_bio: 'Bio / About You',
-    f_experience: 'Experience', f_availability: 'Availability', f_cv_link: 'CV / Portfolio Link', f_your_location: 'Your Location',
-    f_purpose: 'Purpose of Contact', f_cover: 'Cover Letter',
-    ph_fullname: 'Full name', ph_your_name: 'Your name', ph_email_company: 'you@company.com', ph_your_email: 'you@email.com',
-    ph_phone: '+34 600 000 000', ph_company: 'Acme Corp', ph_job_title: 'e.g. Senior Frontend Developer',
-    ph_description: 'Describe the role, responsibilities, and what makes it unique…', ph_salary: 'e.g. €40,000 / year',
-    ph_deadline: 'e.g. 31 Dec 2025', ph_skills: 'e.g. JavaScript, Python, SQL (comma-separated)', ph_cv_link: 'https://drive.google.com/… or LinkedIn',
-    ph_website: 'https://yourcompany.com', ph_role_title: 'e.g. Full Stack Developer, Electrician, Nurse…',
-    ph_bio: 'Brief description of who you are and what you bring to a team…', ph_experience_role: 'Years of experience, past roles, key achievements…',
-    ph_skills_csv: 'Comma-separated skills', ph_experience: 'Brief summary of relevant experience…', ph_cover: 'Why are you a great fit for this role?',
-    ph_portfolio: 'https://yourportfolio.com', ph_location_eg: 'City, Country (e.g. Madrid, Spain)', ph_answer: 'Answer',
-    opt_select_province: 'Select province…', opt_select: 'Select…', opt_select_purpose: 'Select purpose…',
-    jt_fulltime: 'Full-time', jt_parttime: 'Part-time', jt_contract: 'Contract', jt_remote: 'Remote', jt_internship: 'Internship',
-    avail_immediate: 'Immediately', avail_2weeks: 'Within 2 weeks', avail_1month: 'Within 1 month', avail_negotiable: 'Negotiable',
-    purpose_hiring: '💼 Hiring / Job Offer', purpose_partner: '🤝 Partnership / Collaboration', purpose_interview: '📅 Interview Request',
-    purpose_general: '💬 General Enquiry', purpose_other: '✦ Other',
-    note_email_confirm: '📧 Confirmation & approval notices sent here', note_cv_required: '📎 Required — included in your WhatsApp confirmation message',
-    optional: '(optional)', toast_app_ok: 'Application submitted! Check your email for confirmation + WhatsApp button.',
-    toast_app_fail: 'Submission failed.', toast_net_err: 'Network error. Please try again.', toast_name_req: 'Please enter your name.',
-    toast_email_req: 'Email is required — you will receive updates by email.', toast_email_invalid: 'Please enter a valid email address.',
-    toast_resume_req: 'Resume / Portfolio link is required.', toast_employer_req: 'Employer name is required.',
-    toast_title_req: 'Job title is required.', toast_desc_req: 'Job description is required.', toast_loc_req: 'Please select a location province.',
-    toast_role_req: 'Role / job title is required.', toast_province_req: 'Please select your province.',
-    err_name_req: 'Please enter your name.', err_email_req: 'Please enter your email address.', err_email_invalid: 'Please enter a valid email address.',
-    err_location_req: 'Please enter your location.', err_purpose_req: 'Please select your purpose of contact.',
-    err_captcha: 'Incorrect — try again.', err_captcha_send: 'Failed to send. Please try again.', err_captcha_net: 'Network error. Please try again.',
-    empty_jobs: 'No matching positions found.', empty_talent: 'No talent profiles found.', empty_applicants: 'No applicants found.',
-    server_err: 'Could not reach server. Please try again.', captcha_what_is: 'What is',
-  },
-
-  es: {
-    nav_browse: 'Ver Empleos', nav_talent: 'Ver Talento', nav_applicants: 'Candidatos', nav_postrole: 'Busco Trabajo', nav_postjob: 'Publicar Empleo',
-    hero_tag: 'Oportunidades en Vivo', hero_h1: 'Encuentra trabajo que <em>importa</em>',
-    hero_sub: 'Oportunidades laborales curadas por nuestro equipo. Cada oferta es revisada antes de publicarse.',
-    hero_btn_browse: 'Ver Ofertas ↓', hero_btn_seeking: 'Busco Empleo', hero_btn_hire: 'Contratar a Alguien',
-    stat_jobs: 'Empleos Abiertos', stat_visits: 'Visitantes', stat_types: 'Tipos de Empleo', stat_applicants: 'Candidatos',
-    sec_openings_sub: 'Ofertas Actuales', sec_openings_main: 'Todos los Puestos', sec_talent_sub: 'Talento Disponible',
-    sec_talent_main: 'Personas que Buscan Empleo', sec_applicants_sub: 'Candidatos', sec_applicants_main: 'Quién Aplicó · Qué Empresa',
-    search_jobs: 'Buscar título, empresa, habilidades…', search_talent: 'Buscar nombre, puesto, habilidades…', search_applicants: 'Buscar nombre, puesto, empresa, habilidades…',
-    count_jobs: '{n} puesto(s) encontrado(s)', count_talent: '{n} perfil(es) encontrado(s)', count_applicants: '{n} candidato(s) encontrado(s)',
-    filter_all: 'Todos', meta_applied: 'Candidato {n}',
-    applicants_banner: 'Estos son <strong>candidatos aprobados</strong> — personas que han aplicado a puestos abiertos y han sido preseleccionadas por nuestro equipo. Cada tarjeta muestra el nombre del candidato, el <strong>empleo al que aplicaron</strong> y la empresa. Usa <strong>Obtener Datos de Contacto</strong> para recibir su email y teléfono directamente.',
-    card_applied_for: 'Aplicó a:', card_get_contact: '📧 Obtener Datos de Contacto', card_get_contact_mini: '📧 Contacto',
-    postjob_h2: 'Publicar un Puesto', postjob_desc: 'Envía tu oferta de trabajo para revisión. Nuestro equipo aprueba todas las publicaciones antes de que aparezcan — normalmente en 24 horas. <strong style="color:var(--gold)">El email es obligatorio</strong> — recibirás confirmación y notificación de aprobación.',
-    postjob_sec_employer: 'Datos del Empleador', postjob_sec_details: 'Detalles del Empleo', postjob_success_h3: 'Solicitud recibida',
-    postjob_success_p1: 'Tu oferta está pendiente de revisión.<br>Aparecerá públicamente una vez aprobada.',
-    postjob_success_p2: '📧 Se ha enviado un email de confirmación con botón de WhatsApp a tu bandeja.', postjob_post_another: 'Publicar Otro',
-    postrole_h2: 'Publica tu Perfil', postrole_desc: 'Buscas empleo. Cuéntale a los empleadores quién eres, qué haces y dónde en España estás disponible. Tu perfil se revisa antes de publicarse. <strong style="color:var(--gold)">El email es obligatorio</strong>.',
-    postrole_sec_personal: 'Datos Personales', postrole_sec_profile: 'Perfil Profesional', postrole_success_h3: 'Perfil enviado',
-    postrole_success_p1: 'Tu perfil está pendiente de revisión.<br>Aparecerá públicamente una vez aprobado.',
-    postrole_success_p2: '📧 Se ha enviado un email de confirmación con botón de WhatsApp a tu bandeja.', btn_submit_another: 'Enviar Otro',
-    m_skills_label: 'Habilidades Requeridas', m_applicants_label: '👥 Personas que aplicaron a este puesto', m_desc_label: 'Descripción del Puesto',
-    btn_apply: 'Aplicar a este Puesto →', btn_apply_close: '↑ Cerrar Solicitud', apply_sec_title: 'Tu Solicitud',
-    apply_email_note: '📧 Todas las actualizaciones — preselección, decisiones de empresa — llegan por email. El email es obligatorio.',
-    captcha_title: 'Obtener Datos de Contacto', captcha_subtitle: 'Completa tus datos — contacto enviado una vez a tu email',
-    captcha_note: '📧 Los datos de contacto te serán enviados <strong style="color:var(--gold)">una vez</strong> por email. Rellena los datos — no necesitas cuenta.',
-    captcha_prove: 'Demuestra que eres humano', captcha_done_title: 'Revisa tu bandeja', captcha_sent_to: 'Los datos han sido enviados a',
-    captcha_one_time: 'Este enlace es <strong style="color:var(--cream)">de un solo uso</strong> — no funcionará de nuevo.',
-    btn_continue: 'Continuar →', btn_send_contact: 'Enviar Datos →', btn_change_email: '← Cambiar email', btn_close: 'Cerrar',
-    btn_submit_review: 'Enviar para Revisión →', btn_submit_application: 'Enviar Solicitud →', btn_submit_profile: 'Enviar Perfil →',
-    f_your_name: 'Tu Nombre', f_fullname: 'Nombre Completo', f_email: 'Email', f_phone: 'Teléfono', f_company: 'Nombre Empresa',
-    f_job_title: 'Título del Puesto', f_description: 'Descripción', f_location: 'Ubicación', f_province: 'Ubicación (Provincia)',
-    f_job_type: 'Tipo de Empleo', f_salary: 'Salario / Tarifa', f_deadline: 'Fecha Límite', f_skills: 'Habilidades',
-    f_resume_link: 'Enlace CV', f_website: 'Sitio Web', f_role_title: 'Puesto / Título', f_bio: 'Bio / Sobre Ti',
-    f_experience: 'Experiencia', f_availability: 'Disponibilidad', f_cv_link: 'Enlace CV / Portafolio', f_your_location: 'Tu Ubicación',
-    f_purpose: 'Propósito de Contacto', f_cover: 'Carta de Presentación',
-    ph_fullname: 'Nombre completo', ph_your_name: 'Tu nombre', ph_email_company: 'tu@empresa.com', ph_your_email: 'tu@email.com',
-    ph_phone: '+34 600 000 000', ph_company: 'Acme Corp', ph_job_title: 'ej. Desarrollador Frontend Senior',
-    ph_description: 'Describe el puesto, responsabilidades...', ph_salary: 'ej. 40.000 € / año',
-    ph_deadline: 'ej. 31 Dic 2025', ph_skills: 'ej. JavaScript, Python, SQL', ph_cv_link: 'https://drive.google... o LinkedIn',
-    ph_website: 'https://tuempresa.com', ph_role_title: 'ej. Desarrollador Full Stack...',
-    ph_bio: 'Breve descripción de quién eres...', ph_experience_role: 'Años de experiencia...',
-    ph_skills_csv: 'Habilidades separadas por comas', ph_experience: 'Breve resumen de experiencia...', ph_cover: '¿Por qué encajas en este puesto?',
-    ph_portfolio: 'https://tuportafolio.com', ph_location_eg: 'Ciudad, País (ej. Madrid, España)', ph_answer: 'Respuesta',
-    opt_select_province: 'Selecciona provincia…', opt_select: 'Selecciona…', opt_select_purpose: 'Selecciona propósito…',
-    jt_fulltime: 'Tiempo Completo', jt_parttime: 'Tiempo Parcial', jt_contract: 'Contrato', jt_remote: 'Remoto', jt_internship: 'Prácticas',
-    avail_immediate: 'Inmediatamente', avail_2weeks: 'En 2 semanas', avail_1month: 'En 1 mes', avail_negotiable: 'Negociable',
-    purpose_hiring: '💼 Contratación / Oferta', purpose_partner: '🤝 Colaboración', purpose_interview: '📅 Entrevista',
-    purpose_general: '💬 Consulta General', purpose_other: '✦ Otro',
-    note_email_confirm: '📧 Confirmación y avisos enviados aquí', note_cv_required: '📎 Obligatorio — incluido en WhatsApp',
-    optional: '(opcional)', toast_app_ok: '¡Solicitud enviada! Revisa tu email.',
-    toast_app_fail: 'El envío falló.', toast_net_err: 'Error de red. Por favor, inténtalo de nuevo.', toast_name_req: 'El nombre es obligatorio.',
-    toast_email_req: 'El email es obligatorio.', toast_email_invalid: 'Por favor, introduce un email válido.',
-    toast_resume_req: 'El enlace al CV es obligatorio.', toast_employer_req: 'El empleador es obligatorio.',
-    toast_title_req: 'El título del puesto es obligatorio.', toast_desc_req: 'La descripción es obligatoria.', toast_loc_req: 'Selecciona una provincia.',
-    toast_role_req: 'El puesto es obligatorio.', toast_province_req: 'Selecciona tu provincia.',
-    err_name_req: 'Introduce tu nombre.', err_email_req: 'Introduce tu email.', err_email_invalid: 'Email inválido.',
-    err_location_req: 'Introduce tu ubicación.', err_purpose_req: 'Selecciona el propósito.',
-    err_captcha: 'Incorrecto — inténtalo de nuevo.', err_captcha_send: 'Error al enviar.', err_captcha_net: 'Error de red.',
-    empty_jobs: 'No se encontraron puestos.', empty_talent: 'No se encontraron perfiles.', empty_applicants: 'No se encontraron candidatos.',
-    server_err: 'No se pudo conectar al servidor.', captcha_what_is: '¿Cuánto es',
-  },
-
-  ca: {
-    nav_browse: 'Veure Feines', nav_talent: 'Veure Talent', nav_applicants: 'Candidats', nav_postrole: 'Busco Feina', nav_postjob: 'Publicar Feina',
-    hero_tag: 'Oportunitats en Directe', hero_h1: 'Troba una feina que <em>importi</em>',
-    hero_sub: 'Oportunitats laborals curades pel nostre equip. Cada oferta és revisada.',
-    hero_btn_browse: 'Veure Ofertes ↓', hero_btn_seeking: 'Busco Feina', hero_btn_hire: 'Contractar Algú',
-    stat_jobs: 'Llocs Oberts', stat_visits: 'Visitants', stat_types: 'Tipus de Feina', stat_applicants: 'Candidats',
-    sec_openings_sub: 'Ofertes Actuals', sec_openings_main: 'Totes les Posicions', sec_talent_sub: 'Talent Disponible',
-    sec_talent_main: 'Persones que Busquen Feina', sec_applicants_sub: 'Candidats', sec_applicants_main: 'Qui Ha Sol·licitat',
-    search_jobs: 'Cercar títol, empresa, habilitats…', search_talent: 'Cercar nom, lloc, habilitats…', search_applicants: 'Cercar nom, títol, empresa…',
-    count_jobs: '{n} lloc(s) trobat(s)', count_talent: '{n} perfil(s) trobat(s)', count_applicants: '{n} candidat(s) trobat(s)',
-    filter_all: 'Tots', meta_applied: 'Candidat {n}',
-    applicants_banner: 'Aquests són <strong>candidats aprovats</strong>.',
-    card_applied_for: 'Sol·licità:', card_get_contact: '📧 Obtenir Contacte', card_get_contact_mini: '📧 Contacte',
-    postjob_h2: 'Publicar una Posició', postjob_desc: 'Envia la teva oferta.',
-    postjob_sec_employer: 'Dades Empresa', postjob_sec_details: 'Detalls', postjob_success_h3: 'Rebut',
-    postjob_success_p1: 'La teva oferta és pendent de revisió.',
-    postjob_success_p2: '📧 Email enviat.', postjob_post_another: 'Publicar Altra',
-    postrole_h2: 'Publica el Teu Perfil', postrole_desc: 'Busques feina.',
-    postrole_sec_personal: 'Dades Personals', postrole_sec_profile: 'Perfil Professional', postrole_success_h3: 'Perfil enviat',
-    postrole_success_p1: 'Pendent de revisió.',
-    postrole_success_p2: '📧 Email enviat.', btn_submit_another: 'Enviar Un Altre',
-    m_skills_label: 'Habilitats', m_applicants_label: '👥 Persones', m_desc_label: 'Descripció',
-    btn_apply: 'Sol·licitar →', btn_apply_close: '↑ Tancar', apply_sec_title: 'La Teva Sol·licitud',
-    apply_email_note: '📧 Totes les actualitzacions per email.',
-    captcha_title: 'Obtenir Dades', captcha_subtitle: 'Omple les teves dades',
-    captcha_note: '📧 S\'enviarà per email.',
-    captcha_prove: 'Demostra que ets humà', captcha_done_title: 'Revisa la bústia', captcha_sent_to: 'Enviat a',
-    captcha_one_time: 'Enllaç d\'un sol ús.',
-    btn_continue: 'Continuar →', btn_send_contact: 'Enviar Dades →', btn_change_email: '← Canviar email', btn_close: 'Tancar',
-    btn_submit_review: 'Enviar →', btn_submit_application: 'Enviar →', btn_submit_profile: 'Enviar →',
-    f_your_name: 'El Teu Nom', f_fullname: 'Nom Complet', f_email: 'Email', f_phone: 'Telèfon', f_company: 'Empresa',
-    f_job_title: 'Títol', f_description: 'Descripció', f_location: 'Ubicació', f_province: 'Província',
-    f_job_type: 'Tipus', f_salary: 'Salari', f_deadline: 'Data Límit', f_skills: 'Habilitats',
-    f_resume_link: 'Enllaç CV', f_website: 'Lloc Web', f_role_title: 'Lloc / Títol', f_bio: 'Bio',
-    f_experience: 'Experiència', f_availability: 'Disponibilitat', f_cv_link: 'Enllaç CV', f_your_location: 'La Teva Ubicació',
-    f_purpose: 'Propòsit', f_cover: 'Carta de Presentació',
-    ph_fullname: 'Nom complet', ph_your_name: 'El teu nom', ph_email_company: 'tu@empresa.com', ph_your_email: 'tu@email.com',
-    ph_phone: '+34 600 000 000', ph_company: 'Acme Corp', ph_job_title: 'ex. Desenvolupador Frontend',
-    ph_description: 'Descriu el lloc...', ph_salary: 'ex. 40.000 € / any',
-    ph_deadline: 'ex. 31 Des 2025', ph_skills: 'ex. JavaScript...', ph_cv_link: 'https://...',
-    ph_website: 'https://...', ph_role_title: 'ex. Electricista...',
-    ph_bio: 'Breu descripció...', ph_experience_role: 'Anys d\'experiència...',
-    ph_skills_csv: 'Separades per comes', ph_experience: 'Resum...', ph_cover: 'Per què encaixes?',
-    ph_portfolio: 'https://...', ph_location_eg: 'Ciutat (ex. Barcelona)', ph_answer: 'Resposta',
-    opt_select_province: 'Selecciona…', opt_select: 'Selecciona…', opt_select_purpose: 'Selecciona…',
-    jt_fulltime: 'Temps Complet', jt_parttime: 'Temps Parcial', jt_contract: 'Contracte', jt_remote: 'Remot', jt_internship: 'Pràctiques',
-    avail_immediate: 'Immediatament', avail_2weeks: 'En 2 setmanes', avail_1month: 'En 1 mes', avail_negotiable: 'Negociable',
-    purpose_hiring: '💼 Contractació', purpose_partner: '🤝 Col·laboració', purpose_interview: '📅 Entrevista',
-    purpose_general: '💬 Consulta', purpose_other: '✦ Altre',
-    note_email_confirm: '📧 Avisos enviats aquí', note_cv_required: '📎 Obligatori',
-    optional: '(opcional)', toast_app_ok: 'Sol·licitud enviada!',
-    toast_app_fail: 'Error.', toast_net_err: 'Error de xarxa.', toast_name_req: 'Nom obligatori.',
-    toast_email_req: 'Email obligatori.', toast_email_invalid: 'Email vàlid.',
-    toast_resume_req: 'CV obligatori.', toast_employer_req: 'Empresa obligatòria.',
-    toast_title_req: 'Títol obligatori.', toast_desc_req: 'Descripció obligatòria.', toast_loc_req: 'Selecciona província.',
-    toast_role_req: 'Lloc obligatori.', toast_province_req: 'Selecciona província.',
-    err_name_req: 'Nom?', err_email_req: 'Email?', err_email_invalid: 'Email vàlid.',
-    err_location_req: 'Ubicació?', err_purpose_req: 'Propòsit?',
-    err_captcha: 'Incorrecte.', err_captcha_send: 'Error.', err_captcha_net: 'Error.',
-    empty_jobs: 'No hi ha llocs.', empty_talent: 'No hi ha perfils.', empty_applicants: 'No hi ha candidats.',
-    server_err: 'Error de servidor.', captcha_what_is: 'Quant és',
-  },
-  gl: {
-    nav_browse: 'Ver Empregos', nav_talent: 'Ver Talento', nav_applicants: 'Candidatos', nav_postrole: 'Busco Traballo', nav_postjob: 'Publicar Emprego',
-    hero_tag: 'Oportunidades en Directo', hero_h1: 'Atopa un traballo que <em>importe</em>',
-    hero_sub: 'Oportunidades laborais revisadas.',
-    hero_btn_browse: 'Ver Ofertas ↓', hero_btn_seeking: 'Busco Emprego', hero_btn_hire: 'Contratar a Alguén',
-    stat_jobs: 'Postos Abertos', stat_visits: 'Visitantes', stat_types: 'Tipos', stat_applicants: 'Candidatos',
-    sec_openings_sub: 'Ofertas', sec_openings_main: 'Todos os Postos', sec_talent_sub: 'Talento Dispoñible',
-    sec_talent_main: 'Buscan Traballo', sec_applicants_sub: 'Candidatos', sec_applicants_main: 'Quen Aplicou',
-    search_jobs: 'Buscar...', search_talent: 'Buscar...', search_applicants: 'Buscar...',
-    count_jobs: '{n} posto(s)', count_talent: '{n} perfil(s)', count_applicants: '{n} candidato(s)',
-    filter_all: 'Todos', meta_applied: 'Candidato {n}',
-    applicants_banner: 'Estes son <strong>candidatos aprobados</strong>.',
-    card_applied_for: 'Aplicou a:', card_get_contact: '📧 Obter Contacto', card_get_contact_mini: '📧 Contacto',
-    postjob_h2: 'Publicar un Posto', postjob_desc: 'Envía a túa oferta.',
-    postjob_sec_employer: 'Datos', postjob_sec_details: 'Detalles', postjob_success_h3: 'Recibida',
-    postjob_success_p1: 'Pendente de revisión.',
-    postjob_success_p2: '📧 Email enviado.', postjob_post_another: 'Publicar Outra',
-    postrole_h2: 'Publica o Teu Perfil', postrole_desc: 'Buscas traballo.',
-    postrole_sec_personal: 'Persoais', postrole_sec_profile: 'Perfil', postrole_success_h3: 'Enviado',
-    postrole_success_p1: 'Pendente.',
-    postrole_success_p2: '📧 Email enviado.', btn_submit_another: 'Enviar Outro',
-    m_skills_label: 'Habilidades', m_applicants_label: '👥 Persoas', m_desc_label: 'Descrición',
-    btn_apply: 'Aplicar →', btn_apply_close: '↑ Pechar', apply_sec_title: 'A Túa Solicitude',
-    apply_email_note: '📧 Email obrigatorio.',
-    captcha_title: 'Obter Datos', captcha_subtitle: 'Enche os teus datos',
-    captcha_note: '📧 Enviaranse por email.',
-    captcha_prove: 'Es humano?', captcha_done_title: 'Revisa a bandexa', captcha_sent_to: 'Enviado a',
-    captcha_one_time: 'Uso único.',
-    btn_continue: 'Continuar →', btn_send_contact: 'Enviar →', btn_change_email: '← Cambiar', btn_close: 'Pechar',
-    btn_submit_review: 'Enviar →', btn_submit_application: 'Enviar →', btn_submit_profile: 'Enviar →',
-    f_your_name: 'Nome', f_fullname: 'Nome Completo', f_email: 'Email', f_phone: 'Teléfono', f_company: 'Empresa',
-    f_job_title: 'Título', f_description: 'Descrición', f_location: 'Localización', f_province: 'Provincia',
-    f_job_type: 'Tipo', f_salary: 'Salario', f_deadline: 'Prazo', f_skills: 'Habilidades',
-    f_resume_link: 'CV', f_website: 'Web', f_role_title: 'Posto', f_bio: 'Bio',
-    f_experience: 'Experiencia', f_availability: 'Dispoñibilidade', f_cv_link: 'CV', f_your_location: 'Localización',
-    f_purpose: 'Propósito', f_cover: 'Carta',
-    ph_fullname: 'Nome completo', ph_your_name: 'Teu nome', ph_email_company: 'ti@empresa.com', ph_your_email: 'ti@email.com',
-    ph_phone: '+34 600 000 000', ph_company: 'Acme', ph_job_title: 'ex. Frontend',
-    ph_description: 'Descrición...', ph_salary: 'ex. 40.000',
-    ph_deadline: 'ex. 31 Dec', ph_skills: 'ex. Java...', ph_cv_link: 'https://...',
-    ph_website: 'https://...', ph_role_title: 'ex. Electricista...',
-    ph_bio: 'Bio...', ph_experience_role: 'Anos...',
-    ph_skills_csv: 'Separadas por comas', ph_experience: 'Resumo...', ph_cover: 'Por que?',
-    ph_portfolio: 'https://...', ph_location_eg: 'Cidade (ex. Vigo)', ph_answer: 'Resposta',
-    opt_select_province: 'Selecciona…', opt_select: 'Selecciona…', opt_select_purpose: 'Selecciona…',
-    jt_fulltime: 'Completa', jt_parttime: 'Parcial', jt_contract: 'Contrato', jt_remote: 'Remoto', jt_internship: 'Prácticas',
-    avail_immediate: 'Inmediato', avail_2weeks: '2 semanas', avail_1month: '1 mes', avail_negotiable: 'Negociable',
-    purpose_hiring: '💼 Contratación', purpose_partner: '🤝 Colaboración', purpose_interview: '📅 Entrevista',
-    purpose_general: '💬 Consulta', purpose_other: '✦ Outro',
-    note_email_confirm: '📧 Avisos aquí', note_cv_required: '📎 Obrigatorio',
-    optional: '(opcional)', toast_app_ok: 'Enviada!',
-    toast_app_fail: 'Erro.', toast_net_err: 'Erro.', toast_name_req: 'Nome.',
-    toast_email_req: 'Email.', toast_email_invalid: 'Email válido.',
-    toast_resume_req: 'CV.', toast_employer_req: 'Empresa.',
-    toast_title_req: 'Título.', toast_desc_req: 'Descrición.', toast_loc_req: 'Provincia.',
-    toast_role_req: 'Posto.', toast_province_req: 'Provincia.',
-    err_name_req: 'Nome.', err_email_req: 'Email.', err_email_invalid: 'Email válido.',
-    err_location_req: 'Localización.', err_purpose_req: 'Propósito.',
-    err_captcha: 'Incorrecto.', err_captcha_send: 'Erro.', err_captcha_net: 'Erro.',
-    empty_jobs: 'Non hai.', empty_talent: 'Non hai.', empty_applicants: 'Non hai.',
-    server_err: 'Erro servidor.', captcha_what_is: 'Canto é',
-  },
-  eu: {
-    nav_browse: 'Lanak Ikusi', nav_talent: 'Talentua Ikusi', nav_applicants: 'Hautagaiak', nav_postrole: 'Lana Bilatzen', nav_postjob: 'Argitaratu',
-    hero_tag: 'Zuzeneko Aukerak', hero_h1: 'Aurkitu <em>garrantzitsua</em> den lana',
-    hero_sub: 'Berrikusitako lan aukerak.',
-    hero_btn_browse: 'Eskaintzak ↓', hero_btn_seeking: 'Lana Bilatzen', hero_btn_hire: 'Kontratatu',
-    stat_jobs: 'Irekiak', stat_visits: 'Bisitariak', stat_types: 'Motak', stat_applicants: 'Hautagaiak',
-    sec_openings_sub: 'Eskaintzak', sec_openings_main: 'Guztiak', sec_talent_sub: 'Talentua',
-    sec_talent_main: 'Lana Bilatzen', sec_applicants_sub: 'Hautagaiak', sec_applicants_main: 'Nork Eskatu',
-    search_jobs: 'Bilatu...', search_talent: 'Bilatu...', search_applicants: 'Bilatu...',
-    count_jobs: '{n} lanpostu', count_talent: '{n} profil', count_applicants: '{n} hautagai',
-    filter_all: 'Guztiak', meta_applied: 'Hautagaia {n}',
-    applicants_banner: '<strong>Onartutako hautagaiak</strong>.',
-    card_applied_for: 'Eskatu:', card_get_contact: '📧 Kontaktua Lortu', card_get_contact_mini: '📧 Kontaktua',
-    postjob_h2: 'Argitaratu', postjob_desc: 'Bidali.',
-    postjob_sec_employer: 'Enpresa', postjob_sec_details: 'Xehetasunak', postjob_success_h3: 'Jasota',
-    postjob_success_p1: 'Zain.',
-    postjob_success_p2: '📧 Bidalita.', postjob_post_another: 'Beste Bat',
-    postrole_h2: 'Profila Argitaratu', postrole_desc: 'Lana bilatzen.',
-    postrole_sec_personal: 'Datuak', postrole_sec_profile: 'Profila', postrole_success_h3: 'Bidalita',
-    postrole_success_p1: 'Zain.',
-    postrole_success_p2: '📧 Bidalita.', btn_submit_another: 'Beste Bat',
-    m_skills_label: 'Gaitasunak', m_applicants_label: '👥 Pertsonak', m_desc_label: 'Deskribapena',
-    btn_apply: 'Aurkeztu →', btn_apply_close: '↑ Itxi', apply_sec_title: 'Eskaera',
-    apply_email_note: '📧 Emaila beharrezkoa.',
-    captcha_title: 'Datuak Lortu', captcha_subtitle: 'Bete',
-    captcha_note: '📧 Emailera bidaliko dira.',
-    captcha_prove: 'Gizakia zara?', captcha_done_title: 'Egiaztatu sarrera', captcha_sent_to: 'Bidalita',
-    captcha_one_time: 'Behin erabiltzeko.',
-    btn_continue: 'Jarraitu →', btn_send_contact: 'Bidali →', btn_change_email: '← Aldatu', btn_close: 'Itxi',
-    btn_submit_review: 'Bidali →', btn_submit_application: 'Bidali →', btn_submit_profile: 'Bidali →',
-    f_your_name: 'Izena', f_fullname: 'Izen Osoa', f_email: 'Emaila', f_phone: 'Telefonoa', f_company: 'Enpresa',
-    f_job_title: 'Lanpostua', f_description: 'Deskribapena', f_location: 'Kokapena', f_province: 'Probintzia',
-    f_job_type: 'Mota', f_salary: 'Soldata', f_deadline: 'Epemuga', f_skills: 'Gaitasunak',
-    f_resume_link: 'CV', f_website: 'Webgunea', f_role_title: 'Lanpostua', f_bio: 'Bio',
-    f_experience: 'Esperientzia', f_availability: 'Eskuragarri', f_cv_link: 'CV', f_your_location: 'Kokapena',
-    f_purpose: 'Helburua', f_cover: 'Gutuna',
-    ph_fullname: 'Osoa', ph_your_name: 'Izena', ph_email_company: 'zu@enpresa.com', ph_your_email: 'zu@email.com',
-    ph_phone: '+34 600 000 000', ph_company: 'Acme', ph_job_title: 'ad. Frontend',
-    ph_description: 'Deskribapena...', ph_salary: 'ad. 40.000',
-    ph_deadline: 'ad. Abe 31', ph_skills: 'ad. Java...', ph_cv_link: 'https://...',
-    ph_website: 'https://...', ph_role_title: 'ad. Erizaina...',
-    ph_bio: 'Bio...', ph_experience_role: 'Urteak...',
-    ph_skills_csv: 'Komaz bereizita', ph_experience: 'Laburpena...', ph_cover: 'Zergatik?',
-    ph_portfolio: 'https://...', ph_location_eg: 'Hiria (ad. Bilbo)', ph_answer: 'Erantzuna',
-    opt_select_province: 'Hautatu…', opt_select: 'Hautatu…', opt_select_purpose: 'Hautatu…',
-    jt_fulltime: 'Osoa', jt_parttime: 'Partziala', jt_contract: 'Kontratua', jt_remote: 'Urrutikoa', jt_internship: 'Praktikak',
-    avail_immediate: 'Berehala', avail_2weeks: '2 astetan', avail_1month: 'Hilabete 1', avail_negotiable: 'Negoziagarria',
-    purpose_hiring: '💼 Kontratatzea', purpose_partner: '🤝 Elkarlana', purpose_interview: '📅 Elkarrizketa',
-    purpose_general: '💬 Kontsulta', purpose_other: '✦ Bestea',
-    note_email_confirm: '📧 Hemen bidaliko dira', note_cv_required: '📎 Nahitaezkoa',
-    optional: '(aukerakoa)', toast_app_ok: 'Bidalita!',
-    toast_app_fail: 'Errorea.', toast_net_err: 'Errorea.', toast_name_req: 'Izena.',
-    toast_email_req: 'Emaila.', toast_email_invalid: 'Baliozkoa.',
-    toast_resume_req: 'CV.', toast_employer_req: 'Enpresa.',
-    toast_title_req: 'Lanpostua.', toast_desc_req: 'Deskribapena.', toast_loc_req: 'Probintzia.',
-    toast_role_req: 'Lanpostua.', toast_province_req: 'Probintzia.',
-    err_name_req: 'Izena.', err_email_req: 'Emaila.', err_email_invalid: 'Baliozkoa.',
-    err_location_req: 'Kokapena.', err_purpose_req: 'Helburua.',
-    err_captcha: 'Okerra.', err_captcha_send: 'Errorea.', err_captcha_net: 'Errorea.',
-    empty_jobs: 'Hutsik.', empty_talent: 'Hutsik.', empty_applicants: 'Hutsik.',
-    server_err: 'Errorea.', captcha_what_is: 'Zenbat da',
-  },
-  va: {
-    nav_browse: 'Veure Faenes', nav_talent: 'Veure Talent', nav_applicants: 'Candidats', nav_postrole: 'Busque Faena', nav_postjob: 'Publicar Faena',
-    hero_tag: 'Oportunitats en Directe', hero_h1: 'Troba una faena que <em>importe</em>',
-    hero_sub: 'Oportunitats laborals curades pel nostre equip.',
-    hero_btn_browse: 'Veure Ofertes ↓', hero_btn_seeking: 'Busque Faena', hero_btn_hire: 'Contractar Algú',
-    stat_jobs: 'Llocs Oberts', stat_visits: 'Visitants', stat_types: 'Tipus', stat_applicants: 'Candidats',
-    sec_openings_sub: 'Ofertes Actuals', sec_openings_main: 'Totes les Posicions', sec_talent_sub: 'Talent Disponible',
-    sec_talent_main: 'Busquen Faena', sec_applicants_sub: 'Candidats', sec_applicants_main: 'Qui Ha Sol·licitat',
-    search_jobs: 'Cercar títol, empresa, habilitats…', search_talent: 'Cercar nom, lloc…', search_applicants: 'Cercar nom, títol…',
-    count_jobs: '{n} lloc(s)', count_talent: '{n} perfil(s)', count_applicants: '{n} candidat(s)',
-    filter_all: 'Tots', meta_applied: 'Candidat {n}',
-    applicants_banner: 'Estos són <strong>candidats aprovats</strong>.',
-    card_applied_for: 'Sol·licità:', card_get_contact: '📧 Obtindre Contacte', card_get_contact_mini: '📧 Contacte',
-    postjob_h2: 'Publicar una Posició', postjob_desc: 'Envia la teua oferta.',
-    postjob_sec_employer: 'Dades', postjob_sec_details: 'Detalls', postjob_success_h3: 'Rebuda',
-    postjob_success_p1: 'Pendent de revisió.',
-    postjob_success_p2: '📧 Email enviat.', postjob_post_another: 'Publicar Altra',
-    postrole_h2: 'Publica el Teu Perfil', postrole_desc: 'Busques faena.',
-    postrole_sec_personal: 'Personals', postrole_sec_profile: 'Perfil', postrole_success_h3: 'Enviat',
-    postrole_success_p1: 'Pendent.',
-    postrole_success_p2: '📧 Email enviat.', btn_submit_another: 'Enviar Un Altre',
-    m_skills_label: 'Habilitats', m_applicants_label: '👥 Persones', m_desc_label: 'Descripció',
-    btn_apply: 'Sol·licitar →', btn_apply_close: '↑ Tancar', apply_sec_title: 'La Teua Sol·licitud',
-    apply_email_note: '📧 Email obligatori.',
-    captcha_title: 'Obtindre Dades', captcha_subtitle: 'Omple les teues dades',
-    captcha_note: '📧 Et seran enviades per email.',
-    captcha_prove: 'Eres humà?', captcha_done_title: 'Revisa la bústia', captcha_sent_to: 'Enviat a',
-    captcha_one_time: 'D\'un sol ús.',
-    btn_continue: 'Continuar →', btn_send_contact: 'Enviar →', btn_change_email: '← Canviar', btn_close: 'Tancar',
-    btn_submit_review: 'Enviar →', btn_submit_application: 'Enviar →', btn_submit_profile: 'Enviar →',
-    f_your_name: 'Nom', f_fullname: 'Nom Complet', f_email: 'Email', f_phone: 'Telèfon', f_company: 'Empresa',
-    f_job_title: 'Títol', f_description: 'Descripció', f_location: 'Ubicació', f_province: 'Província',
-    f_job_type: 'Tipus', f_salary: 'Salari', f_deadline: 'Data Límit', f_skills: 'Habilitats',
-    f_resume_link: 'CV', f_website: 'Lloc Web', f_role_title: 'Lloc', f_bio: 'Bio',
-    f_experience: 'Experiència', f_availability: 'Disponibilitat', f_cv_link: 'CV', f_your_location: 'Ubicació',
-    f_purpose: 'Propòsit', f_cover: 'Carta',
-    ph_fullname: 'Nom complet', ph_your_name: 'El teu nom', ph_email_company: 'tu@empresa.com', ph_your_email: 'tu@email.com',
-    ph_phone: '+34 600 000 000', ph_company: 'Acme Corp', ph_job_title: 'ex. Frontend',
-    ph_description: 'Descriu...', ph_salary: 'ex. 40.000',
-    ph_deadline: 'ex. 31 Des', ph_skills: 'ex. JavaScript...', ph_cv_link: 'https://...',
-    ph_website: 'https://...', ph_role_title: 'ex. Electricista...',
-    ph_bio: 'Bio...', ph_experience_role: 'Anys...',
-    ph_skills_csv: 'Separades per comes', ph_experience: 'Resum...', ph_cover: 'Per què?',
-    ph_portfolio: 'https://...', ph_location_eg: 'Ciutat (ex. València)', ph_answer: 'Resposta',
-    opt_select_province: 'Selecciona…', opt_select: 'Selecciona…', opt_select_purpose: 'Selecciona…',
-    jt_fulltime: 'Jornada Completa', jt_parttime: 'Jornada Parcial', jt_contract: 'Contracte', jt_remote: 'Remot', jt_internship: 'Pràctiques',
-    avail_immediate: 'Immediatament', avail_2weeks: 'En 2 setmanes', avail_1month: 'En 1 mes', avail_negotiable: 'Negociable',
-    purpose_hiring: '💼 Contractació', purpose_partner: '🤝 Col·laboració', purpose_interview: '📅 Entrevista',
-    purpose_general: '💬 Consulta', purpose_other: '✦ Altre',
-    note_email_confirm: '📧 Avisos ací', note_cv_required: '📎 Obligatori',
-    optional: '(opcional)', toast_app_ok: 'Enviada!',
-    toast_app_fail: 'Error.', toast_net_err: 'Error.', toast_name_req: 'Nom.',
-    toast_email_req: 'Email.', toast_email_invalid: 'Email vàlid.',
-    toast_resume_req: 'CV.', toast_employer_req: 'Empresa.',
-    toast_title_req: 'Títol.', toast_desc_req: 'Descripció.', toast_loc_req: 'Província.',
-    toast_role_req: 'Lloc.', toast_province_req: 'Província.',
-    err_name_req: 'Nom.', err_email_req: 'Email.', err_email_invalid: 'Email vàlid.',
-    err_location_req: 'Ubicació.', err_purpose_req: 'Propòsit.',
-    err_captcha: 'Incorrecte.', err_captcha_send: 'Error.', err_captcha_net: 'Error.',
-    empty_jobs: 'No hi ha.', empty_talent: 'No hi ha.', empty_applicants: 'No hi ha.',
-    server_err: 'Error.', captcha_what_is: 'Quant és',
-  },
-  hi: {
-    nav_browse: 'नौकरियाँ देखें', nav_talent: 'प्रतिभा देखें', nav_applicants: 'आवेदक', nav_postrole: 'काम चाहिए', nav_postjob: 'नौकरी पोस्ट करें',
-    hero_tag: 'लाइव अवसर', hero_h1: 'वो काम खोजें जो <em>मायने रखे</em>',
-    hero_sub: 'हमारी टीम द्वारा जांची गई नौकरियाँ। हर लिस्टिंग प्रकाशन से पहले समीक्षित होती है।',
-    hero_btn_browse: 'नौकरियाँ देखें ↓', hero_btn_seeking: 'मुझे काम चाहिए', hero_btn_hire: 'किसी को नियुक्त करें',
-    stat_jobs: 'खुली भर्तियाँ', stat_visits: 'विज़िटर', stat_types: 'नौकरी प्रकार', stat_applicants: 'आवेदक',
-    sec_openings_sub: 'वर्तमान भर्तियाँ', sec_openings_main: 'सभी पद', sec_talent_sub: 'उपलब्ध प्रतिभा',
-    sec_talent_main: 'काम ढूंढ रहे लोग', sec_applicants_sub: 'नौकरी आवेदक', sec_applicants_main: 'किसने आवेदन किया',
-    search_jobs: 'शीर्षक, कंपनी, कौशल खोजें…', search_talent: 'नाम, भूमिका, कौशल खोजें…', search_applicants: 'नाम, पद, कंपनी खोजें…',
-    count_jobs: '{n} पद मिले', count_talent: '{n} प्रोफ़ाइल मिली', count_applicants: '{n} आवेदक मिले',
-    filter_all: 'सभी', meta_applied: '{n} आवेदक',
-    applicants_banner: 'ये <strong>अनुमोदित आवेदक</strong> हैं।',
-    card_applied_for: 'आवेदन किया:', card_get_contact: '📧 संपर्क विवरण पाएं', card_get_contact_mini: '📧 संपर्क',
-    postjob_h2: 'पद पोस्ट करें', postjob_desc: 'समीक्षा के लिए अपनी नौकरी सबमिट करें।',
-    postjob_sec_employer: 'नियोक्ता विवरण', postjob_sec_details: 'नौकरी विवरण', postjob_success_h3: 'सबमिशन प्राप्त हुआ',
-    postjob_success_p1: 'आपकी नौकरी समीक्षा के लिए लंबित है।', postjob_success_p2: '📧 पुष्टि ईमेल भेजा गया।', postjob_post_another: 'और पोस्ट करें',
-    postrole_h2: 'अपनी भूमिका पोस्ट करें', postrole_desc: 'आप काम ढूंढ रहे हैं।',
-    postrole_sec_personal: 'व्यक्तिगत विवरण', postrole_sec_profile: 'पेशेवर प्रोफ़ाइल', postrole_success_h3: 'प्रोफ़ाइल सबमिट हुई',
-    postrole_success_p1: 'समीक्षा के लिए लंबित।', postrole_success_p2: '📧 ईमेल भेजा गया।', btn_submit_another: 'और सबमिट करें',
-    m_skills_label: 'आवश्यक कौशल', m_applicants_label: '👥 आवेदक', m_desc_label: 'नौकरी विवरण',
-    btn_apply: 'आवेदन करें →', btn_apply_close: '↑ बंद करें', apply_sec_title: 'आपका आवेदन',
-    apply_email_note: '📧 सभी अपडेट ईमेल पर आएंगे।',
-    captcha_title: 'संपर्क विवरण पाएं', captcha_subtitle: 'अपना विवरण भरें',
-    captcha_note: '📧 संपर्क विवरण एक बार ईमेल किया जाएगा।',
-    captcha_prove: 'साबित करें कि आप इंसान हैं', captcha_done_title: 'इनबॉक्स देखें', captcha_sent_to: 'भेजा गया',
-    captcha_one_time: 'यह लिंक <strong style="color:var(--cream)">एक बार उपयोग</strong> के लिए है।',
-    btn_continue: 'जारी रखें →', btn_send_contact: 'संपर्क भेजें →', btn_change_email: '← ईमेल बदलें', btn_close: 'बंद करें',
-    btn_submit_review: 'समीक्षा के लिए सबमिट करें →', btn_submit_application: 'आवेदन सबमिट करें →', btn_submit_profile: 'प्रोफ़ाइल सबमिट करें →',
-    f_your_name: 'आपका नाम', f_fullname: 'पूरा नाम', f_email: 'ईमेल', f_phone: 'फ़ोन', f_company: 'कंपनी का नाम',
-    f_job_title: 'नौकरी का शीर्षक', f_description: 'विवरण', f_location: 'स्थान', f_province: 'प्रांत',
-    f_job_type: 'नौकरी प्रकार', f_salary: 'वेतन', f_deadline: 'अंतिम तिथि', f_skills: 'कौशल',
-    f_resume_link: 'CV लिंक', f_website: 'वेबसाइट', f_role_title: 'भूमिका / पद', f_bio: 'परिचय',
-    f_experience: 'अनुभव', f_availability: 'उपलब्धता', f_cv_link: 'CV / पोर्टफोलियो', f_your_location: 'आपका स्थान',
-    f_purpose: 'संपर्क का उद्देश्य', f_cover: 'कवर लेटर',
-    ph_fullname: 'पूरा नाम', ph_your_name: 'आपका नाम', ph_email_company: 'aap@company.com', ph_your_email: 'aap@email.com',
-    ph_phone: '+91 98000 00000', ph_company: 'कंपनी', ph_job_title: 'जैसे: Frontend Developer',
-    ph_description: 'भूमिका का विवरण…', ph_salary: 'जैसे: ₹5,00,000/वर्ष',
-    ph_deadline: 'जैसे: 31 दिसंबर 2025', ph_skills: 'जैसे: JavaScript, Python',
-    ph_cv_link: 'https://…', ph_website: 'https://…', ph_role_title: 'जैसे: इलेक्ट्रीशियन…',
-    ph_bio: 'संक्षिप्त परिचय…', ph_experience_role: 'अनुभव के वर्ष…',
-    ph_skills_csv: 'कॉमा से अलग कौशल', ph_experience: 'अनुभव का सारांश…', ph_cover: 'आप इस भूमिका के लिए उपयुक्त क्यों हैं?',
-    ph_portfolio: 'https://…', ph_location_eg: 'शहर, देश', ph_answer: 'उत्तर',
-    opt_select_province: 'प्रांत चुनें…', opt_select: 'चुनें…', opt_select_purpose: 'उद्देश्य चुनें…',
-    jt_fulltime: 'पूर्णकालिक', jt_parttime: 'अंशकालिक', jt_contract: 'अनुबंध', jt_remote: 'दूरस्थ', jt_internship: 'इंटर्नशिप',
-    avail_immediate: 'तुरंत', avail_2weeks: '2 सप्ताह में', avail_1month: '1 महीने में', avail_negotiable: 'बातचीत योग्य',
-    purpose_hiring: '💼 नियुक्ति / नौकरी प्रस्ताव', purpose_partner: '🤝 साझेदारी', purpose_interview: '📅 इंटरव्यू',
-    purpose_general: '💬 सामान्य प्रश्न', purpose_other: '✦ अन्य',
-    note_email_confirm: '📧 पुष्टि यहाँ भेजी जाएगी', note_cv_required: '📎 आवश्यक',
-    optional: '(वैकल्पिक)', toast_app_ok: 'आवेदन सबमिट हुआ! ईमेल देखें।',
-    toast_app_fail: 'सबमिशन विफल।', toast_net_err: 'नेटवर्क त्रुटि।', toast_name_req: 'नाम आवश्यक है।',
-    toast_email_req: 'ईमेल आवश्यक है।', toast_email_invalid: 'वैध ईमेल दर्ज करें।',
-    toast_resume_req: 'CV लिंक आवश्यक है।', toast_employer_req: 'नियोक्ता नाम आवश्यक है।',
-    toast_title_req: 'नौकरी शीर्षक आवश्यक है।', toast_desc_req: 'विवरण आवश्यक है।', toast_loc_req: 'प्रांत चुनें।',
-    toast_role_req: 'भूमिका आवश्यक है।', toast_province_req: 'प्रांत चुनें।',
-    err_name_req: 'नाम दर्ज करें।', err_email_req: 'ईमेल दर्ज करें।', err_email_invalid: 'वैध ईमेल।',
-    err_location_req: 'स्थान दर्ज करें।', err_purpose_req: 'उद्देश्य चुनें।',
-    err_captcha: 'गलत — फिर प्रयास करें।', err_captcha_send: 'भेजने में विफल।', err_captcha_net: 'नेटवर्क त्रुटि।',
-    empty_jobs: 'कोई पद नहीं मिला।', empty_talent: 'कोई प्रोफ़ाइल नहीं।', empty_applicants: 'कोई आवेदक नहीं।',
-    server_err: 'सर्वर से कनेक्ट नहीं हो सका।', captcha_what_is: 'क्या है',
-  },
-  pa: {
-    nav_browse: 'ਨੌਕਰੀਆਂ ਦੇਖੋ', nav_talent: 'ਪ੍ਰਤਿਭਾ ਦੇਖੋ', nav_applicants: 'ਅਰਜ਼ੀਕਰਤਾ', nav_postrole: 'ਕੰਮ ਚਾਹੀਦਾ', nav_postjob: 'ਨੌਕਰੀ ਪੋਸਟ ਕਰੋ',
-    hero_tag: 'ਲਾਈਵ ਮੌਕੇ', hero_h1: 'ਉਹ ਕੰਮ ਲੱਭੋ ਜੋ <em>ਅਹਿਮ</em> ਹੋਵੇ',
-    hero_sub: 'ਸਾਡੀ ਟੀਮ ਵੱਲੋਂ ਜਾਂਚੀਆਂ ਗਈਆਂ ਨੌਕਰੀਆਂ।',
-    hero_btn_browse: 'ਨੌਕਰੀਆਂ ਦੇਖੋ ↓', hero_btn_seeking: 'ਮੈਨੂੰ ਕੰਮ ਚਾਹੀਦਾ', hero_btn_hire: 'ਕਿਸੇ ਨੂੰ ਨਿਯੁਕਤ ਕਰੋ',
-    stat_jobs: 'ਖੁੱਲ੍ਹੀਆਂ ਅਸਾਮੀਆਂ', stat_visits: 'ਵਿਜ਼ਿਟਰ', stat_types: 'ਕੰਮ ਕਿਸਮ', stat_applicants: 'ਅਰਜ਼ੀਕਰਤਾ',
-    sec_openings_sub: 'ਮੌਜੂਦਾ ਅਸਾਮੀਆਂ', sec_openings_main: 'ਸਾਰੇ ਅਹੁਦੇ', sec_talent_sub: 'ਉਪਲਬਧ ਪ੍ਰਤਿਭਾ',
-    sec_talent_main: 'ਕੰਮ ਲੱਭ ਰਹੇ ਲੋਕ', sec_applicants_sub: 'ਅਰਜ਼ੀਕਰਤਾ', sec_applicants_main: 'ਕਿਸਨੇ ਅਰਜ਼ੀ ਦਿੱਤੀ',
-    search_jobs: 'ਸਿਰਲੇਖ, ਕੰਪਨੀ, ਹੁਨਰ ਖੋਜੋ…', search_talent: 'ਨਾਮ, ਭੂਮਿਕਾ ਖੋਜੋ…', search_applicants: 'ਨਾਮ, ਅਹੁਦਾ ਖੋਜੋ…',
-    count_jobs: '{n} ਅਹੁਦੇ ਮਿਲੇ', count_talent: '{n} ਪ੍ਰੋਫ਼ਾਈਲ ਮਿਲੇ', count_applicants: '{n} ਅਰਜ਼ੀਕਰਤਾ ਮਿਲੇ',
-    filter_all: 'ਸਭ', meta_applied: '{n} ਅਰਜ਼ੀਕਰਤਾ',
-    applicants_banner: 'ਇਹ <strong>ਪ੍ਰਵਾਨਿਤ ਅਰਜ਼ੀਕਰਤਾ</strong> ਹਨ।',
-    card_applied_for: 'ਅਰਜ਼ੀ ਦਿੱਤੀ:', card_get_contact: '📧 ਸੰਪਰਕ ਵੇਰਵੇ ਲਓ', card_get_contact_mini: '📧 ਸੰਪਰਕ',
-    postjob_h2: 'ਨੌਕਰੀ ਪੋਸਟ ਕਰੋ', postjob_desc: 'ਸਮੀਖਿਆ ਲਈ ਸਬਮਿਟ ਕਰੋ।',
-    postjob_sec_employer: 'ਮਾਲਕ ਵੇਰਵੇ', postjob_sec_details: 'ਨੌਕਰੀ ਵੇਰਵੇ', postjob_success_h3: 'ਸਬਮਿਸ਼ਨ ਮਿਲੀ',
-    postjob_success_p1: 'ਤੁਹਾਡੀ ਨੌਕਰੀ ਸਮੀਖਿਆ ਅਧੀਨ ਹੈ।', postjob_success_p2: '📧 ਈਮੇਲ ਭੇਜੀ ਗਈ।', postjob_post_another: 'ਹੋਰ ਪੋਸਟ ਕਰੋ',
-    postrole_h2: 'ਆਪਣੀ ਭੂਮਿਕਾ ਪੋਸਟ ਕਰੋ', postrole_desc: 'ਤੁਸੀਂ ਕੰਮ ਲੱਭ ਰਹੇ ਹੋ।',
-    postrole_sec_personal: 'ਨਿੱਜੀ ਵੇਰਵੇ', postrole_sec_profile: 'ਪੇਸ਼ੇਵਰ ਪ੍ਰੋਫ਼ਾਈਲ', postrole_success_h3: 'ਪ੍ਰੋਫ਼ਾਈਲ ਭੇਜੀ',
-    postrole_success_p1: 'ਸਮੀਖਿਆ ਅਧੀਨ।', postrole_success_p2: '📧 ਈਮੇਲ ਭੇਜੀ ਗਈ।', btn_submit_another: 'ਹੋਰ ਸਬਮਿਟ ਕਰੋ',
-    m_skills_label: 'ਲੋੜੀਂਦੇ ਹੁਨਰ', m_applicants_label: '👥 ਅਰਜ਼ੀਕਰਤਾ', m_desc_label: 'ਨੌਕਰੀ ਵੇਰਵਾ',
-    btn_apply: 'ਅਰਜ਼ੀ ਦਿਓ →', btn_apply_close: '↑ ਬੰਦ ਕਰੋ', apply_sec_title: 'ਤੁਹਾਡੀ ਅਰਜ਼ੀ',
-    apply_email_note: '📧 ਸਾਰੇ ਅਪਡੇਟ ਈਮੇਲ ਤੇ।',
-    captcha_title: 'ਸੰਪਰਕ ਵੇਰਵੇ ਲਓ', captcha_subtitle: 'ਵੇਰਵੇ ਭਰੋ',
-    captcha_note: '📧 ਇੱਕ ਵਾਰ ਈਮੇਲ ਕੀਤਾ ਜਾਵੇਗਾ।',
-    captcha_prove: 'ਸਾਬਿਤ ਕਰੋ ਕਿ ਤੁਸੀਂ ਇਨਸਾਨ ਹੋ', captcha_done_title: 'ਇਨਬਾਕਸ ਦੇਖੋ', captcha_sent_to: 'ਭੇਜਿਆ ਗਿਆ',
-    captcha_one_time: 'ਇਹ ਲਿੰਕ <strong style="color:var(--cream)">ਇੱਕ ਵਾਰ</strong> ਲਈ ਹੈ।',
-    btn_continue: 'ਜਾਰੀ ਰੱਖੋ →', btn_send_contact: 'ਸੰਪਰਕ ਭੇਜੋ →', btn_change_email: '← ਈਮੇਲ ਬਦਲੋ', btn_close: 'ਬੰਦ ਕਰੋ',
-    btn_submit_review: 'ਸਬਮਿਟ ਕਰੋ →', btn_submit_application: 'ਅਰਜ਼ੀ ਭੇਜੋ →', btn_submit_profile: 'ਪ੍ਰੋਫ਼ਾਈਲ ਭੇਜੋ →',
-    f_your_name: 'ਤੁਹਾਡਾ ਨਾਮ', f_fullname: 'ਪੂਰਾ ਨਾਮ', f_email: 'ਈਮੇਲ', f_phone: 'ਫ਼ੋਨ', f_company: 'ਕੰਪਨੀ',
-    f_job_title: 'ਨੌਕਰੀ ਸਿਰਲੇਖ', f_description: 'ਵੇਰਵਾ', f_location: 'ਸਥਾਨ', f_province: 'ਪ੍ਰਾਂਤ',
-    f_job_type: 'ਕਿਸਮ', f_salary: 'ਤਨਖ਼ਾਹ', f_deadline: 'ਆਖਰੀ ਮਿਤੀ', f_skills: 'ਹੁਨਰ',
-    f_resume_link: 'CV ਲਿੰਕ', f_website: 'ਵੈੱਬਸਾਈਟ', f_role_title: 'ਭੂਮਿਕਾ', f_bio: 'ਪਰਿਚੈ',
-    f_experience: 'ਤਜ਼ਰਬਾ', f_availability: 'ਉਪਲਬਧਤਾ', f_cv_link: 'CV', f_your_location: 'ਤੁਹਾਡਾ ਸਥਾਨ',
-    f_purpose: 'ਸੰਪਰਕ ਦਾ ਮਕਸਦ', f_cover: 'ਕਵਰ ਲੈਟਰ',
-    ph_fullname: 'ਪੂਰਾ ਨਾਮ', ph_your_name: 'ਤੁਹਾਡਾ ਨਾਮ', ph_email_company: 'tusi@company.com', ph_your_email: 'tusi@email.com',
-    ph_phone: '+91 98000 00000', ph_company: 'ਕੰਪਨੀ', ph_job_title: 'ਜਿਵੇਂ: Frontend Developer',
-    ph_description: 'ਭੂਮਿਕਾ ਦਾ ਵੇਰਵਾ…', ph_salary: 'ਜਿਵੇਂ: ₹5,00,000',
-    ph_deadline: 'ਜਿਵੇਂ: 31 ਦਸੰਬਰ', ph_skills: 'ਜਿਵੇਂ: JavaScript',
-    ph_cv_link: 'https://…', ph_website: 'https://…', ph_role_title: 'ਜਿਵੇਂ: ਇਲੈਕਟ੍ਰੀਸ਼ੀਅਨ',
-    ph_bio: 'ਸੰਖੇਪ ਪਰਿਚੈ…', ph_experience_role: 'ਤਜ਼ਰਬੇ ਦੇ ਸਾਲ…',
-    ph_skills_csv: 'ਕੌਮੇ ਨਾਲ ਵੱਖ', ph_experience: 'ਸਾਰ…', ph_cover: 'ਤੁਸੀਂ ਕਿਉਂ ਯੋਗ ਹੋ?',
-    ph_portfolio: 'https://…', ph_location_eg: 'ਸ਼ਹਿਰ, ਦੇਸ਼', ph_answer: 'ਜਵਾਬ',
-    opt_select_province: 'ਪ੍ਰਾਂਤ ਚੁਣੋ…', opt_select: 'ਚੁਣੋ…', opt_select_purpose: 'ਮਕਸਦ ਚੁਣੋ…',
-    jt_fulltime: 'ਪੂਰਾ ਸਮਾਂ', jt_parttime: 'ਅੰਸ਼ਕ ਸਮਾਂ', jt_contract: 'ਕੰਟਰੈਕਟ', jt_remote: 'ਰਿਮੋਟ', jt_internship: 'ਇੰਟਰਨਸ਼ਿਪ',
-    avail_immediate: 'ਤੁਰੰਤ', avail_2weeks: '2 ਹਫ਼ਤਿਆਂ ਵਿੱਚ', avail_1month: '1 ਮਹੀਨੇ ਵਿੱਚ', avail_negotiable: 'ਗੱਲਬਾਤ ਯੋਗ',
-    purpose_hiring: '💼 ਨਿਯੁਕਤੀ', purpose_partner: '🤝 ਭਾਈਵਾਲੀ', purpose_interview: '📅 ਇੰਟਰਵਿਊ',
-    purpose_general: '💬 ਆਮ ਸਵਾਲ', purpose_other: '✦ ਹੋਰ',
-    note_email_confirm: '📧 ਪੁਸ਼ਟੀ ਇੱਥੇ', note_cv_required: '📎 ਲਾਜ਼ਮੀ',
-    optional: '(ਵਿਕਲਪਿਕ)', toast_app_ok: 'ਅਰਜ਼ੀ ਭੇਜੀ ਗਈ!',
-    toast_app_fail: 'ਅਸਫ਼ਲ।', toast_net_err: 'ਨੈੱਟਵਰਕ ਗੜਬੜ।', toast_name_req: 'ਨਾਮ ਦਰਜ ਕਰੋ।',
-    toast_email_req: 'ਈਮੇਲ ਲਾਜ਼ਮੀ।', toast_email_invalid: 'ਯੋਗ ਈਮੇਲ ਦਰਜ ਕਰੋ।',
-    toast_resume_req: 'CV ਲਾਜ਼ਮੀ।', toast_employer_req: 'ਮਾਲਕ ਦਾ ਨਾਮ ਲਾਜ਼ਮੀ।',
-    toast_title_req: 'ਸਿਰਲੇਖ ਲਾਜ਼ਮੀ।', toast_desc_req: 'ਵੇਰਵਾ ਲਾਜ਼ਮੀ।', toast_loc_req: 'ਪ੍ਰਾਂਤ ਚੁਣੋ।',
-    toast_role_req: 'ਭੂਮਿਕਾ ਲਾਜ਼ਮੀ।', toast_province_req: 'ਪ੍ਰਾਂਤ ਚੁਣੋ।',
-    err_name_req: 'ਨਾਮ?', err_email_req: 'ਈਮੇਲ?', err_email_invalid: 'ਯੋਗ ਈਮੇਲ।',
-    err_location_req: 'ਸਥਾਨ?', err_purpose_req: 'ਮਕਸਦ?',
-    err_captcha: 'ਗਲਤ — ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।', err_captcha_send: 'ਭੇਜਣ ਵਿੱਚ ਅਸਫ਼ਲ।', err_captcha_net: 'ਨੈੱਟਵਰਕ ਗੜਬੜ।',
-    empty_jobs: 'ਕੋਈ ਅਹੁਦਾ ਨਹੀਂ।', empty_talent: 'ਕੋਈ ਪ੍ਰੋਫ਼ਾਈਲ ਨਹੀਂ।', empty_applicants: 'ਕੋਈ ਅਰਜ਼ੀਕਰਤਾ ਨਹੀਂ।',
-    server_err: 'ਸਰਵਰ ਨਾਲ ਕੁਨੈਕਟ ਨਹੀਂ।', captcha_what_is: 'ਕੀ ਹੈ',
-  },
-  bn: {
-    nav_browse: 'চাকরি দেখুন', nav_talent: 'প্রতিভা দেখুন', nav_applicants: 'আবেদনকারী', nav_postrole: 'কাজ খুঁজছি', nav_postjob: 'চাকরি পোস্ট করুন',
-    hero_tag: 'সরাসরি সুযোগ', hero_h1: 'সেই কাজ খুঁজুন যা <em>গুরুত্বপূর্ণ</em>',
-    hero_sub: 'আমাদের দল যাচাই করা চাকরির সুযোগ। প্রতিটি তালিকা প্রকাশের আগে পর্যালোচনা করা হয়।',
-    hero_btn_browse: 'চাকরি দেখুন ↓', hero_btn_seeking: 'আমি কাজ খুঁজছি', hero_btn_hire: 'কাউকে নিয়োগ করুন',
-    stat_jobs: 'খোলা পদ', stat_visits: 'দর্শক', stat_types: 'চাকরির ধরন', stat_applicants: 'আবেদনকারী',
-    sec_openings_sub: 'বর্তমান পদ', sec_openings_main: 'সব পদ', sec_talent_sub: 'উপলব্ধ প্রতিভা',
-    sec_talent_main: 'কাজ খুঁজছেন যারা', sec_applicants_sub: 'চাকরির আবেদনকারী', sec_applicants_main: 'কে আবেদন করেছেন',
-    search_jobs: 'শিরোনাম, কোম্পানি, দক্ষতা খুঁজুন…', search_talent: 'নাম, ভূমিকা খুঁজুন…', search_applicants: 'নাম, পদ খুঁজুন…',
-    count_jobs: '{n}টি পদ পাওয়া গেছে', count_talent: '{n}টি প্রোফাইল পাওয়া গেছে', count_applicants: '{n}জন আবেদনকারী',
-    filter_all: 'সব', meta_applied: '{n} আবেদনকারী',
-    applicants_banner: 'এরা <strong>অনুমোদিত আবেদনকারী</strong>।',
-    card_applied_for: 'আবেদন করেছেন:', card_get_contact: '📧 যোগাযোগের তথ্য পান', card_get_contact_mini: '📧 যোগাযোগ',
-    postjob_h2: 'চাকরি পোস্ট করুন', postjob_desc: 'পর্যালোচনার জন্য জমা দিন।',
-    postjob_sec_employer: 'নিয়োগকর্তার তথ্য', postjob_sec_details: 'চাকরির বিবরণ', postjob_success_h3: 'জমা পেয়েছি',
-    postjob_success_p1: 'আপনার চাকরি পর্যালোচনাধীন।', postjob_success_p2: '📧 নিশ্চিতকরণ ইমেইল পাঠানো হয়েছে।', postjob_post_another: 'আরও পোস্ট করুন',
-    postrole_h2: 'আপনার ভূমিকা পোস্ট করুন', postrole_desc: 'আপনি কাজ খুঁজছেন।',
-    postrole_sec_personal: 'ব্যক্তিগত তথ্য', postrole_sec_profile: 'পেশাদার প্রোফাইল', postrole_success_h3: 'প্রোফাইল জমা হয়েছে',
-    postrole_success_p1: 'পর্যালোচনাধীন।', postrole_success_p2: '📧 ইমেইল পাঠানো হয়েছে।', btn_submit_another: 'আরও জমা দিন',
-    m_skills_label: 'প্রয়োজনীয় দক্ষতা', m_applicants_label: '👥 আবেদনকারী', m_desc_label: 'চাকরির বিবরণ',
-    btn_apply: 'আবেদন করুন →', btn_apply_close: '↑ বন্ধ করুন', apply_sec_title: 'আপনার আবেদন',
-    apply_email_note: '📧 সব আপডেট ইমেইলে আসবে।',
-    captcha_title: 'যোগাযোগের তথ্য পান', captcha_subtitle: 'আপনার তথ্য পূরণ করুন',
-    captcha_note: '📧 একবার ইমেইল করা হবে।',
-    captcha_prove: 'প্রমাণ করুন আপনি মানুষ', captcha_done_title: 'ইনবক্স দেখুন', captcha_sent_to: 'পাঠানো হয়েছে',
-    captcha_one_time: 'এই লিংক <strong style="color:var(--cream)">একবার ব্যবহারযোগ্য</strong>।',
-    btn_continue: 'চালিয়ে যান →', btn_send_contact: 'যোগাযোগ পাঠান →', btn_change_email: '← ইমেইল পরিবর্তন', btn_close: 'বন্ধ করুন',
-    btn_submit_review: 'পর্যালোচনার জন্য জমা দিন →', btn_submit_application: 'আবেদন জমা দিন →', btn_submit_profile: 'প্রোফাইল জমা দিন →',
-    f_your_name: 'আপনার নাম', f_fullname: 'পুরো নাম', f_email: 'ইমেইল', f_phone: 'ফোন', f_company: 'কোম্পানির নাম',
-    f_job_title: 'চাকরির শিরোনাম', f_description: 'বিবরণ', f_location: 'অবস্থান', f_province: 'প্রদেশ',
-    f_job_type: 'চাকরির ধরন', f_salary: 'বেতন', f_deadline: 'শেষ তারিখ', f_skills: 'দক্ষতা',
-    f_resume_link: 'CV লিংক', f_website: 'ওয়েবসাইট', f_role_title: 'ভূমিকা', f_bio: 'পরিচয়',
-    f_experience: 'অভিজ্ঞতা', f_availability: 'উপলব্ধতা', f_cv_link: 'CV', f_your_location: 'আপনার অবস্থান',
-    f_purpose: 'যোগাযোগের উদ্দেশ্য', f_cover: 'কভার লেটার',
-    ph_fullname: 'পুরো নাম', ph_your_name: 'আপনার নাম', ph_email_company: 'aapni@company.com', ph_your_email: 'aapni@email.com',
-    ph_phone: '+880 1700 000000', ph_company: 'কোম্পানি', ph_job_title: 'যেমন: Frontend Developer',
-    ph_description: 'ভূমিকার বিবরণ…', ph_salary: 'যেমন: ৳৫,০০,০০০',
-    ph_deadline: 'যেমন: ৩১ ডিসেম্বর', ph_skills: 'যেমন: JavaScript',
-    ph_cv_link: 'https://…', ph_website: 'https://…', ph_role_title: 'যেমন: ইলেকট্রিশিয়ান',
-    ph_bio: 'সংক্ষিপ্ত পরিচয়…', ph_experience_role: 'অভিজ্ঞতার বছর…',
-    ph_skills_csv: 'কমা দিয়ে আলাদা', ph_experience: 'সারসংক্ষেপ…', ph_cover: 'আপনি কেন উপযুক্ত?',
-    ph_portfolio: 'https://…', ph_location_eg: 'শহর, দেশ', ph_answer: 'উত্তর',
-    opt_select_province: 'প্রদেশ বেছে নিন…', opt_select: 'বেছে নিন…', opt_select_purpose: 'উদ্দেশ্য বেছে নিন…',
-    jt_fulltime: 'পূর্ণকালীন', jt_parttime: 'খণ্ডকালীন', jt_contract: 'চুক্তি', jt_remote: 'দূরবর্তী', jt_internship: 'ইন্টার্নশিপ',
-    avail_immediate: 'তাৎক্ষণিক', avail_2weeks: '২ সপ্তাহের মধ্যে', avail_1month: '১ মাসের মধ্যে', avail_negotiable: 'আলোচনাযোগ্য',
-    purpose_hiring: '💼 নিয়োগ / চাকরির প্রস্তাব', purpose_partner: '🤝 অংশীদারিত্ব', purpose_interview: '📅 ইন্টারভিউ',
-    purpose_general: '💬 সাধারণ জিজ্ঞাসা', purpose_other: '✦ অন্যান্য',
-    note_email_confirm: '📧 নিশ্চিতকরণ এখানে', note_cv_required: '📎 বাধ্যতামূলক',
-    optional: '(ঐচ্ছিক)', toast_app_ok: 'আবেদন জমা হয়েছে! ইমেইল দেখুন।',
-    toast_app_fail: 'জমা ব্যর্থ।', toast_net_err: 'নেটওয়ার্ক ত্রুটি।', toast_name_req: 'নাম প্রয়োজন।',
-    toast_email_req: 'ইমেইল প্রয়োজন।', toast_email_invalid: 'বৈধ ইমেইল দিন।',
-    toast_resume_req: 'CV প্রয়োজন।', toast_employer_req: 'নিয়োগকর্তার নাম প্রয়োজন।',
-    toast_title_req: 'শিরোনাম প্রয়োজন।', toast_desc_req: 'বিবরণ প্রয়োজন।', toast_loc_req: 'প্রদেশ বেছে নিন।',
-    toast_role_req: 'ভূমিকা প্রয়োজন।', toast_province_req: 'প্রদেশ বেছে নিন।',
-    err_name_req: 'নাম দিন।', err_email_req: 'ইমেইল দিন।', err_email_invalid: 'বৈধ ইমেইল।',
-    err_location_req: 'অবস্থান দিন।', err_purpose_req: 'উদ্দেশ্য বেছে নিন।',
-    err_captcha: 'ভুল — আবার চেষ্টা করুন।', err_captcha_send: 'পাঠাতে ব্যর্থ।', err_captcha_net: 'নেটওয়ার্ক ত্রুটি।',
-    empty_jobs: 'কোনো পদ পাওয়া যায়নি।', empty_talent: 'কোনো প্রোফাইল নেই।', empty_applicants: 'কোনো আবেদনকারী নেই।',
-    server_err: 'সার্ভারে সংযোগ করা যায়নি।', captcha_what_is: 'কত হয়',
-  },
-  ur: {
-    nav_browse: 'ملازمتیں دیکھیں', nav_talent: 'ہنر دیکھیں', nav_applicants: 'درخواست دہندگان', nav_postrole: 'کام چاہیے', nav_postjob: 'ملازمت پوسٹ کریں',
-    hero_tag: 'براہ راست مواقع', hero_h1: 'وہ کام تلاش کریں جو <em>اہم</em> ہو',
-    hero_sub: 'ہماری ٹیم کی جانچ شدہ ملازمتیں۔ ہر اشتہار شائع ہونے سے پہلے جائزہ لیا جاتا ہے۔',
-    hero_btn_browse: 'ملازمتیں دیکھیں ↓', hero_btn_seeking: 'مجھے کام چاہیے', hero_btn_hire: 'کسی کو ملازم رکھیں',
-    stat_jobs: 'کھلی آسامیاں', stat_visits: 'زائرین', stat_types: 'ملازمت کی اقسام', stat_applicants: 'درخواست دہندگان',
-    sec_openings_sub: 'موجودہ آسامیاں', sec_openings_main: 'تمام عہدے', sec_talent_sub: 'دستیاب ہنر',
-    sec_talent_main: 'کام تلاش کرنے والے', sec_applicants_sub: 'درخواست دہندگان', sec_applicants_main: 'کس نے درخواست دی',
-    search_jobs: 'عنوان، کمپنی، مہارت تلاش کریں…', search_talent: 'نام، کردار تلاش کریں…', search_applicants: 'نام، عہدہ تلاش کریں…',
-    count_jobs: '{n} عہدے ملے', count_talent: '{n} پروفائل ملے', count_applicants: '{n} درخواست دہندگان',
-    filter_all: 'سب', meta_applied: '{n} درخواست دہندہ',
-    applicants_banner: 'یہ <strong>منظور شدہ درخواست دہندگان</strong> ہیں۔',
-    card_applied_for: 'درخواست دی:', card_get_contact: '📧 رابطہ معلومات حاصل کریں', card_get_contact_mini: '📧 رابطہ',
-    postjob_h2: 'ملازمت پوسٹ کریں', postjob_desc: 'جائزے کے لیے جمع کریں۔',
-    postjob_sec_employer: 'آجر کی تفصیلات', postjob_sec_details: 'ملازمت کی تفصیلات', postjob_success_h3: 'درخواست موصول',
-    postjob_success_p1: 'آپ کی ملازمت جائزے کے زیر التواء ہے۔', postjob_success_p2: '📧 تصدیقی ای میل بھیج دیا گیا۔', postjob_post_another: 'مزید پوسٹ کریں',
-    postrole_h2: 'اپنا کردار پوسٹ کریں', postrole_desc: 'آپ کام تلاش کر رہے ہیں۔',
-    postrole_sec_personal: 'ذاتی تفصیلات', postrole_sec_profile: 'پیشہ ورانہ پروفائل', postrole_success_h3: 'پروفائل جمع ہو گئی',
-    postrole_success_p1: 'جائزے کے زیر التواء۔', postrole_success_p2: '📧 ای میل بھیجا گیا۔', btn_submit_another: 'مزید جمع کریں',
-    m_skills_label: 'ضروری مہارتیں', m_applicants_label: '👥 درخواست دہندگان', m_desc_label: 'ملازمت کی تفصیل',
-    btn_apply: 'درخواست دیں →', btn_apply_close: '↑ بند کریں', apply_sec_title: 'آپ کی درخواست',
-    apply_email_note: '📧 تمام اپڈیٹ ای میل پر آئیں گے۔',
-    captcha_title: 'رابطہ معلومات حاصل کریں', captcha_subtitle: 'اپنی تفصیلات بھریں',
-    captcha_note: '📧 ایک بار ای میل کیا جائے گا۔',
-    captcha_prove: 'ثابت کریں کہ آپ انسان ہیں', captcha_done_title: 'ان باکس دیکھیں', captcha_sent_to: 'بھیجا گیا',
-    captcha_one_time: 'یہ لنک <strong style="color:var(--cream)">صرف ایک بار</strong> کام کرے گا۔',
-    btn_continue: 'جاری رکھیں →', btn_send_contact: 'رابطہ بھیجیں →', btn_change_email: '← ای میل تبدیل کریں', btn_close: 'بند کریں',
-    btn_submit_review: 'جائزے کے لیے جمع کریں →', btn_submit_application: 'درخواست جمع کریں →', btn_submit_profile: 'پروفائل جمع کریں →',
-    f_your_name: 'آپ کا نام', f_fullname: 'پورا نام', f_email: 'ای میل', f_phone: 'فون', f_company: 'کمپنی کا نام',
-    f_job_title: 'ملازمت کا عنوان', f_description: 'تفصیل', f_location: 'مقام', f_province: 'صوبہ',
-    f_job_type: 'قسم', f_salary: 'تنخواہ', f_deadline: 'آخری تاریخ', f_skills: 'مہارتیں',
-    f_resume_link: 'CV لنک', f_website: 'ویب سائٹ', f_role_title: 'کردار / عہدہ', f_bio: 'تعارف',
-    f_experience: 'تجربہ', f_availability: 'دستیابی', f_cv_link: 'CV', f_your_location: 'آپ کا مقام',
-    f_purpose: 'رابطے کا مقصد', f_cover: 'کور لیٹر',
-    ph_fullname: 'پورا نام', ph_your_name: 'آپ کا نام', ph_email_company: 'aap@company.com', ph_your_email: 'aap@email.com',
-    ph_phone: '+92 300 0000000', ph_company: 'کمپنی', ph_job_title: 'مثلاً: Frontend Developer',
-    ph_description: 'کردار کی تفصیل…', ph_salary: 'مثلاً: ₨50,000',
-    ph_deadline: 'مثلاً: 31 دسمبر', ph_skills: 'مثلاً: JavaScript',
-    ph_cv_link: 'https://…', ph_website: 'https://…', ph_role_title: 'مثلاً: الیکٹریشن',
-    ph_bio: 'مختصر تعارف…', ph_experience_role: 'تجربے کے سال…',
-    ph_skills_csv: 'کاما سے الگ', ph_experience: 'خلاصہ…', ph_cover: 'آپ کیوں موزوں ہیں؟',
-    ph_portfolio: 'https://…', ph_location_eg: 'شہر، ملک', ph_answer: 'جواب',
-    opt_select_province: 'صوبہ چنیں…', opt_select: 'چنیں…', opt_select_purpose: 'مقصد چنیں…',
-    jt_fulltime: 'کل وقتی', jt_parttime: 'جز وقتی', jt_contract: 'معاہدہ', jt_remote: 'ریموٹ', jt_internship: 'انٹرن شپ',
-    avail_immediate: 'فوری', avail_2weeks: '2 ہفتوں میں', avail_1month: '1 مہینے میں', avail_negotiable: 'قابل گفتگو',
-    purpose_hiring: '💼 ملازمت کی پیشکش', purpose_partner: '🤝 شراکت داری', purpose_interview: '📅 انٹرویو',
-    purpose_general: '💬 عام استفسار', purpose_other: '✦ دیگر',
-    note_email_confirm: '📧 تصدیق یہاں بھیجی جائے گی', note_cv_required: '📎 لازمی',
-    optional: '(اختیاری)', toast_app_ok: 'درخواست جمع ہو گئی! ای میل دیکھیں۔',
-    toast_app_fail: 'جمع کرنا ناکام۔', toast_net_err: 'نیٹ ورک خرابی۔', toast_name_req: 'نام درج کریں۔',
-    toast_email_req: 'ای میل لازمی ہے۔', toast_email_invalid: 'درست ای میل درج کریں۔',
-    toast_resume_req: 'CV لازمی ہے۔', toast_employer_req: 'آجر کا نام لازمی ہے۔',
-    toast_title_req: 'عنوان لازمی ہے۔', toast_desc_req: 'تفصیل لازمی ہے۔', toast_loc_req: 'صوبہ چنیں۔',
-    toast_role_req: 'کردار لازمی ہے۔', toast_province_req: 'صوبہ چنیں۔',
-    err_name_req: 'نام درج کریں۔', err_email_req: 'ای میل درج کریں۔', err_email_invalid: 'درست ای میل۔',
-    err_location_req: 'مقام درج کریں۔', err_purpose_req: 'مقصد چنیں۔',
-    err_captcha: 'غلط — دوبارہ کوشش کریں۔', err_captcha_send: 'بھیجنا ناکام۔', err_captcha_net: 'نیٹ ورک خرابی۔',
-    empty_jobs: 'کوئی عہدہ نہیں ملا۔', empty_talent: 'کوئی پروفائل نہیں۔', empty_applicants: 'کوئی درخواست دہندہ نہیں۔',
-    server_err: 'سرور سے جڑ نہیں سکا۔', captcha_what_is: 'کیا ہے',
-  }
-
+const LANGS_EN = {
+  nav_browse: 'Browse Jobs', nav_talent: 'Browse Talent', nav_applicants: 'Applicants', nav_postrole: 'Post My Role', nav_postjob: 'Post a Job',
+  hero_tag: 'Live Opportunities', hero_h1: 'Find work that <em>matters</em> to you',
+  hero_sub: 'Curated job opportunities vetted by our team. Every listing is reviewed before going live.',
+  hero_btn_browse: 'Browse Openings \u2193', hero_btn_seeking: "I'm Looking for Work", hero_btn_hire: 'Hire Someone',
+  stat_jobs: 'Open Roles', stat_visits: 'Visitors', stat_types: 'Job Types', stat_applicants: 'Applicants',
+  sec_openings_sub: 'Current Openings', sec_openings_main: 'All Positions', sec_talent_sub: 'Available Talent',
+  sec_talent_main: 'People Looking for Work', sec_applicants_sub: 'Job Applicants', sec_applicants_main: 'Who Has Applied',
+  search_jobs: 'Search title, company, skills\u2026', search_talent: 'Search name, role, skills\u2026', search_applicants: 'Search name, title, company\u2026',
+  count_jobs: '{n} position(s) found', count_talent: '{n} profile(s) found', count_applicants: '{n} applicant(s) found',
+  filter_all: 'All', meta_applied: 'Applicant {n}',
+  applicants_banner: 'These are <strong>approved applicants</strong>.',
+  card_applied_for: 'Applied for:', card_get_contact: '\ud83d\udce7 Get Contact Details', card_get_contact_mini: '\ud83d\udce7 Contact',
+  postjob_h2: 'Post a Position', postjob_desc: 'Submit your job listing for review. Our team approves all postings before they appear publicly \u2014 usually within 24 hours. <strong style="color:var(--gold)">Email is required</strong> \u2014 you will receive a confirmation and approval notification via email.',
+  postjob_sec_employer: 'Employer Details', postjob_sec_details: 'Job Details', postjob_success_h3: 'Submission received',
+  postjob_success_p1: 'Your job posting is pending admin review.<br>It will appear publicly once approved.',
+  postjob_success_p2: '\ud83d\udce7 A confirmation email with a WhatsApp contact button has been sent to your inbox.', postjob_post_another: 'Post Another',
+  postrole_h2: 'Post Your Role', postrole_desc: 'You are looking for work. Tell employers who you are, what you do, and where in Spain you are available. Your profile is reviewed before going live. <strong style="color:var(--gold)">Email is required</strong> \u2014 you will get a confirmation and approval notice.',
+  postrole_sec_personal: 'Personal Details', postrole_sec_profile: 'Professional Profile', postrole_success_h3: 'Profile submitted',
+  postrole_success_p1: 'Your role profile is pending admin review.<br>It will appear publicly once approved.',
+  postrole_success_p2: '\ud83d\udce7 A confirmation email with a WhatsApp contact button has been sent to your inbox.', btn_submit_another: 'Submit Another',
+  m_skills_label: 'Required Skills', m_applicants_label: '\ud83d\udc65 People who applied', m_desc_label: 'Job Description',
+  btn_apply: 'Apply for this Position \u2192', btn_apply_close: '\u2191 Close Application', apply_sec_title: 'Your Application',
+  apply_email_note: '\ud83d\udce7 All updates \u2014 shortlisting, company decisions \u2014 come via email. Email is required.',
+  captcha_title: 'Get Contact Details', captcha_subtitle: 'Fill in your details \u2014 contact sent once to your email',
+  captcha_note: '\ud83d\udce7 Contact details will be emailed to you <strong style="color:var(--gold)">once</strong>. Fill in your details \u2014 no account needed.',
+  captcha_prove: 'Prove you are human', captcha_done_title: 'Check your inbox', captcha_sent_to: 'Details have been sent to',
+  captcha_one_time: 'This link is <strong style="color:var(--cream)">one-time use</strong> \u2014 it will not work again.',
+  btn_continue: 'Continue \u2192', btn_send_contact: 'Send Details \u2192', btn_change_email: '\u2190 Change email', btn_close: 'Close',
+  btn_submit_review: 'Submit for Review \u2192', btn_submit_application: 'Submit Application \u2192', btn_submit_profile: 'Submit Profile \u2192',
+  f_your_name: 'Your Name', f_fullname: 'Full Name', f_email: 'Email', f_phone: 'Phone', f_company: 'Company Name',
+  f_job_title: 'Job Title', f_description: 'Description', f_location: 'Location', f_province: 'Location (Province)',
+  f_job_type: 'Job Type', f_salary: 'Salary / Rate', f_deadline: 'Deadline', f_skills: 'Skills',
+  f_resume_link: 'Resume / Portfolio Link', f_website: 'Website', f_role_title: 'Role / Job Title', f_bio: 'Bio / About You',
+  f_experience: 'Experience', f_availability: 'Availability', f_cv_link: 'Resume / Portfolio Link', f_your_location: 'Your Location',
+  f_purpose: 'Contact Purpose', f_cover: 'Cover Letter',
+  ph_fullname: 'Full name', ph_your_name: 'Your name', ph_email_company: 'you@company.com', ph_your_email: 'you@email.com',
+  ph_phone: '+34 600 000 000', ph_company: 'Acme Corp', ph_job_title: 'e.g. Senior Frontend Developer',
+  ph_description: 'Describe the role, responsibilities\u2026', ph_salary: 'e.g. 40,000 \u20ac / year',
+  ph_deadline: 'e.g. 31 Dec 2025', ph_skills: 'e.g. JavaScript, Python, SQL', ph_cv_link: 'https://drive.google\u2026 or LinkedIn',
+  ph_website: 'https://yourcompany.com', ph_role_title: 'e.g. Full Stack Developer\u2026',
+  ph_bio: 'Brief description of who you are\u2026', ph_experience_role: 'Years of experience\u2026',
+  ph_skills_csv: 'Comma-separated skills', ph_experience: 'Brief experience summary\u2026', ph_cover: 'Why are you a good fit?',
+  ph_portfolio: 'https://yourportfolio.com', ph_location_eg: 'City, Country (e.g. Madrid, Spain)', ph_answer: 'Answer',
+  opt_select_province: 'Select province\u2026', opt_select: 'Select\u2026', opt_select_purpose: 'Select purpose\u2026',
+  jt_fulltime: 'Full-time', jt_parttime: 'Part-time', jt_contract: 'Contract', jt_remote: 'Remote', jt_internship: 'Internship',
+  avail_immediate: 'Immediately', avail_2weeks: 'Within 2 weeks', avail_1month: 'Within 1 month', avail_negotiable: 'Negotiable',
+  purpose_hiring: '\ud83d\udcbc Hiring / Job Offer', purpose_partner: '\ud83e\udd1d Collaboration', purpose_interview: '\ud83d\udcc5 Interview',
+  purpose_general: '\ud83d\udcac General Enquiry', purpose_other: '\u2736 Other',
+  note_email_confirm: '\ud83d\udce7 Confirmation & approval notices sent here', note_cv_required: '\ud83d\udcce Required \u2014 included in your WhatsApp confirmation',
+  optional: '(optional)', toast_app_ok: 'Application sent! Check your email.',
+  toast_app_fail: 'Submission failed.', toast_net_err: 'Network error. Please try again.', toast_name_req: 'Name is required.',
+  toast_email_req: 'Email is required.', toast_email_invalid: 'Please enter a valid email.',
+  toast_resume_req: 'Resume link is required.', toast_employer_req: 'Employer name is required.',
+  toast_title_req: 'Job title is required.', toast_desc_req: 'Description is required.', toast_loc_req: 'Please select a province.',
+  toast_role_req: 'Role is required.', toast_province_req: 'Please select your province.',
+  err_name_req: 'Enter your name.', err_email_req: 'Enter your email.', err_email_invalid: 'Invalid email.',
+  err_location_req: 'Enter your location.', err_purpose_req: 'Select a purpose.',
+  err_captcha: 'Incorrect \u2014 try again.', err_captcha_send: 'Send failed.', err_captcha_net: 'Network error.',
+  empty_jobs: 'No positions found.', empty_talent: 'No profiles found.', empty_applicants: 'No applicants found.',
+  server_err: 'Could not connect to server.', captcha_what_is: 'What is',
 };
 
-let currentLang = 'en';
-
 function t(key) {
-  return (LANGS[currentLang] && LANGS[currentLang][key]) || LANGS['en'][key] || key;
+  return LANGS_EN[key] || key;
 }
 
 // ═══════════════════════════════════════════════════
@@ -1559,7 +995,7 @@ function t(key) {
 // ═══════════════════════════════════════════════════
 function toggleMobileNav(e) {
   if(e) e.stopPropagation();
-  closeLangMenu();
+  closeGTModal();
   const btn = document.getElementById('hamburger-btn');
   const drawer = document.getElementById('mobile-nav-drawer');
   btn.classList.toggle('open');
@@ -1571,38 +1007,8 @@ function closeMobileNav() {
   document.getElementById('mobile-nav-drawer').classList.remove('open');
 }
 
-function toggleLangMenu(e) {
-  if (e) e.stopPropagation();
-  closeMobileNav();
-  const picker  = document.getElementById('lang-picker');
-  const trigger = document.getElementById('lang-trigger-btn');
-  const isOpen  = picker.classList.contains('open');
-  
-  if (isOpen) {
-    closeLangMenu();
-  } else {
-    picker.classList.add('open');
-    trigger.classList.add('open');
-    trigger.setAttribute('aria-expanded', 'true');
-  }
-}
-
-function closeLangMenu() {
-  const picker  = document.getElementById('lang-picker');
-  const trigger = document.getElementById('lang-trigger-btn');
-  if(picker) picker.classList.remove('open');
-  if(trigger) {
-    trigger.classList.remove('open');
-    trigger.setAttribute('aria-expanded', 'false');
-  }
-}
-
-// Close language picker / mobile menu if clicked outside
+// Close mobile menu if clicked outside
 document.addEventListener('click', function(e) {
-  const picker = document.getElementById('lang-picker');
-  if (picker && picker.classList.contains('open') && !picker.contains(e.target)) {
-    closeLangMenu();
-  }
   const drawer = document.getElementById('mobile-nav-drawer');
   const hamburger = document.getElementById('hamburger-btn');
   if (drawer && drawer.classList.contains('open') && !drawer.contains(e.target) && !hamburger.contains(e.target)) {
@@ -1610,61 +1016,164 @@ document.addEventListener('click', function(e) {
   }
 });
 
-const LANG_META = {
-  en: { code: 'EN' }, es: { code: 'ES' }, ca: { code: 'CA' },
-  gl: { code: 'GL' }, eu: { code: 'EU' }, va: { code: 'VA' },
-  hi: { code: 'HI' }, pa: { code: 'PA' }, bn: { code: 'BN' }, ur: { code: 'UR' },
-};
+// ═══════════════════════════════════════════════════
+//  GOOGLE TRANSLATE INTEGRATION
+// ═══════════════════════════════════════════════════
+const GT_LANGUAGES = [
+  { code: 'en',    name: 'English',            native: 'English',              flag: '🇬🇧' },
+  { code: 'es',    name: 'Spanish',            native: 'Español',              flag: '🇪🇸' },
+  { code: 'ca',    name: 'Catalan',            native: 'Català',               flag: '🟡' },
+  { code: 'gl',    name: 'Galician',           native: 'Galego',               flag: '🌿' },
+  { code: 'eu',    name: 'Basque',             native: 'Euskara',              flag: '🟢' },
+  { code: 'fr',    name: 'French',             native: 'Français',             flag: '🇫🇷' },
+  { code: 'de',    name: 'German',             native: 'Deutsch',              flag: '🇩🇪' },
+  { code: 'it',    name: 'Italian',            native: 'Italiano',             flag: '🇮🇹' },
+  { code: 'pt',    name: 'Portuguese',         native: 'Português',            flag: '🇵🇹' },
+  { code: 'nl',    name: 'Dutch',              native: 'Nederlands',           flag: '🇳🇱' },
+  { code: 'pl',    name: 'Polish',             native: 'Polski',               flag: '🇵🇱' },
+  { code: 'ru',    name: 'Russian',            native: 'Русский',              flag: '🇷🇺' },
+  { code: 'uk',    name: 'Ukrainian',          native: 'Українська',           flag: '🇺🇦' },
+  { code: 'ro',    name: 'Romanian',           native: 'Română',               flag: '🇷🇴' },
+  { code: 'cs',    name: 'Czech',              native: 'Čeština',              flag: '🇨🇿' },
+  { code: 'sk',    name: 'Slovak',             native: 'Slovenčina',           flag: '🇸🇰' },
+  { code: 'hu',    name: 'Hungarian',          native: 'Magyar',               flag: '🇭🇺' },
+  { code: 'sv',    name: 'Swedish',            native: 'Svenska',              flag: '🇸🇪' },
+  { code: 'no',    name: 'Norwegian',          native: 'Norsk',                flag: '🇳🇴' },
+  { code: 'da',    name: 'Danish',             native: 'Dansk',                flag: '🇩🇰' },
+  { code: 'fi',    name: 'Finnish',            native: 'Suomi',                flag: '🇫🇮' },
+  { code: 'el',    name: 'Greek',              native: 'Ελληνικά',             flag: '🇬🇷' },
+  { code: 'tr',    name: 'Turkish',            native: 'Türkçe',               flag: '🇹🇷' },
+  { code: 'ar',    name: 'Arabic',             native: 'العربية',              flag: '🇸🇦' },
+  { code: 'fa',    name: 'Persian',            native: 'فارسی',                flag: '🇮🇷' },
+  { code: 'ur',    name: 'Urdu',               native: 'اردو',                 flag: '🇵🇰' },
+  { code: 'hi',    name: 'Hindi',              native: 'हिंदी',                 flag: '🇮🇳' },
+  { code: 'bn',    name: 'Bengali',            native: 'বাংলা',                 flag: '🇧🇩' },
+  { code: 'pa',    name: 'Punjabi',            native: 'ਪੰਜਾਬੀ',               flag: '🪯' },
+  { code: 'gu',    name: 'Gujarati',           native: 'ગુજરાતી',              flag: '🇮🇳' },
+  { code: 'mr',    name: 'Marathi',            native: 'मराठी',                 flag: '🇮🇳' },
+  { code: 'ta',    name: 'Tamil',              native: 'தமிழ்',                 flag: '🇮🇳' },
+  { code: 'te',    name: 'Telugu',             native: 'తెలుగు',               flag: '🇮🇳' },
+  { code: 'kn',    name: 'Kannada',            native: 'ಕನ್ನಡ',                flag: '🇮🇳' },
+  { code: 'ml',    name: 'Malayalam',          native: 'മലയാളം',               flag: '🇮🇳' },
+  { code: 'si',    name: 'Sinhala',            native: 'සිංහල',                flag: '🇱🇰' },
+  { code: 'ne',    name: 'Nepali',             native: 'नेपाली',               flag: '🇳🇵' },
+  { code: 'zh-CN', name: 'Chinese (Simplified)', native: '中文（简体）',         flag: '🇨🇳' },
+  { code: 'zh-TW', name: 'Chinese (Traditional)', native: '中文（繁體）',        flag: '🇹🇼' },
+  { code: 'ja',    name: 'Japanese',           native: '日本語',               flag: '🇯🇵' },
+  { code: 'ko',    name: 'Korean',             native: '한국어',               flag: '🇰🇷' },
+  { code: 'vi',    name: 'Vietnamese',         native: 'Tiếng Việt',           flag: '🇻🇳' },
+  { code: 'th',    name: 'Thai',               native: 'ภาษาไทย',              flag: '🇹🇭' },
+  { code: 'id',    name: 'Indonesian',         native: 'Bahasa Indonesia',      flag: '🇮🇩' },
+  { code: 'ms',    name: 'Malay',              native: 'Bahasa Melayu',         flag: '🇲🇾' },
+  { code: 'tl',    name: 'Filipino',           native: 'Filipino',              flag: '🇵🇭' },
+  { code: 'sw',    name: 'Swahili',            native: 'Kiswahili',             flag: '🇰🇪' },
+  { code: 'am',    name: 'Amharic',            native: 'አማርኛ',                 flag: '🇪🇹' },
+  { code: 'ha',    name: 'Hausa',              native: 'Hausa',                 flag: '🇳🇬' },
+  { code: 'yo',    name: 'Yoruba',             native: 'Yorùbá',               flag: '🇳🇬' },
+  { code: 'ig',    name: 'Igbo',               native: 'Igbo',                  flag: '🇳🇬' },
+  { code: 'so',    name: 'Somali',             native: 'Soomaali',              flag: '🇸🇴' },
+  { code: 'af',    name: 'Afrikaans',          native: 'Afrikaans',             flag: '🇿🇦' },
+  { code: 'he',    name: 'Hebrew',             native: 'עברית',                 flag: '🇮🇱' },
+  { code: 'az',    name: 'Azerbaijani',        native: 'Azərbaycanca',          flag: '🇦🇿' },
+  { code: 'ka',    name: 'Georgian',           native: 'ქართული',              flag: '🇬🇪' },
+  { code: 'hy',    name: 'Armenian',           native: 'Հայերեն',              flag: '🇦🇲' },
+  { code: 'kk',    name: 'Kazakh',             native: 'Қазақша',              flag: '🇰🇿' },
+  { code: 'uz',    name: 'Uzbek',              native: "O'zbek",                flag: '🇺🇿' },
+  { code: 'mn',    name: 'Mongolian',          native: 'Монгол',               flag: '🇲🇳' },
+  { code: 'my',    name: 'Burmese',            native: 'မြန်မာ',                flag: '🇲🇲' },
+  { code: 'km',    name: 'Khmer',              native: 'ខ្មែរ',                 flag: '🇰🇭' },
+  { code: 'lo',    name: 'Lao',                native: 'ລາວ',                  flag: '🇱🇦' },
+  { code: 'sq',    name: 'Albanian',           native: 'Shqip',                 flag: '🇦🇱' },
+  { code: 'bs',    name: 'Bosnian',            native: 'Bosanski',              flag: '🇧🇦' },
+  { code: 'hr',    name: 'Croatian',           native: 'Hrvatski',              flag: '🇭🇷' },
+  { code: 'sr',    name: 'Serbian',            native: 'Српски',               flag: '🇷🇸' },
+  { code: 'sl',    name: 'Slovenian',          native: 'Slovenščina',           flag: '🇸🇮' },
+  { code: 'bg',    name: 'Bulgarian',          native: 'Български',            flag: '🇧🇬' },
+  { code: 'mk',    name: 'Macedonian',         native: 'Македонски',           flag: '🇲🇰' },
+  { code: 'lv',    name: 'Latvian',            native: 'Latviešu',              flag: '🇱🇻' },
+  { code: 'lt',    name: 'Lithuanian',         native: 'Lietuvių',              flag: '🇱🇹' },
+  { code: 'et',    name: 'Estonian',           native: 'Eesti',                 flag: '🇪🇪' },
+  { code: 'mt',    name: 'Maltese',            native: 'Malti',                 flag: '🇲🇹' },
+  { code: 'is',    name: 'Icelandic',          native: 'Íslenska',              flag: '🇮🇸' },
+  { code: 'ga',    name: 'Irish',              native: 'Gaeilge',               flag: '🇮🇪' },
+  { code: 'cy',    name: 'Welsh',              native: 'Cymraeg',               flag: '🏴󠁧󠁢󠁷󠁬󠁳󠁿' },
+];
 
-function pickLang(lang) {
-  setLang(lang);
-  try { localStorage.setItem('wb_lang', lang); } catch(e) {}
-  setTimeout(closeLangMenu, 120);
+let _gtCurrentCode = 'en';
+let _gtCurrentLabel = 'EN';
 
-  // Show loaders
-  document.getElementById('job-grid').innerHTML = '<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-  document.getElementById('talent-grid').innerHTML = '<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-  document.getElementById('applicant-grid').innerHTML = '<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-
-  // Re-fetch all data
-  loadJobs();
-  loadTalents();
-  loadApplicants();
-  loadVisits();
+function _setGTCookie(langCode) {
+  // Set googtrans cookie for both root path and current domain
+  const val = langCode === 'en' ? '' : '/en/' + langCode;
+  const expire = langCode === 'en' ? 'expires=Thu, 01 Jan 1970 00:00:00 UTC; ' : '';
+  document.cookie = 'googtrans=' + val + '; ' + expire + 'path=/';
+  document.cookie = 'googtrans=' + val + '; ' + expire + 'path=/; domain=' + location.hostname;
 }
-function setLang(lang) {
-  currentLang = lang;
-  document.documentElement.lang = lang === 'eu' ? 'eu' : lang === 'gl' ? 'gl' : (lang === 'ca' || lang === 'va') ? 'ca' : ['hi','pa','bn','ur'].includes(lang) ? lang : lang === 'en' ? 'en' : 'es';
-  
-  // Set Urdu to Right-To-Left (RTL) layout, others to Left-To-Right
-  document.dir = lang === 'ur' ? 'rtl' : 'ltr';
 
-  const meta = LANG_META[lang] || LANG_META.en;
-  const codeEl = document.getElementById('lang-trigger-code');
-  if (codeEl) codeEl.textContent = meta.code;
-
-  ['en','es','ca','gl','eu','va','hi','pa','bn','ur'].forEach(l => {
-    const row = document.getElementById('lopt-' + l);
-    if (row) row.classList.toggle('is-active', l === lang);
-  });
-
-  document.querySelectorAll('[data-t]').forEach(el => {
-    const key = el.getAttribute('data-t');
-    const val = t(key);
-    if (val) el.innerHTML = val;
-  });
-
-  document.querySelectorAll('[data-ph]').forEach(el => {
-    const key = el.getAttribute('data-ph');
-    const val = t(key);
-    if (val) el.placeholder = val;
-  });
-
-  if (allJobs.length) renderJobs();
-  if (allTalents.length) renderTalents();
-  if (allApplicants.length) { buildApplicantJobFilters(); renderApplicants(); }
-  if (allJobs.length) buildFilters();
+function pickGTLang(langCode) {
+  _gtCurrentCode = langCode;
+  _setGTCookie(langCode);
+  location.reload();
 }
+
+// Re-trigger GT translation on dynamically added nodes
+function retranslate() {
+  try {
+    const combo = document.querySelector('.goog-te-combo');
+    if (combo && combo.value && combo.value !== 'en') {
+      combo.dispatchEvent(new Event('change'));
+    }
+  } catch(e) {}
+}
+
+function buildGTList(filter) {
+  const list = document.getElementById('gt-lang-list');
+  if (!list) return;
+  const q = (filter || '').toLowerCase();
+  const filtered = GT_LANGUAGES.filter(l =>
+    !q || l.name.toLowerCase().includes(q) || l.native.toLowerCase().includes(q)
+  );
+  list.innerHTML = filtered.map(l => `
+    <button class="gt-lang-opt ${l.code === _gtCurrentCode ? 'active' : ''}" data-code="${l.code}"
+      onclick="pickGTLang(this.dataset.code)">
+      <span class="gt-lang-flag">${l.flag}</span>
+      <span class="gt-lang-name">${l.name}<span class="gt-lang-native">${l.native}</span></span>
+      ${l.code === _gtCurrentCode ? '<span style="margin-left:auto;color:var(--gold);font-size:0.7rem">✓</span>' : ''}
+    </button>
+  `).join('');
+}
+
+function filterGTLangs(q) { buildGTList(q); }
+
+function openGTModal() {
+  closeMobileNav();
+  const overlay = document.getElementById('gt-modal-overlay');
+  if (overlay) { overlay.classList.add('open'); buildGTList(''); }
+  setTimeout(() => { const s = document.getElementById('gt-search'); if(s) s.focus(); }, 100);
+}
+
+function closeGTModal(e) {
+  if (e && e.target !== document.getElementById('gt-modal-overlay')) return;
+  const overlay = document.getElementById('gt-modal-overlay');
+  if (overlay) overlay.classList.remove('open');
+}
+
+// Detect current GT language from cookie and update button label + active state
+(function detectCurrentGTLang() {
+  try {
+    const m = document.cookie.match(/googtrans=\/en\/([^;]+)/);
+    if (m && m[1]) {
+      const code = decodeURIComponent(m[1]).trim();
+      const found = GT_LANGUAGES.find(l => l.code === code);
+      if (found) {
+        _gtCurrentCode = found.code;
+        // Update button label to show current language
+        const lbl = document.getElementById('gt-current-label');
+        if (lbl) lbl.textContent = found.name.slice(0,5).toUpperCase();
+      }
+    }
+  } catch(e) {}
+})();
 
 
 // ═══════════════════════════════════════════════════
@@ -1734,7 +1243,7 @@ async function loadApplicants() {
 function buildApplicantJobFilters() {
   const jobs = [t('filter_all'), ...new Set(allApplicants.map(a => a.job_title).filter(Boolean))];
   const allKey = t('filter_all');
-  if (activeApplicantJobFilter === 'All' || Object.values(LANGS).map(l=>l.filter_all).includes(activeApplicantJobFilter)) {
+  if (activeApplicantJobFilter === 'All' || activeApplicantJobFilter === t('filter_all')) {
     activeApplicantJobFilter = allKey;
   }
   document.getElementById('applicant-job-filters').innerHTML = jobs.map(job =>
@@ -1785,9 +1294,8 @@ function renderApplicants() {
       <button class="reveal-btn" onclick="event.stopPropagation();openCaptcha(${a.id},'applicant')">${t('card_get_contact')}</button>
     </div>`;
   }).join('');
-}
-
-function formatDate(iso) {
+  retranslate();
+}function formatDate(iso) {
   if (!iso) return '';
   try { return new Date(iso).toLocaleDateString('es-ES', { day:'numeric', month:'short', year:'numeric' }); } catch { return ''; }
 }
@@ -1827,13 +1335,14 @@ function updateStats() {
 
 function buildFilters() {
   const allKey = t('filter_all');
-  if (activeFilter === 'All' || Object.values(LANGS).map(l=>l.filter_all).includes(activeFilter)) {
+  if (activeFilter === 'All' || activeFilter === t('filter_all')) {
     activeFilter = allKey;
   }
   const types = [allKey, ...new Set(allJobs.map(j => j.job_type).filter(Boolean))];
   document.getElementById('filters').innerHTML = types.map(tp =>
     `<button class="filter-btn ${tp === activeFilter ? 'on' : ''}" onclick="setFilter(${JSON.stringify(tp)})">${esc(tp)}</button>`
   ).join('');
+  retranslate();
 }
 
 function setFilter(f) { activeFilter = f; buildFilters(); renderJobs(); }
@@ -1869,6 +1378,7 @@ function renderJobs() {
       ${j.skills ? `<div class="job-skills">${j.skills.split(',').slice(0,5).map(s=>`<span class="skill-pill">${esc(s.trim())}</span>`).join('')}</div>` : ''}
     </div>`;
   }).join('');
+  retranslate();
 }
 
 function badgeClass(tp) {
@@ -1920,6 +1430,7 @@ function openJob(id) {
   applyBtn.textContent = t('btn_apply');
   clearApplyForm();
   document.getElementById('job-modal').classList.add('open');
+  retranslate();
   document.body.style.overflow = 'hidden';
 }
 
@@ -2141,14 +1652,21 @@ function resetRoleForm() {
   document.getElementById('r-country').value = ''; document.getElementById('r-availability').value = '';
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeJobModal(); closeCaptcha(); closeLangMenu(); closeMobileNav(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeJobModal(); closeCaptcha(); closeGTModal(); closeMobileNav(); } });
 
 loadJobs(); loadVisits(); loadApplicants();
+// Initialize UI text from English dict
 (function() {
-  let savedLang = 'en';
-  try { savedLang = localStorage.getItem('wb_lang') || 'en'; } catch(e) {}
-  if (!LANGS[savedLang]) savedLang = 'en';
-  setLang(savedLang);
+  document.querySelectorAll('[data-t]').forEach(el => {
+    const key = el.getAttribute('data-t');
+    const val = t(key);
+    if (val) el.innerHTML = val;
+  });
+  document.querySelectorAll('[data-ph]').forEach(el => {
+    const key = el.getAttribute('data-ph');
+    const val = t(key);
+    if (val) el.placeholder = val;
+  });
 })();
 </script>
 </body>
