@@ -413,7 +413,7 @@
       </button>
 
       <div class="lang-dropdown-panel" id="lang-dropdown-panel" role="menu">
-        <button class="lang-opt-row" id="lopt-en" onclick="pickLang('en')" role="menuitem">
+          <button class="lang-opt-row" id="lopt-en" onclick="pickLang('en')" role="menuitem">
           <span class="lang-opt-flag">🇬🇧</span>
           <span class="lang-opt-label">English<span class="lang-opt-sublabel">Default</span></span>
           <span class="lang-opt-check">✓</span>
@@ -442,6 +442,30 @@
         <button class="lang-opt-row" id="lopt-va" onclick="pickLang('va')" role="menuitem">
           <span class="lang-opt-flag">🔵</span>
           <span class="lang-opt-label">Valencià<span class="lang-opt-sublabel">Comunitat Valenciana</span></span>
+          <span class="lang-opt-check">✓</span>
+        </button>
+        
+        <!-- NEW LANGUAGES ADDED HERE -->
+        <div class="lang-sep"></div>
+        
+        <button class="lang-opt-row" id="lopt-hi" onclick="pickLang('hi')" role="menuitem">
+          <span class="lang-opt-flag">🇮🇳</span>
+          <span class="lang-opt-label">हिंदी<span class="lang-opt-sublabel">Hindi</span></span>
+          <span class="lang-opt-check">✓</span>
+        </button>
+        <button class="lang-opt-row" id="lopt-pa" onclick="pickLang('pa')" role="menuitem">
+          <span class="lang-opt-flag">🪯</span>
+          <span class="lang-opt-label">ਪੰਜਾਬੀ<span class="lang-opt-sublabel">Punjabi</span></span>
+          <span class="lang-opt-check">✓</span>
+        </button>
+        <button class="lang-opt-row" id="lopt-bn" onclick="pickLang('bn')" role="menuitem">
+          <span class="lang-opt-flag">🇧🇩</span>
+          <span class="lang-opt-label">বাংলা<span class="lang-opt-sublabel">Bangla</span></span>
+          <span class="lang-opt-check">✓</span>
+        </button>
+        <button class="lang-opt-row" id="lopt-ur" onclick="pickLang('ur')" role="menuitem">
+          <span class="lang-opt-flag">🇵🇰</span>
+          <span class="lang-opt-label">اردو<span class="lang-opt-sublabel">Urdu</span></span>
           <span class="lang-opt-check">✓</span>
         </button>
       </div>
@@ -1280,7 +1304,248 @@ const LANGS = {
     err_captcha: 'Incorrecte.', err_captcha_send: 'Error.', err_captcha_net: 'Error.',
     empty_jobs: 'No hi ha.', empty_talent: 'No hi ha.', empty_applicants: 'No hi ha.',
     server_err: 'Error.', captcha_what_is: 'Quant és',
+  },
+  hi: {
+    nav_browse: 'नौकरियाँ देखें', nav_talent: 'प्रतिभा देखें', nav_applicants: 'आवेदक', nav_postrole: 'काम चाहिए', nav_postjob: 'नौकरी पोस्ट करें',
+    hero_tag: 'लाइव अवसर', hero_h1: 'वो काम खोजें जो <em>मायने रखे</em>',
+    hero_sub: 'हमारी टीम द्वारा जांची गई नौकरियाँ। हर लिस्टिंग प्रकाशन से पहले समीक्षित होती है।',
+    hero_btn_browse: 'नौकरियाँ देखें ↓', hero_btn_seeking: 'मुझे काम चाहिए', hero_btn_hire: 'किसी को नियुक्त करें',
+    stat_jobs: 'खुली भर्तियाँ', stat_visits: 'विज़िटर', stat_types: 'नौकरी प्रकार', stat_applicants: 'आवेदक',
+    sec_openings_sub: 'वर्तमान भर्तियाँ', sec_openings_main: 'सभी पद', sec_talent_sub: 'उपलब्ध प्रतिभा',
+    sec_talent_main: 'काम ढूंढ रहे लोग', sec_applicants_sub: 'नौकरी आवेदक', sec_applicants_main: 'किसने आवेदन किया',
+    search_jobs: 'शीर्षक, कंपनी, कौशल खोजें…', search_talent: 'नाम, भूमिका, कौशल खोजें…', search_applicants: 'नाम, पद, कंपनी खोजें…',
+    count_jobs: '{n} पद मिले', count_talent: '{n} प्रोफ़ाइल मिली', count_applicants: '{n} आवेदक मिले',
+    filter_all: 'सभी', meta_applied: '{n} आवेदक',
+    applicants_banner: 'ये <strong>अनुमोदित आवेदक</strong> हैं।',
+    card_applied_for: 'आवेदन किया:', card_get_contact: '📧 संपर्क विवरण पाएं', card_get_contact_mini: '📧 संपर्क',
+    postjob_h2: 'पद पोस्ट करें', postjob_desc: 'समीक्षा के लिए अपनी नौकरी सबमिट करें।',
+    postjob_sec_employer: 'नियोक्ता विवरण', postjob_sec_details: 'नौकरी विवरण', postjob_success_h3: 'सबमिशन प्राप्त हुआ',
+    postjob_success_p1: 'आपकी नौकरी समीक्षा के लिए लंबित है।', postjob_success_p2: '📧 पुष्टि ईमेल भेजा गया।', postjob_post_another: 'और पोस्ट करें',
+    postrole_h2: 'अपनी भूमिका पोस्ट करें', postrole_desc: 'आप काम ढूंढ रहे हैं।',
+    postrole_sec_personal: 'व्यक्तिगत विवरण', postrole_sec_profile: 'पेशेवर प्रोफ़ाइल', postrole_success_h3: 'प्रोफ़ाइल सबमिट हुई',
+    postrole_success_p1: 'समीक्षा के लिए लंबित।', postrole_success_p2: '📧 ईमेल भेजा गया।', btn_submit_another: 'और सबमिट करें',
+    m_skills_label: 'आवश्यक कौशल', m_applicants_label: '👥 आवेदक', m_desc_label: 'नौकरी विवरण',
+    btn_apply: 'आवेदन करें →', btn_apply_close: '↑ बंद करें', apply_sec_title: 'आपका आवेदन',
+    apply_email_note: '📧 सभी अपडेट ईमेल पर आएंगे।',
+    captcha_title: 'संपर्क विवरण पाएं', captcha_subtitle: 'अपना विवरण भरें',
+    captcha_note: '📧 संपर्क विवरण एक बार ईमेल किया जाएगा।',
+    captcha_prove: 'साबित करें कि आप इंसान हैं', captcha_done_title: 'इनबॉक्स देखें', captcha_sent_to: 'भेजा गया',
+    captcha_one_time: 'यह लिंक <strong style="color:var(--cream)">एक बार उपयोग</strong> के लिए है।',
+    btn_continue: 'जारी रखें →', btn_send_contact: 'संपर्क भेजें →', btn_change_email: '← ईमेल बदलें', btn_close: 'बंद करें',
+    btn_submit_review: 'समीक्षा के लिए सबमिट करें →', btn_submit_application: 'आवेदन सबमिट करें →', btn_submit_profile: 'प्रोफ़ाइल सबमिट करें →',
+    f_your_name: 'आपका नाम', f_fullname: 'पूरा नाम', f_email: 'ईमेल', f_phone: 'फ़ोन', f_company: 'कंपनी का नाम',
+    f_job_title: 'नौकरी का शीर्षक', f_description: 'विवरण', f_location: 'स्थान', f_province: 'प्रांत',
+    f_job_type: 'नौकरी प्रकार', f_salary: 'वेतन', f_deadline: 'अंतिम तिथि', f_skills: 'कौशल',
+    f_resume_link: 'CV लिंक', f_website: 'वेबसाइट', f_role_title: 'भूमिका / पद', f_bio: 'परिचय',
+    f_experience: 'अनुभव', f_availability: 'उपलब्धता', f_cv_link: 'CV / पोर्टफोलियो', f_your_location: 'आपका स्थान',
+    f_purpose: 'संपर्क का उद्देश्य', f_cover: 'कवर लेटर',
+    ph_fullname: 'पूरा नाम', ph_your_name: 'आपका नाम', ph_email_company: 'aap@company.com', ph_your_email: 'aap@email.com',
+    ph_phone: '+91 98000 00000', ph_company: 'कंपनी', ph_job_title: 'जैसे: Frontend Developer',
+    ph_description: 'भूमिका का विवरण…', ph_salary: 'जैसे: ₹5,00,000/वर्ष',
+    ph_deadline: 'जैसे: 31 दिसंबर 2025', ph_skills: 'जैसे: JavaScript, Python',
+    ph_cv_link: 'https://…', ph_website: 'https://…', ph_role_title: 'जैसे: इलेक्ट्रीशियन…',
+    ph_bio: 'संक्षिप्त परिचय…', ph_experience_role: 'अनुभव के वर्ष…',
+    ph_skills_csv: 'कॉमा से अलग कौशल', ph_experience: 'अनुभव का सारांश…', ph_cover: 'आप इस भूमिका के लिए उपयुक्त क्यों हैं?',
+    ph_portfolio: 'https://…', ph_location_eg: 'शहर, देश', ph_answer: 'उत्तर',
+    opt_select_province: 'प्रांत चुनें…', opt_select: 'चुनें…', opt_select_purpose: 'उद्देश्य चुनें…',
+    jt_fulltime: 'पूर्णकालिक', jt_parttime: 'अंशकालिक', jt_contract: 'अनुबंध', jt_remote: 'दूरस्थ', jt_internship: 'इंटर्नशिप',
+    avail_immediate: 'तुरंत', avail_2weeks: '2 सप्ताह में', avail_1month: '1 महीने में', avail_negotiable: 'बातचीत योग्य',
+    purpose_hiring: '💼 नियुक्ति / नौकरी प्रस्ताव', purpose_partner: '🤝 साझेदारी', purpose_interview: '📅 इंटरव्यू',
+    purpose_general: '💬 सामान्य प्रश्न', purpose_other: '✦ अन्य',
+    note_email_confirm: '📧 पुष्टि यहाँ भेजी जाएगी', note_cv_required: '📎 आवश्यक',
+    optional: '(वैकल्पिक)', toast_app_ok: 'आवेदन सबमिट हुआ! ईमेल देखें।',
+    toast_app_fail: 'सबमिशन विफल।', toast_net_err: 'नेटवर्क त्रुटि।', toast_name_req: 'नाम आवश्यक है।',
+    toast_email_req: 'ईमेल आवश्यक है।', toast_email_invalid: 'वैध ईमेल दर्ज करें।',
+    toast_resume_req: 'CV लिंक आवश्यक है।', toast_employer_req: 'नियोक्ता नाम आवश्यक है।',
+    toast_title_req: 'नौकरी शीर्षक आवश्यक है।', toast_desc_req: 'विवरण आवश्यक है।', toast_loc_req: 'प्रांत चुनें।',
+    toast_role_req: 'भूमिका आवश्यक है।', toast_province_req: 'प्रांत चुनें।',
+    err_name_req: 'नाम दर्ज करें।', err_email_req: 'ईमेल दर्ज करें।', err_email_invalid: 'वैध ईमेल।',
+    err_location_req: 'स्थान दर्ज करें।', err_purpose_req: 'उद्देश्य चुनें।',
+    err_captcha: 'गलत — फिर प्रयास करें।', err_captcha_send: 'भेजने में विफल।', err_captcha_net: 'नेटवर्क त्रुटि।',
+    empty_jobs: 'कोई पद नहीं मिला।', empty_talent: 'कोई प्रोफ़ाइल नहीं।', empty_applicants: 'कोई आवेदक नहीं।',
+    server_err: 'सर्वर से कनेक्ट नहीं हो सका।', captcha_what_is: 'क्या है',
+  },
+  pa: {
+    nav_browse: 'ਨੌਕਰੀਆਂ ਦੇਖੋ', nav_talent: 'ਪ੍ਰਤਿਭਾ ਦੇਖੋ', nav_applicants: 'ਅਰਜ਼ੀਕਰਤਾ', nav_postrole: 'ਕੰਮ ਚਾਹੀਦਾ', nav_postjob: 'ਨੌਕਰੀ ਪੋਸਟ ਕਰੋ',
+    hero_tag: 'ਲਾਈਵ ਮੌਕੇ', hero_h1: 'ਉਹ ਕੰਮ ਲੱਭੋ ਜੋ <em>ਅਹਿਮ</em> ਹੋਵੇ',
+    hero_sub: 'ਸਾਡੀ ਟੀਮ ਵੱਲੋਂ ਜਾਂਚੀਆਂ ਗਈਆਂ ਨੌਕਰੀਆਂ।',
+    hero_btn_browse: 'ਨੌਕਰੀਆਂ ਦੇਖੋ ↓', hero_btn_seeking: 'ਮੈਨੂੰ ਕੰਮ ਚਾਹੀਦਾ', hero_btn_hire: 'ਕਿਸੇ ਨੂੰ ਨਿਯੁਕਤ ਕਰੋ',
+    stat_jobs: 'ਖੁੱਲ੍ਹੀਆਂ ਅਸਾਮੀਆਂ', stat_visits: 'ਵਿਜ਼ਿਟਰ', stat_types: 'ਕੰਮ ਕਿਸਮ', stat_applicants: 'ਅਰਜ਼ੀਕਰਤਾ',
+    sec_openings_sub: 'ਮੌਜੂਦਾ ਅਸਾਮੀਆਂ', sec_openings_main: 'ਸਾਰੇ ਅਹੁਦੇ', sec_talent_sub: 'ਉਪਲਬਧ ਪ੍ਰਤਿਭਾ',
+    sec_talent_main: 'ਕੰਮ ਲੱਭ ਰਹੇ ਲੋਕ', sec_applicants_sub: 'ਅਰਜ਼ੀਕਰਤਾ', sec_applicants_main: 'ਕਿਸਨੇ ਅਰਜ਼ੀ ਦਿੱਤੀ',
+    search_jobs: 'ਸਿਰਲੇਖ, ਕੰਪਨੀ, ਹੁਨਰ ਖੋਜੋ…', search_talent: 'ਨਾਮ, ਭੂਮਿਕਾ ਖੋਜੋ…', search_applicants: 'ਨਾਮ, ਅਹੁਦਾ ਖੋਜੋ…',
+    count_jobs: '{n} ਅਹੁਦੇ ਮਿਲੇ', count_talent: '{n} ਪ੍ਰੋਫ਼ਾਈਲ ਮਿਲੇ', count_applicants: '{n} ਅਰਜ਼ੀਕਰਤਾ ਮਿਲੇ',
+    filter_all: 'ਸਭ', meta_applied: '{n} ਅਰਜ਼ੀਕਰਤਾ',
+    applicants_banner: 'ਇਹ <strong>ਪ੍ਰਵਾਨਿਤ ਅਰਜ਼ੀਕਰਤਾ</strong> ਹਨ।',
+    card_applied_for: 'ਅਰਜ਼ੀ ਦਿੱਤੀ:', card_get_contact: '📧 ਸੰਪਰਕ ਵੇਰਵੇ ਲਓ', card_get_contact_mini: '📧 ਸੰਪਰਕ',
+    postjob_h2: 'ਨੌਕਰੀ ਪੋਸਟ ਕਰੋ', postjob_desc: 'ਸਮੀਖਿਆ ਲਈ ਸਬਮਿਟ ਕਰੋ।',
+    postjob_sec_employer: 'ਮਾਲਕ ਵੇਰਵੇ', postjob_sec_details: 'ਨੌਕਰੀ ਵੇਰਵੇ', postjob_success_h3: 'ਸਬਮਿਸ਼ਨ ਮਿਲੀ',
+    postjob_success_p1: 'ਤੁਹਾਡੀ ਨੌਕਰੀ ਸਮੀਖਿਆ ਅਧੀਨ ਹੈ।', postjob_success_p2: '📧 ਈਮੇਲ ਭੇਜੀ ਗਈ।', postjob_post_another: 'ਹੋਰ ਪੋਸਟ ਕਰੋ',
+    postrole_h2: 'ਆਪਣੀ ਭੂਮਿਕਾ ਪੋਸਟ ਕਰੋ', postrole_desc: 'ਤੁਸੀਂ ਕੰਮ ਲੱਭ ਰਹੇ ਹੋ।',
+    postrole_sec_personal: 'ਨਿੱਜੀ ਵੇਰਵੇ', postrole_sec_profile: 'ਪੇਸ਼ੇਵਰ ਪ੍ਰੋਫ਼ਾਈਲ', postrole_success_h3: 'ਪ੍ਰੋਫ਼ਾਈਲ ਭੇਜੀ',
+    postrole_success_p1: 'ਸਮੀਖਿਆ ਅਧੀਨ।', postrole_success_p2: '📧 ਈਮੇਲ ਭੇਜੀ ਗਈ।', btn_submit_another: 'ਹੋਰ ਸਬਮਿਟ ਕਰੋ',
+    m_skills_label: 'ਲੋੜੀਂਦੇ ਹੁਨਰ', m_applicants_label: '👥 ਅਰਜ਼ੀਕਰਤਾ', m_desc_label: 'ਨੌਕਰੀ ਵੇਰਵਾ',
+    btn_apply: 'ਅਰਜ਼ੀ ਦਿਓ →', btn_apply_close: '↑ ਬੰਦ ਕਰੋ', apply_sec_title: 'ਤੁਹਾਡੀ ਅਰਜ਼ੀ',
+    apply_email_note: '📧 ਸਾਰੇ ਅਪਡੇਟ ਈਮੇਲ ਤੇ।',
+    captcha_title: 'ਸੰਪਰਕ ਵੇਰਵੇ ਲਓ', captcha_subtitle: 'ਵੇਰਵੇ ਭਰੋ',
+    captcha_note: '📧 ਇੱਕ ਵਾਰ ਈਮੇਲ ਕੀਤਾ ਜਾਵੇਗਾ।',
+    captcha_prove: 'ਸਾਬਿਤ ਕਰੋ ਕਿ ਤੁਸੀਂ ਇਨਸਾਨ ਹੋ', captcha_done_title: 'ਇਨਬਾਕਸ ਦੇਖੋ', captcha_sent_to: 'ਭੇਜਿਆ ਗਿਆ',
+    captcha_one_time: 'ਇਹ ਲਿੰਕ <strong style="color:var(--cream)">ਇੱਕ ਵਾਰ</strong> ਲਈ ਹੈ।',
+    btn_continue: 'ਜਾਰੀ ਰੱਖੋ →', btn_send_contact: 'ਸੰਪਰਕ ਭੇਜੋ →', btn_change_email: '← ਈਮੇਲ ਬਦਲੋ', btn_close: 'ਬੰਦ ਕਰੋ',
+    btn_submit_review: 'ਸਬਮਿਟ ਕਰੋ →', btn_submit_application: 'ਅਰਜ਼ੀ ਭੇਜੋ →', btn_submit_profile: 'ਪ੍ਰੋਫ਼ਾਈਲ ਭੇਜੋ →',
+    f_your_name: 'ਤੁਹਾਡਾ ਨਾਮ', f_fullname: 'ਪੂਰਾ ਨਾਮ', f_email: 'ਈਮੇਲ', f_phone: 'ਫ਼ੋਨ', f_company: 'ਕੰਪਨੀ',
+    f_job_title: 'ਨੌਕਰੀ ਸਿਰਲੇਖ', f_description: 'ਵੇਰਵਾ', f_location: 'ਸਥਾਨ', f_province: 'ਪ੍ਰਾਂਤ',
+    f_job_type: 'ਕਿਸਮ', f_salary: 'ਤਨਖ਼ਾਹ', f_deadline: 'ਆਖਰੀ ਮਿਤੀ', f_skills: 'ਹੁਨਰ',
+    f_resume_link: 'CV ਲਿੰਕ', f_website: 'ਵੈੱਬਸਾਈਟ', f_role_title: 'ਭੂਮਿਕਾ', f_bio: 'ਪਰਿਚੈ',
+    f_experience: 'ਤਜ਼ਰਬਾ', f_availability: 'ਉਪਲਬਧਤਾ', f_cv_link: 'CV', f_your_location: 'ਤੁਹਾਡਾ ਸਥਾਨ',
+    f_purpose: 'ਸੰਪਰਕ ਦਾ ਮਕਸਦ', f_cover: 'ਕਵਰ ਲੈਟਰ',
+    ph_fullname: 'ਪੂਰਾ ਨਾਮ', ph_your_name: 'ਤੁਹਾਡਾ ਨਾਮ', ph_email_company: 'tusi@company.com', ph_your_email: 'tusi@email.com',
+    ph_phone: '+91 98000 00000', ph_company: 'ਕੰਪਨੀ', ph_job_title: 'ਜਿਵੇਂ: Frontend Developer',
+    ph_description: 'ਭੂਮਿਕਾ ਦਾ ਵੇਰਵਾ…', ph_salary: 'ਜਿਵੇਂ: ₹5,00,000',
+    ph_deadline: 'ਜਿਵੇਂ: 31 ਦਸੰਬਰ', ph_skills: 'ਜਿਵੇਂ: JavaScript',
+    ph_cv_link: 'https://…', ph_website: 'https://…', ph_role_title: 'ਜਿਵੇਂ: ਇਲੈਕਟ੍ਰੀਸ਼ੀਅਨ',
+    ph_bio: 'ਸੰਖੇਪ ਪਰਿਚੈ…', ph_experience_role: 'ਤਜ਼ਰਬੇ ਦੇ ਸਾਲ…',
+    ph_skills_csv: 'ਕੌਮੇ ਨਾਲ ਵੱਖ', ph_experience: 'ਸਾਰ…', ph_cover: 'ਤੁਸੀਂ ਕਿਉਂ ਯੋਗ ਹੋ?',
+    ph_portfolio: 'https://…', ph_location_eg: 'ਸ਼ਹਿਰ, ਦੇਸ਼', ph_answer: 'ਜਵਾਬ',
+    opt_select_province: 'ਪ੍ਰਾਂਤ ਚੁਣੋ…', opt_select: 'ਚੁਣੋ…', opt_select_purpose: 'ਮਕਸਦ ਚੁਣੋ…',
+    jt_fulltime: 'ਪੂਰਾ ਸਮਾਂ', jt_parttime: 'ਅੰਸ਼ਕ ਸਮਾਂ', jt_contract: 'ਕੰਟਰੈਕਟ', jt_remote: 'ਰਿਮੋਟ', jt_internship: 'ਇੰਟਰਨਸ਼ਿਪ',
+    avail_immediate: 'ਤੁਰੰਤ', avail_2weeks: '2 ਹਫ਼ਤਿਆਂ ਵਿੱਚ', avail_1month: '1 ਮਹੀਨੇ ਵਿੱਚ', avail_negotiable: 'ਗੱਲਬਾਤ ਯੋਗ',
+    purpose_hiring: '💼 ਨਿਯੁਕਤੀ', purpose_partner: '🤝 ਭਾਈਵਾਲੀ', purpose_interview: '📅 ਇੰਟਰਵਿਊ',
+    purpose_general: '💬 ਆਮ ਸਵਾਲ', purpose_other: '✦ ਹੋਰ',
+    note_email_confirm: '📧 ਪੁਸ਼ਟੀ ਇੱਥੇ', note_cv_required: '📎 ਲਾਜ਼ਮੀ',
+    optional: '(ਵਿਕਲਪਿਕ)', toast_app_ok: 'ਅਰਜ਼ੀ ਭੇਜੀ ਗਈ!',
+    toast_app_fail: 'ਅਸਫ਼ਲ।', toast_net_err: 'ਨੈੱਟਵਰਕ ਗੜਬੜ।', toast_name_req: 'ਨਾਮ ਦਰਜ ਕਰੋ।',
+    toast_email_req: 'ਈਮੇਲ ਲਾਜ਼ਮੀ।', toast_email_invalid: 'ਯੋਗ ਈਮੇਲ ਦਰਜ ਕਰੋ।',
+    toast_resume_req: 'CV ਲਾਜ਼ਮੀ।', toast_employer_req: 'ਮਾਲਕ ਦਾ ਨਾਮ ਲਾਜ਼ਮੀ।',
+    toast_title_req: 'ਸਿਰਲੇਖ ਲਾਜ਼ਮੀ।', toast_desc_req: 'ਵੇਰਵਾ ਲਾਜ਼ਮੀ।', toast_loc_req: 'ਪ੍ਰਾਂਤ ਚੁਣੋ।',
+    toast_role_req: 'ਭੂਮਿਕਾ ਲਾਜ਼ਮੀ।', toast_province_req: 'ਪ੍ਰਾਂਤ ਚੁਣੋ।',
+    err_name_req: 'ਨਾਮ?', err_email_req: 'ਈਮੇਲ?', err_email_invalid: 'ਯੋਗ ਈਮੇਲ।',
+    err_location_req: 'ਸਥਾਨ?', err_purpose_req: 'ਮਕਸਦ?',
+    err_captcha: 'ਗਲਤ — ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।', err_captcha_send: 'ਭੇਜਣ ਵਿੱਚ ਅਸਫ਼ਲ।', err_captcha_net: 'ਨੈੱਟਵਰਕ ਗੜਬੜ।',
+    empty_jobs: 'ਕੋਈ ਅਹੁਦਾ ਨਹੀਂ।', empty_talent: 'ਕੋਈ ਪ੍ਰੋਫ਼ਾਈਲ ਨਹੀਂ।', empty_applicants: 'ਕੋਈ ਅਰਜ਼ੀਕਰਤਾ ਨਹੀਂ।',
+    server_err: 'ਸਰਵਰ ਨਾਲ ਕੁਨੈਕਟ ਨਹੀਂ।', captcha_what_is: 'ਕੀ ਹੈ',
+  },
+  bn: {
+    nav_browse: 'চাকরি দেখুন', nav_talent: 'প্রতিভা দেখুন', nav_applicants: 'আবেদনকারী', nav_postrole: 'কাজ খুঁজছি', nav_postjob: 'চাকরি পোস্ট করুন',
+    hero_tag: 'সরাসরি সুযোগ', hero_h1: 'সেই কাজ খুঁজুন যা <em>গুরুত্বপূর্ণ</em>',
+    hero_sub: 'আমাদের দল যাচাই করা চাকরির সুযোগ। প্রতিটি তালিকা প্রকাশের আগে পর্যালোচনা করা হয়।',
+    hero_btn_browse: 'চাকরি দেখুন ↓', hero_btn_seeking: 'আমি কাজ খুঁজছি', hero_btn_hire: 'কাউকে নিয়োগ করুন',
+    stat_jobs: 'খোলা পদ', stat_visits: 'দর্শক', stat_types: 'চাকরির ধরন', stat_applicants: 'আবেদনকারী',
+    sec_openings_sub: 'বর্তমান পদ', sec_openings_main: 'সব পদ', sec_talent_sub: 'উপলব্ধ প্রতিভা',
+    sec_talent_main: 'কাজ খুঁজছেন যারা', sec_applicants_sub: 'চাকরির আবেদনকারী', sec_applicants_main: 'কে আবেদন করেছেন',
+    search_jobs: 'শিরোনাম, কোম্পানি, দক্ষতা খুঁজুন…', search_talent: 'নাম, ভূমিকা খুঁজুন…', search_applicants: 'নাম, পদ খুঁজুন…',
+    count_jobs: '{n}টি পদ পাওয়া গেছে', count_talent: '{n}টি প্রোফাইল পাওয়া গেছে', count_applicants: '{n}জন আবেদনকারী',
+    filter_all: 'সব', meta_applied: '{n} আবেদনকারী',
+    applicants_banner: 'এরা <strong>অনুমোদিত আবেদনকারী</strong>।',
+    card_applied_for: 'আবেদন করেছেন:', card_get_contact: '📧 যোগাযোগের তথ্য পান', card_get_contact_mini: '📧 যোগাযোগ',
+    postjob_h2: 'চাকরি পোস্ট করুন', postjob_desc: 'পর্যালোচনার জন্য জমা দিন।',
+    postjob_sec_employer: 'নিয়োগকর্তার তথ্য', postjob_sec_details: 'চাকরির বিবরণ', postjob_success_h3: 'জমা পেয়েছি',
+    postjob_success_p1: 'আপনার চাকরি পর্যালোচনাধীন।', postjob_success_p2: '📧 নিশ্চিতকরণ ইমেইল পাঠানো হয়েছে।', postjob_post_another: 'আরও পোস্ট করুন',
+    postrole_h2: 'আপনার ভূমিকা পোস্ট করুন', postrole_desc: 'আপনি কাজ খুঁজছেন।',
+    postrole_sec_personal: 'ব্যক্তিগত তথ্য', postrole_sec_profile: 'পেশাদার প্রোফাইল', postrole_success_h3: 'প্রোফাইল জমা হয়েছে',
+    postrole_success_p1: 'পর্যালোচনাধীন।', postrole_success_p2: '📧 ইমেইল পাঠানো হয়েছে।', btn_submit_another: 'আরও জমা দিন',
+    m_skills_label: 'প্রয়োজনীয় দক্ষতা', m_applicants_label: '👥 আবেদনকারী', m_desc_label: 'চাকরির বিবরণ',
+    btn_apply: 'আবেদন করুন →', btn_apply_close: '↑ বন্ধ করুন', apply_sec_title: 'আপনার আবেদন',
+    apply_email_note: '📧 সব আপডেট ইমেইলে আসবে।',
+    captcha_title: 'যোগাযোগের তথ্য পান', captcha_subtitle: 'আপনার তথ্য পূরণ করুন',
+    captcha_note: '📧 একবার ইমেইল করা হবে।',
+    captcha_prove: 'প্রমাণ করুন আপনি মানুষ', captcha_done_title: 'ইনবক্স দেখুন', captcha_sent_to: 'পাঠানো হয়েছে',
+    captcha_one_time: 'এই লিংক <strong style="color:var(--cream)">একবার ব্যবহারযোগ্য</strong>।',
+    btn_continue: 'চালিয়ে যান →', btn_send_contact: 'যোগাযোগ পাঠান →', btn_change_email: '← ইমেইল পরিবর্তন', btn_close: 'বন্ধ করুন',
+    btn_submit_review: 'পর্যালোচনার জন্য জমা দিন →', btn_submit_application: 'আবেদন জমা দিন →', btn_submit_profile: 'প্রোফাইল জমা দিন →',
+    f_your_name: 'আপনার নাম', f_fullname: 'পুরো নাম', f_email: 'ইমেইল', f_phone: 'ফোন', f_company: 'কোম্পানির নাম',
+    f_job_title: 'চাকরির শিরোনাম', f_description: 'বিবরণ', f_location: 'অবস্থান', f_province: 'প্রদেশ',
+    f_job_type: 'চাকরির ধরন', f_salary: 'বেতন', f_deadline: 'শেষ তারিখ', f_skills: 'দক্ষতা',
+    f_resume_link: 'CV লিংক', f_website: 'ওয়েবসাইট', f_role_title: 'ভূমিকা', f_bio: 'পরিচয়',
+    f_experience: 'অভিজ্ঞতা', f_availability: 'উপলব্ধতা', f_cv_link: 'CV', f_your_location: 'আপনার অবস্থান',
+    f_purpose: 'যোগাযোগের উদ্দেশ্য', f_cover: 'কভার লেটার',
+    ph_fullname: 'পুরো নাম', ph_your_name: 'আপনার নাম', ph_email_company: 'aapni@company.com', ph_your_email: 'aapni@email.com',
+    ph_phone: '+880 1700 000000', ph_company: 'কোম্পানি', ph_job_title: 'যেমন: Frontend Developer',
+    ph_description: 'ভূমিকার বিবরণ…', ph_salary: 'যেমন: ৳৫,০০,০০০',
+    ph_deadline: 'যেমন: ৩১ ডিসেম্বর', ph_skills: 'যেমন: JavaScript',
+    ph_cv_link: 'https://…', ph_website: 'https://…', ph_role_title: 'যেমন: ইলেকট্রিশিয়ান',
+    ph_bio: 'সংক্ষিপ্ত পরিচয়…', ph_experience_role: 'অভিজ্ঞতার বছর…',
+    ph_skills_csv: 'কমা দিয়ে আলাদা', ph_experience: 'সারসংক্ষেপ…', ph_cover: 'আপনি কেন উপযুক্ত?',
+    ph_portfolio: 'https://…', ph_location_eg: 'শহর, দেশ', ph_answer: 'উত্তর',
+    opt_select_province: 'প্রদেশ বেছে নিন…', opt_select: 'বেছে নিন…', opt_select_purpose: 'উদ্দেশ্য বেছে নিন…',
+    jt_fulltime: 'পূর্ণকালীন', jt_parttime: 'খণ্ডকালীন', jt_contract: 'চুক্তি', jt_remote: 'দূরবর্তী', jt_internship: 'ইন্টার্নশিপ',
+    avail_immediate: 'তাৎক্ষণিক', avail_2weeks: '২ সপ্তাহের মধ্যে', avail_1month: '১ মাসের মধ্যে', avail_negotiable: 'আলোচনাযোগ্য',
+    purpose_hiring: '💼 নিয়োগ / চাকরির প্রস্তাব', purpose_partner: '🤝 অংশীদারিত্ব', purpose_interview: '📅 ইন্টারভিউ',
+    purpose_general: '💬 সাধারণ জিজ্ঞাসা', purpose_other: '✦ অন্যান্য',
+    note_email_confirm: '📧 নিশ্চিতকরণ এখানে', note_cv_required: '📎 বাধ্যতামূলক',
+    optional: '(ঐচ্ছিক)', toast_app_ok: 'আবেদন জমা হয়েছে! ইমেইল দেখুন।',
+    toast_app_fail: 'জমা ব্যর্থ।', toast_net_err: 'নেটওয়ার্ক ত্রুটি।', toast_name_req: 'নাম প্রয়োজন।',
+    toast_email_req: 'ইমেইল প্রয়োজন।', toast_email_invalid: 'বৈধ ইমেইল দিন।',
+    toast_resume_req: 'CV প্রয়োজন।', toast_employer_req: 'নিয়োগকর্তার নাম প্রয়োজন।',
+    toast_title_req: 'শিরোনাম প্রয়োজন।', toast_desc_req: 'বিবরণ প্রয়োজন।', toast_loc_req: 'প্রদেশ বেছে নিন।',
+    toast_role_req: 'ভূমিকা প্রয়োজন।', toast_province_req: 'প্রদেশ বেছে নিন।',
+    err_name_req: 'নাম দিন।', err_email_req: 'ইমেইল দিন।', err_email_invalid: 'বৈধ ইমেইল।',
+    err_location_req: 'অবস্থান দিন।', err_purpose_req: 'উদ্দেশ্য বেছে নিন।',
+    err_captcha: 'ভুল — আবার চেষ্টা করুন।', err_captcha_send: 'পাঠাতে ব্যর্থ।', err_captcha_net: 'নেটওয়ার্ক ত্রুটি।',
+    empty_jobs: 'কোনো পদ পাওয়া যায়নি।', empty_talent: 'কোনো প্রোফাইল নেই।', empty_applicants: 'কোনো আবেদনকারী নেই।',
+    server_err: 'সার্ভারে সংযোগ করা যায়নি।', captcha_what_is: 'কত হয়',
+  },
+  ur: {
+    nav_browse: 'ملازمتیں دیکھیں', nav_talent: 'ہنر دیکھیں', nav_applicants: 'درخواست دہندگان', nav_postrole: 'کام چاہیے', nav_postjob: 'ملازمت پوسٹ کریں',
+    hero_tag: 'براہ راست مواقع', hero_h1: 'وہ کام تلاش کریں جو <em>اہم</em> ہو',
+    hero_sub: 'ہماری ٹیم کی جانچ شدہ ملازمتیں۔ ہر اشتہار شائع ہونے سے پہلے جائزہ لیا جاتا ہے۔',
+    hero_btn_browse: 'ملازمتیں دیکھیں ↓', hero_btn_seeking: 'مجھے کام چاہیے', hero_btn_hire: 'کسی کو ملازم رکھیں',
+    stat_jobs: 'کھلی آسامیاں', stat_visits: 'زائرین', stat_types: 'ملازمت کی اقسام', stat_applicants: 'درخواست دہندگان',
+    sec_openings_sub: 'موجودہ آسامیاں', sec_openings_main: 'تمام عہدے', sec_talent_sub: 'دستیاب ہنر',
+    sec_talent_main: 'کام تلاش کرنے والے', sec_applicants_sub: 'درخواست دہندگان', sec_applicants_main: 'کس نے درخواست دی',
+    search_jobs: 'عنوان، کمپنی، مہارت تلاش کریں…', search_talent: 'نام، کردار تلاش کریں…', search_applicants: 'نام، عہدہ تلاش کریں…',
+    count_jobs: '{n} عہدے ملے', count_talent: '{n} پروفائل ملے', count_applicants: '{n} درخواست دہندگان',
+    filter_all: 'سب', meta_applied: '{n} درخواست دہندہ',
+    applicants_banner: 'یہ <strong>منظور شدہ درخواست دہندگان</strong> ہیں۔',
+    card_applied_for: 'درخواست دی:', card_get_contact: '📧 رابطہ معلومات حاصل کریں', card_get_contact_mini: '📧 رابطہ',
+    postjob_h2: 'ملازمت پوسٹ کریں', postjob_desc: 'جائزے کے لیے جمع کریں۔',
+    postjob_sec_employer: 'آجر کی تفصیلات', postjob_sec_details: 'ملازمت کی تفصیلات', postjob_success_h3: 'درخواست موصول',
+    postjob_success_p1: 'آپ کی ملازمت جائزے کے زیر التواء ہے۔', postjob_success_p2: '📧 تصدیقی ای میل بھیج دیا گیا۔', postjob_post_another: 'مزید پوسٹ کریں',
+    postrole_h2: 'اپنا کردار پوسٹ کریں', postrole_desc: 'آپ کام تلاش کر رہے ہیں۔',
+    postrole_sec_personal: 'ذاتی تفصیلات', postrole_sec_profile: 'پیشہ ورانہ پروفائل', postrole_success_h3: 'پروفائل جمع ہو گئی',
+    postrole_success_p1: 'جائزے کے زیر التواء۔', postrole_success_p2: '📧 ای میل بھیجا گیا۔', btn_submit_another: 'مزید جمع کریں',
+    m_skills_label: 'ضروری مہارتیں', m_applicants_label: '👥 درخواست دہندگان', m_desc_label: 'ملازمت کی تفصیل',
+    btn_apply: 'درخواست دیں →', btn_apply_close: '↑ بند کریں', apply_sec_title: 'آپ کی درخواست',
+    apply_email_note: '📧 تمام اپڈیٹ ای میل پر آئیں گے۔',
+    captcha_title: 'رابطہ معلومات حاصل کریں', captcha_subtitle: 'اپنی تفصیلات بھریں',
+    captcha_note: '📧 ایک بار ای میل کیا جائے گا۔',
+    captcha_prove: 'ثابت کریں کہ آپ انسان ہیں', captcha_done_title: 'ان باکس دیکھیں', captcha_sent_to: 'بھیجا گیا',
+    captcha_one_time: 'یہ لنک <strong style="color:var(--cream)">صرف ایک بار</strong> کام کرے گا۔',
+    btn_continue: 'جاری رکھیں →', btn_send_contact: 'رابطہ بھیجیں →', btn_change_email: '← ای میل تبدیل کریں', btn_close: 'بند کریں',
+    btn_submit_review: 'جائزے کے لیے جمع کریں →', btn_submit_application: 'درخواست جمع کریں →', btn_submit_profile: 'پروفائل جمع کریں →',
+    f_your_name: 'آپ کا نام', f_fullname: 'پورا نام', f_email: 'ای میل', f_phone: 'فون', f_company: 'کمپنی کا نام',
+    f_job_title: 'ملازمت کا عنوان', f_description: 'تفصیل', f_location: 'مقام', f_province: 'صوبہ',
+    f_job_type: 'قسم', f_salary: 'تنخواہ', f_deadline: 'آخری تاریخ', f_skills: 'مہارتیں',
+    f_resume_link: 'CV لنک', f_website: 'ویب سائٹ', f_role_title: 'کردار / عہدہ', f_bio: 'تعارف',
+    f_experience: 'تجربہ', f_availability: 'دستیابی', f_cv_link: 'CV', f_your_location: 'آپ کا مقام',
+    f_purpose: 'رابطے کا مقصد', f_cover: 'کور لیٹر',
+    ph_fullname: 'پورا نام', ph_your_name: 'آپ کا نام', ph_email_company: 'aap@company.com', ph_your_email: 'aap@email.com',
+    ph_phone: '+92 300 0000000', ph_company: 'کمپنی', ph_job_title: 'مثلاً: Frontend Developer',
+    ph_description: 'کردار کی تفصیل…', ph_salary: 'مثلاً: ₨50,000',
+    ph_deadline: 'مثلاً: 31 دسمبر', ph_skills: 'مثلاً: JavaScript',
+    ph_cv_link: 'https://…', ph_website: 'https://…', ph_role_title: 'مثلاً: الیکٹریشن',
+    ph_bio: 'مختصر تعارف…', ph_experience_role: 'تجربے کے سال…',
+    ph_skills_csv: 'کاما سے الگ', ph_experience: 'خلاصہ…', ph_cover: 'آپ کیوں موزوں ہیں؟',
+    ph_portfolio: 'https://…', ph_location_eg: 'شہر، ملک', ph_answer: 'جواب',
+    opt_select_province: 'صوبہ چنیں…', opt_select: 'چنیں…', opt_select_purpose: 'مقصد چنیں…',
+    jt_fulltime: 'کل وقتی', jt_parttime: 'جز وقتی', jt_contract: 'معاہدہ', jt_remote: 'ریموٹ', jt_internship: 'انٹرن شپ',
+    avail_immediate: 'فوری', avail_2weeks: '2 ہفتوں میں', avail_1month: '1 مہینے میں', avail_negotiable: 'قابل گفتگو',
+    purpose_hiring: '💼 ملازمت کی پیشکش', purpose_partner: '🤝 شراکت داری', purpose_interview: '📅 انٹرویو',
+    purpose_general: '💬 عام استفسار', purpose_other: '✦ دیگر',
+    note_email_confirm: '📧 تصدیق یہاں بھیجی جائے گی', note_cv_required: '📎 لازمی',
+    optional: '(اختیاری)', toast_app_ok: 'درخواست جمع ہو گئی! ای میل دیکھیں۔',
+    toast_app_fail: 'جمع کرنا ناکام۔', toast_net_err: 'نیٹ ورک خرابی۔', toast_name_req: 'نام درج کریں۔',
+    toast_email_req: 'ای میل لازمی ہے۔', toast_email_invalid: 'درست ای میل درج کریں۔',
+    toast_resume_req: 'CV لازمی ہے۔', toast_employer_req: 'آجر کا نام لازمی ہے۔',
+    toast_title_req: 'عنوان لازمی ہے۔', toast_desc_req: 'تفصیل لازمی ہے۔', toast_loc_req: 'صوبہ چنیں۔',
+    toast_role_req: 'کردار لازمی ہے۔', toast_province_req: 'صوبہ چنیں۔',
+    err_name_req: 'نام درج کریں۔', err_email_req: 'ای میل درج کریں۔', err_email_invalid: 'درست ای میل۔',
+    err_location_req: 'مقام درج کریں۔', err_purpose_req: 'مقصد چنیں۔',
+    err_captcha: 'غلط — دوبارہ کوشش کریں۔', err_captcha_send: 'بھیجنا ناکام۔', err_captcha_net: 'نیٹ ورک خرابی۔',
+    empty_jobs: 'کوئی عہدہ نہیں ملا۔', empty_talent: 'کوئی پروفائل نہیں۔', empty_applicants: 'کوئی درخواست دہندہ نہیں۔',
+    server_err: 'سرور سے جڑ نہیں سکا۔', captcha_what_is: 'کیا ہے',
   }
+
 };
 
 let currentLang = 'en';
@@ -1348,6 +1613,7 @@ document.addEventListener('click', function(e) {
 const LANG_META = {
   en: { code: 'EN' }, es: { code: 'ES' }, ca: { code: 'CA' },
   gl: { code: 'GL' }, eu: { code: 'EU' }, va: { code: 'VA' },
+  hi: { code: 'HI' }, pa: { code: 'PA' }, bn: { code: 'BN' }, ur: { code: 'UR' },
 };
 
 function pickLang(lang) {
@@ -1366,16 +1632,18 @@ function pickLang(lang) {
   loadApplicants();
   loadVisits();
 }
-
 function setLang(lang) {
   currentLang = lang;
-  document.documentElement.lang = lang === 'eu' ? 'eu' : lang === 'gl' ? 'gl' : (lang === 'ca' || lang === 'va') ? 'ca' : lang === 'en' ? 'en' : 'es';
+  document.documentElement.lang = lang === 'eu' ? 'eu' : lang === 'gl' ? 'gl' : (lang === 'ca' || lang === 'va') ? 'ca' : ['hi','pa','bn','ur'].includes(lang) ? lang : lang === 'en' ? 'en' : 'es';
+  
+  // Set Urdu to Right-To-Left (RTL) layout, others to Left-To-Right
+  document.dir = lang === 'ur' ? 'rtl' : 'ltr';
 
   const meta = LANG_META[lang] || LANG_META.en;
   const codeEl = document.getElementById('lang-trigger-code');
   if (codeEl) codeEl.textContent = meta.code;
 
-  ['en','es','ca','gl','eu','va'].forEach(l => {
+  ['en','es','ca','gl','eu','va','hi','pa','bn','ur'].forEach(l => {
     const row = document.getElementById('lopt-' + l);
     if (row) row.classList.toggle('is-active', l === lang);
   });
@@ -1397,6 +1665,7 @@ function setLang(lang) {
   if (allApplicants.length) { buildApplicantJobFilters(); renderApplicants(); }
   if (allJobs.length) buildFilters();
 }
+
 
 // ═══════════════════════════════════════════════════
 //  APP LOGIC
