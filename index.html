@@ -1354,6 +1354,17 @@ function pickLang(lang) {
   setLang(lang);
   try { localStorage.setItem('wb_lang', lang); } catch(e) {}
   setTimeout(closeLangMenu, 120);
+
+  // Show loaders
+  document.getElementById('job-grid').innerHTML = '<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  document.getElementById('talent-grid').innerHTML = '<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  document.getElementById('applicant-grid').innerHTML = '<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+
+  // Re-fetch all data
+  loadJobs();
+  loadTalents();
+  loadApplicants();
+  loadVisits();
 }
 
 function setLang(lang) {
