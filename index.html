@@ -1117,18 +1117,48 @@ function _setGTCookie(langCode) {
   document.cookie = 'googtrans=' + val + '; ' + future + '; path=/; domain=' + bareDomain;
 }
 
-function pickGTLang(langCode) {
+// Switch language by driving Google Translate's own <select id="google_translate_element">
+// dropdown directly, instead of reloading the page. A reload can get served from a CDN
+// or browser cache that ignores the query string, so every switch after the first one
+// silently returns the old cached page — that's the "works once, stuck till hard
+// refresh" symptom. Driving the widget's combo box in-place sidesteps caching entirely.
+function _findGTCombo() {
+  return document.querySelector('#google_translate_element select.goog-te-combo')
+      || document.querySelector('.goog-te-combo');
+}
+
+function pickGTLang(langCode, _retriesLeft) {
+  if (_retriesLeft === undefined) _retriesLeft = 20;
   _gtCurrentCode = langCode;
   _setGTCookie(langCode);
-  // location.reload() can be served straight from bfcache on repeat calls, which
-  // silently skips re-initializing the Google Translate widget — that's why the
-  // switcher worked once and then stopped. Force a real navigation instead.
+
+  const combo = _findGTCombo();
+  if (combo) {
+    const targetVal = langCode === 'en' ? '' : langCode;
+    // Setting .value directly doesn't trigger GT's own listener — dispatch 'change' too.
+    combo.value = targetVal;
+    combo.dispatchEvent(new Event('change'));
+    // Update the button label + re-open modal state immediately, no reload needed.
+    const found = GT_LANGUAGES.find(l => l.code === langCode);
+    const lbl = document.getElementById('gt-current-label');
+    if (lbl) lbl.textContent = found ? found.name.slice(0,5).toUpperCase() : 'EN';
+    closeGTModal();
+    return;
+  }
+
+  // Widget script hasn't finished injecting the combo box yet — retry briefly.
+  if (_retriesLeft > 0) {
+    setTimeout(() => pickGTLang(langCode, _retriesLeft - 1), 250);
+    return;
+  }
+
+  // Last-resort fallback: force a real (non-cached) reload with cache-busting headers.
   const url = new URL(location.href);
   url.searchParams.set('_gtl', Date.now());
   location.href = url.toString();
 }
 
-// Strip the cache-buster param once the real reload lands, so the URL stays clean.
+// Strip any leftover cache-buster param from a previous fallback reload.
 (function _stripGTLParam() {
   if (location.search.includes('_gtl=')) {
     const url = new URL(location.href);
