@@ -1103,18 +1103,39 @@ let _gtCurrentCode = 'en';
 let _gtCurrentLabel = 'EN';
 
 function _setGTCookie(langCode) {
-  // Set googtrans cookie for both root path and current domain
-  const val = langCode === 'en' ? '' : '/en/' + langCode;
-  const expire = langCode === 'en' ? 'expires=Thu, 01 Jan 1970 00:00:00 UTC; ' : '';
-  document.cookie = 'googtrans=' + val + '; ' + expire + 'path=/';
-  document.cookie = 'googtrans=' + val + '; ' + expire + 'path=/; domain=' + location.hostname;
+  // Wipe every possible existing googtrans cookie variant first (host-only + domain,
+  // with/without www) so a stale duplicate can't silently override the new value.
+  const bareDomain = location.hostname.replace(/^www\./, '');
+  const domains = ['', location.hostname, bareDomain, '.' + bareDomain];
+  domains.forEach(d => {
+    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/' + (d ? '; domain=' + d : '');
+  });
+  if (langCode === 'en') return; // cleared cookies = English, nothing more to set
+  const val = '/en/' + langCode;
+  const future = 'expires=' + new Date(Date.now() + 365*24*60*60*1000).toUTCString();
+  document.cookie = 'googtrans=' + val + '; ' + future + '; path=/';
+  document.cookie = 'googtrans=' + val + '; ' + future + '; path=/; domain=' + bareDomain;
 }
 
 function pickGTLang(langCode) {
   _gtCurrentCode = langCode;
   _setGTCookie(langCode);
-  location.reload();
+  // location.reload() can be served straight from bfcache on repeat calls, which
+  // silently skips re-initializing the Google Translate widget — that's why the
+  // switcher worked once and then stopped. Force a real navigation instead.
+  const url = new URL(location.href);
+  url.searchParams.set('_gtl', Date.now());
+  location.href = url.toString();
 }
+
+// Strip the cache-buster param once the real reload lands, so the URL stays clean.
+(function _stripGTLParam() {
+  if (location.search.includes('_gtl=')) {
+    const url = new URL(location.href);
+    url.searchParams.delete('_gtl');
+    history.replaceState({}, '', url.toString());
+  }
+})();
 
 // Re-trigger GT translation on dynamically added nodes
 function retranslate() {
