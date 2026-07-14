@@ -1106,15 +1106,19 @@ let _gtCurrentCode = 'en';
 let _gtCurrentLabel = 'EN';
 
 function _setGTCookie(langCode) {
-  // Wipe every possible existing googtrans cookie variant first (host-only + domain,
-  // with/without www) so a stale duplicate can't silently override the new value.
   const bareDomain = location.hostname.replace(/^www\./, '');
   const domains = ['', location.hostname, bareDomain, '.' + bareDomain];
   domains.forEach(d => {
     document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/' + (d ? '; domain=' + d : '');
   });
-  if (langCode === 'en') return; // cleared cookies = English, nothing more to set
-  const val = '/en/' + langCode;
+
+  // Don't just delete the cookie for English — Google's own script rewrites
+  // googtrans itself on load and usually wins that race, silently restoring
+  // the last language. Explicitly set it to /en/en instead, the same way we
+  // set /en/<lang> for every other language, so there's a real value that
+  // wins the race instead of an absence that loses it.
+  const target = langCode === 'en' ? 'en' : langCode;
+  const val = '/en/' + target;
   const future = 'expires=' + new Date(Date.now() + 365*24*60*60*1000).toUTCString();
   document.cookie = 'googtrans=' + val + '; ' + future + '; path=/';
   document.cookie = 'googtrans=' + val + '; ' + future + '; path=/; domain=' + bareDomain;
