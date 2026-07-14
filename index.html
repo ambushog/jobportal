@@ -1127,16 +1127,36 @@ function _findGTCombo() {
       || document.querySelector('.goog-te-combo');
 }
 
+function _forceRealReload() {
+  // A plain location.reload() can be served from bfcache/CDN cache and silently
+  // return stale content — append a changing query param to guarantee a fresh fetch.
+  const url = new URL(location.href);
+  url.searchParams.set('_gtl', Date.now());
+  location.href = url.toString();
+}
+
 function pickGTLang(langCode, _retriesLeft) {
   if (_retriesLeft === undefined) _retriesLeft = 20;
   _gtCurrentCode = langCode;
   _setGTCookie(langCode);
 
+  // Google's own dropdown doesn't reliably have a working "restore to original"
+  // option — setting combo.value = '' often leaves the page translated even
+  // though the cookie says English. Reverting to English needs a real reload
+  // (with the cookie already cleared by _setGTCookie above) rather than the
+  // in-place combo trick used for every other language.
+  if (langCode === 'en') {
+    const lbl = document.getElementById('gt-current-label');
+    if (lbl) lbl.textContent = 'EN';
+    closeGTModal();
+    _forceRealReload();
+    return;
+  }
+
   const combo = _findGTCombo();
   if (combo) {
-    const targetVal = langCode === 'en' ? '' : langCode;
     // Setting .value directly doesn't trigger GT's own listener — dispatch 'change' too.
-    combo.value = targetVal;
+    combo.value = langCode;
     combo.dispatchEvent(new Event('change'));
     // Update the button label + re-open modal state immediately, no reload needed.
     const found = GT_LANGUAGES.find(l => l.code === langCode);
@@ -1152,10 +1172,8 @@ function pickGTLang(langCode, _retriesLeft) {
     return;
   }
 
-  // Last-resort fallback: force a real (non-cached) reload with cache-busting headers.
-  const url = new URL(location.href);
-  url.searchParams.set('_gtl', Date.now());
-  location.href = url.toString();
+  // Last-resort fallback: force a real (non-cached) reload.
+  _forceRealReload();
 }
 
 // Strip any leftover cache-buster param from a previous fallback reload.
