@@ -388,8 +388,6 @@
   .talent-avail { font-family: var(--mono); font-size: 0.68rem; padding: 4px 10px; border-radius: 20px; white-space: nowrap; background: rgba(46,125,92,0.14); color: var(--green-lt); border: 1px solid rgba(46,125,92,0.25); letter-spacing: 0.06em; text-transform: uppercase; flex-shrink: 0; }
   .reveal-btn { background: none; border: 1px solid var(--border2); color: var(--muted); font-family: var(--mono); font-size: 0.72rem; padding: 6px 14px; border-radius: var(--radius); cursor: pointer; transition: all 0.2s; letter-spacing: 0.04em; margin-top: 1rem; }
   .reveal-btn:hover { border-color: var(--gold); color: var(--gold); }
-  #captcha-answer::-webkit-outer-spin-button, #captcha-answer::-webkit-inner-spin-button { -webkit-appearance: none; }
-  #captcha-answer[type=number] { -moz-appearance: textfield; }
 
   .applicants-banner {
     background: linear-gradient(135deg, rgba(124,92,191,0.08) 0%, rgba(10,10,8,0) 60%);
@@ -399,6 +397,21 @@
     display: flex; align-items: center; gap: 12px;
   }
   .applicants-banner strong { color: var(--purple-lt); }
+
+  /* ── DIRECT CONTACT (no email / no form) ── */
+  .dc-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: var(--radius); background: rgba(255,255,255,0.02); font-family: var(--mono); font-size: 0.82rem; }
+  .dc-row label { flex: 0 0 78px; font-size: 0.66rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .dc-row .dc-val { flex: 1; min-width: 0; word-break: break-word; color: var(--text); }
+  .dc-row a { color: var(--gold); text-decoration: none; }
+  .dc-row a:hover { text-decoration: underline; }
+  .dc-copy { background: none; border: 1px solid var(--border2); color: var(--muted); font-family: var(--mono); font-size: 0.65rem; padding: 4px 9px; border-radius: 20px; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
+  .dc-copy:hover { border-color: var(--gold); color: var(--gold); }
+  .dc-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 1.25rem; }
+  .dc-actions .btn { flex: 1; justify-content: center; min-width: 140px; }
+  .dc-wa { background: #25D366; color: #fff; }
+  .dc-wa:hover { background: #1ebe5a; transform: translateY(-1px); }
+  .dc-employer-btn { width: 100%; justify-content: center; margin-bottom: 0.75rem; }
+  .dc-card-btn { margin-top: 0.75rem; margin-right: 8px; }
 
   [data-t] { transition: opacity 0.12s; }
 </style>
@@ -658,6 +671,11 @@
       <span class="modal-desc-label" data-t="m_desc_label">Job Description</span>
       <div class="modal-desc" id="m-desc"></div>
 
+      <!-- Instant employer contact (no email, no form) -->
+      <button class="btn btn-outline dc-employer-btn" id="dc-employer-btn" onclick="revealContact(currentJobId,'employer')" data-t="btn_employer_contact">
+        🏢 Get Employer Contact
+      </button>
+
       <button class="btn btn-primary" id="apply-toggle-btn" onclick="toggleApply()" style="width:100%;justify-content:center;margin-bottom:0.75rem" data-t="btn_apply">
         Apply for this Role →
       </button>
@@ -812,7 +830,7 @@
 
     <div class="applicants-banner">
       <span style="font-size:1.4rem;flex-shrink:0">👥</span>
-      <span data-t="applicants_banner">These are <strong>approved applicants</strong> — people who have applied for open roles and been shortlisted by our admin. Each card shows the applicant's name, the <strong>job they applied for</strong>, and the company. Use <strong>Get Contact Details</strong> to receive their email &amp; phone directly.</span>
+      <span data-t="applicants_banner">These are <strong>approved applicants</strong> — people who have applied for open roles and been shortlisted by our admin. Each card shows the applicant's name, the <strong>job they applied for</strong>, and the company. Use <strong>Get Contact Details</strong> to see their email &amp; phone instantly.</span>
     </div>
 
     <div class="search-wrap">
@@ -828,79 +846,17 @@
   </div>
 </div>
 
-<!-- CONTACT REQUEST MODAL -->
-<div class="modal-bg" id="captcha-modal" onclick="closeCaptchaOnBg(event)">
+<!-- INSTANT CONTACT MODAL (no email / no form / no captcha) -->
+<div class="modal-bg" id="dc-modal" style="z-index:2500" onclick="closeContactOnBg(event)">
   <div class="modal" style="max-width:480px">
     <div class="modal-header">
       <div>
-        <div class="modal-title" data-t="captcha_title">Get Contact Details</div>
-        <div class="modal-company" style="color:var(--muted)" data-t="captcha_subtitle">Fill in your details — contact info sent once to your email</div>
+        <div class="modal-title" data-t="captcha_title">Contact Details</div>
+        <div class="modal-company" id="dc-sub"></div>
       </div>
-      <button class="modal-close" onclick="closeCaptcha()">✕</button>
+      <button class="modal-close" onclick="closeContact()">✕</button>
     </div>
-    <div class="modal-body" style="padding:1.75rem 2rem">
-      <div id="captcha-step-email">
-        <div style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.5;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);background:rgba(200,162,75,0.04)" data-t="captcha_note">
-          📧 Contact details will be emailed to you <strong style="color:var(--gold)">once</strong>. Fill in the details below — no account needed.
-        </div>
-        <div style="margin-bottom:0.9rem">
-          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem" data-t="f_fullname">Your Full Name <span style="color:var(--gold)">*</span></div>
-          <input type="text" id="captcha-requester-name" data-ph="ph_your_name" placeholder="Your name"
-            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.85rem;padding:10px 14px;border-radius:6px;outline:none;transition:border-color 0.2s"
-            onfocus="this.style.borderColor='var(--gold-dim)'" onblur="this.style.borderColor='var(--border2)'">
-        </div>
-        <div style="margin-bottom:0.9rem">
-          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem" data-t="f_email">Your Email Address <span style="color:var(--gold)">*</span></div>
-          <input type="email" id="captcha-requester-email" data-ph="ph_your_email" placeholder="you@email.com"
-            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.85rem;padding:10px 14px;border-radius:6px;outline:none;transition:border-color 0.2s"
-            onfocus="this.style.borderColor='var(--gold-dim)'" onblur="this.style.borderColor='var(--border2)'"
-            onkeydown="if(event.key==='Enter')proceedToCaptcha()">
-        </div>
-        <div style="margin-bottom:0.9rem">
-          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem" data-t="f_your_location">Your Location <span style="color:var(--gold)">*</span></div>
-          <input type="text" id="captcha-requester-location" data-ph="ph_location_eg" placeholder="City, Country (e.g. Madrid, Spain)"
-            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.85rem;padding:10px 14px;border-radius:6px;outline:none;transition:border-color 0.2s"
-            onfocus="this.style.borderColor='var(--gold-dim)'" onblur="this.style.borderColor='var(--border2)'">
-        </div>
-        <div style="margin-bottom:1.1rem">
-          <div style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem" data-t="f_purpose">Purpose of Contact <span style="color:var(--gold)">*</span></div>
-          <select id="captcha-requester-purpose"
-            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.85rem;padding:10px 14px;border-radius:6px;outline:none;transition:border-color 0.2s;appearance:none;cursor:pointer"
-            onfocus="this.style.borderColor='var(--gold-dim)'" onblur="this.style.borderColor='var(--border2)'">
-            <option value="" style="background:#1a1a18" data-t="opt_select_purpose">Select purpose…</option>
-            <option value="Hiring / Job Offer" style="background:#1a1a18" data-t="purpose_hiring">💼 Hiring / Job Offer</option>
-            <option value="Partnership / Collaboration" style="background:#1a1a18" data-t="purpose_partner">🤝 Partnership / Collaboration</option>
-            <option value="Interview Request" style="background:#1a1a18" data-t="purpose_interview">📅 Interview Request</option>
-            <option value="General Enquiry" style="background:#1a1a18" data-t="purpose_general">💬 General Enquiry</option>
-            <option value="Other" style="background:#1a1a18" data-t="purpose_other">✦ Other</option>
-          </select>
-        </div>
-        <div id="captcha-email-error" style="font-family:var(--mono);font-size:0.75rem;color:var(--red);margin-bottom:0.75rem;min-height:1em"></div>
-        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="proceedToCaptcha()" data-t="btn_continue">Continue →</button>
-      </div>
-      <div id="captcha-step-puzzle" style="display:none;text-align:center">
-        <div style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem" data-t="captcha_prove">Prove you're human</div>
-        <div id="captcha-question" style="font-family:'Instrument Serif',serif;font-size:2.2rem;color:var(--cream);margin-bottom:1.5rem;line-height:1.2;letter-spacing:-0.01em"></div>
-        <div style="max-width:180px;margin:0 auto 0.75rem">
-          <input type="number" id="captcha-answer" data-ph="ph_answer" placeholder="Answer"
-            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:1.15rem;padding:12px 14px;border-radius:6px;outline:none;text-align:center"
-            onkeydown="if(event.key==='Enter')verifyCaptcha()">
-        </div>
-        <div id="captcha-error" style="font-family:var(--mono);font-size:0.75rem;color:var(--red);margin-bottom:0.75rem;min-height:1.2em"></div>
-        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="verifyCaptcha()" data-t="btn_send_contact">Send Contact Details →</button>
-        <button onclick="backToEmail()" style="background:none;border:none;color:var(--muted);font-family:var(--mono);font-size:0.72rem;cursor:pointer;margin-top:0.75rem;text-decoration:underline" data-t="btn_change_email">← Change email</button>
-      </div>
-      <div id="captcha-step-done" style="display:none;text-align:center;padding:1rem 0">
-        <div style="font-size:2.5rem;margin-bottom:1rem">✉️</div>
-        <div style="font-family:'Instrument Serif',serif;font-size:1.4rem;color:var(--cream);margin-bottom:0.75rem" data-t="captcha_done_title">Check your inbox</div>
-        <div style="font-family:var(--mono);font-size:0.78rem;color:var(--muted);line-height:1.65">
-          <span data-t="captcha_sent_to">Contact details have been sent to</span><br>
-          <strong id="captcha-sent-to" style="color:var(--gold)"></strong><br><br>
-          <span data-t="captcha_one_time">This link is <strong style="color:var(--cream)">one-time only</strong> — it will not work again.</span>
-        </div>
-        <button class="btn btn-outline" style="margin-top:1.5rem" onclick="closeCaptcha()" data-t="btn_close">Close</button>
-      </div>
-    </div>
+    <div class="modal-body" id="dc-body" style="padding:1.5rem 2rem"></div>
   </div>
 </div>
 
@@ -939,6 +895,7 @@ const LANGS_EN = {
   filter_all: 'All', meta_applied: 'Applicant {n}',
   applicants_banner: 'These are <strong>approved applicants</strong>.',
   card_applied_for: 'Applied for:', card_get_contact: '\ud83d\udce7 Get Contact Details', card_get_contact_mini: '\ud83d\udce7 Contact',
+  card_employer_contact: '\ud83c\udfe2 Get Employer Contact', btn_employer_contact: '\ud83c\udfe2 Get Employer Contact',
   postjob_h2: 'Post a Position', postjob_desc: 'Submit your job listing for review. Our team approves all postings before they appear publicly \u2014 usually within 24 hours. <strong style="color:var(--gold)">Email is required</strong> \u2014 you will receive a confirmation and approval notification via email.',
   postjob_sec_employer: 'Employer Details', postjob_sec_details: 'Job Details', postjob_success_h3: 'Submission received',
   postjob_success_p1: 'Your job posting is pending admin review.<br>It will appear publicly once approved.',
@@ -950,18 +907,13 @@ const LANGS_EN = {
   m_skills_label: 'Required Skills', m_applicants_label: '\ud83d\udc65 People who applied', m_desc_label: 'Job Description',
   btn_apply: 'Apply for this Position \u2192', btn_apply_close: '\u2191 Close Application', apply_sec_title: 'Your Application',
   apply_email_note: '\ud83d\udce7 All updates \u2014 shortlisting, company decisions \u2014 come via email. Email is required.',
-  captcha_title: 'Get Contact Details', captcha_subtitle: 'Fill in your details \u2014 contact sent once to your email',
-  captcha_note: '\ud83d\udce7 Contact details will be emailed to you <strong style="color:var(--gold)">once</strong>. Fill in your details \u2014 no account needed.',
-  captcha_prove: 'Prove you are human', captcha_done_title: 'Check your inbox', captcha_sent_to: 'Details have been sent to',
-  captcha_one_time: 'This link is <strong style="color:var(--cream)">one-time use</strong> \u2014 it will not work again.',
-  btn_continue: 'Continue \u2192', btn_send_contact: 'Send Details \u2192', btn_change_email: '\u2190 Change email', btn_close: 'Close',
+  captcha_title: 'Contact Details',
   btn_submit_review: 'Submit for Review \u2192', btn_submit_application: 'Submit Application \u2192', btn_submit_profile: 'Submit Profile \u2192',
   f_your_name: 'Your Name', f_fullname: 'Full Name', f_email: 'Email', f_phone: 'Phone', f_company: 'Company Name',
   f_job_title: 'Job Title', f_description: 'Description', f_location: 'Location', f_province: 'Location (Province)',
   f_job_type: 'Job Type', f_salary: 'Salary / Rate', f_deadline: 'Deadline', f_skills: 'Skills',
   f_resume_link: 'Resume / Portfolio Link', f_website: 'Website', f_role_title: 'Role / Job Title', f_bio: 'Bio / About You',
-  f_experience: 'Experience', f_availability: 'Availability', f_cv_link: 'Resume / Portfolio Link', f_your_location: 'Your Location',
-  f_purpose: 'Contact Purpose', f_cover: 'Cover Letter',
+  f_experience: 'Experience', f_availability: 'Availability', f_cv_link: 'Resume / Portfolio Link', f_cover: 'Cover Letter',
   ph_fullname: 'Full name', ph_your_name: 'Your name', ph_email_company: 'you@company.com', ph_your_email: 'you@email.com',
   ph_phone: '+34 600 000 000', ph_company: 'Acme Corp', ph_job_title: 'e.g. Senior Frontend Developer',
   ph_description: 'Describe the role, responsibilities\u2026', ph_salary: 'e.g. 40,000 \u20ac / year',
@@ -969,12 +921,10 @@ const LANGS_EN = {
   ph_website: 'https://yourcompany.com', ph_role_title: 'e.g. Full Stack Developer\u2026',
   ph_bio: 'Brief description of who you are\u2026', ph_experience_role: 'Years of experience\u2026',
   ph_skills_csv: 'Comma-separated skills', ph_experience: 'Brief experience summary\u2026', ph_cover: 'Why are you a good fit?',
-  ph_portfolio: 'https://yourportfolio.com', ph_location_eg: 'City, Country (e.g. Madrid, Spain)', ph_answer: 'Answer',
-  opt_select_province: 'Select province\u2026', opt_select: 'Select\u2026', opt_select_purpose: 'Select purpose\u2026',
+  ph_portfolio: 'https://yourportfolio.com',
+  opt_select_province: 'Select province\u2026', opt_select: 'Select\u2026',
   jt_fulltime: 'Full-time', jt_parttime: 'Part-time', jt_contract: 'Contract', jt_remote: 'Remote', jt_internship: 'Internship',
   avail_immediate: 'Immediately', avail_2weeks: 'Within 2 weeks', avail_1month: 'Within 1 month', avail_negotiable: 'Negotiable',
-  purpose_hiring: '\ud83d\udcbc Hiring / Job Offer', purpose_partner: '\ud83e\udd1d Collaboration', purpose_interview: '\ud83d\udcc5 Interview',
-  purpose_general: '\ud83d\udcac General Enquiry', purpose_other: '\u2736 Other',
   note_email_confirm: '\ud83d\udce7 Confirmation & approval notices sent here', note_cv_required: '\ud83d\udcce Required \u2014 included in your WhatsApp confirmation',
   optional: '(optional)', toast_app_ok: 'Application sent! Check your email.',
   toast_app_fail: 'Submission failed.', toast_net_err: 'Network error. Please try again.', toast_name_req: 'Name is required.',
@@ -982,11 +932,11 @@ const LANGS_EN = {
   toast_resume_req: 'Resume link is required.', toast_employer_req: 'Employer name is required.',
   toast_title_req: 'Job title is required.', toast_desc_req: 'Description is required.', toast_loc_req: 'Please select a province.',
   toast_role_req: 'Role is required.', toast_province_req: 'Please select your province.',
-  err_name_req: 'Enter your name.', err_email_req: 'Enter your email.', err_email_invalid: 'Invalid email.',
-  err_location_req: 'Enter your location.', err_purpose_req: 'Select a purpose.',
-  err_captcha: 'Incorrect \u2014 try again.', err_captcha_send: 'Send failed.', err_captcha_net: 'Network error.',
   empty_jobs: 'No positions found.', empty_talent: 'No profiles found.', empty_applicants: 'No applicants found.',
-  server_err: 'Could not connect to server.', captcha_what_is: 'What is',
+  server_err: 'Could not connect to server.',
+  dc_name: 'Name', dc_role: 'Role', dc_email: 'Email', dc_phone: 'Phone', dc_location: 'Location', dc_cv: 'CV / Link',
+  dc_copy: 'Copy', dc_copied: 'Copied \u2713', dc_btn_email: '\u2709 Email', dc_btn_call: '\ud83d\udcde Call', dc_btn_wa: '\ud83d\udcac WhatsApp',
+  dc_load_fail: 'Could not load contact details.',
 };
 
 function t(key) {
@@ -1367,11 +1317,13 @@ function renderApplicants() {
       </div>
       ${a.experience ? `<p class="job-desc">${esc(a.experience)}</p>` : ''}
       ${a.skills ? `<div class="job-skills">${a.skills.split(',').slice(0,5).map(s=>`<span class="skill-pill">${esc(s.trim())}</span>`).join('')}</div>` : ''}
-      <button class="reveal-btn" onclick="event.stopPropagation();openCaptcha(${a.id},'applicant')">${t('card_get_contact')}</button>
+      <button class="reveal-btn" onclick="event.stopPropagation();revealContact(${a.id},'applicant')">${t('card_get_contact')}</button>
     </div>`;
   }).join('');
   retranslate();
-}function formatDate(iso) {
+}
+
+function formatDate(iso) {
   if (!iso) return '';
   try { return new Date(iso).toLocaleDateString('es-ES', { day:'numeric', month:'short', year:'numeric' }); } catch { return ''; }
 }
@@ -1391,8 +1343,9 @@ function renderTalents() {
       <div class="job-meta">${tl.country ? `<span class="job-meta-item">📍 ${esc(tl.country)}</span>` : ''}</div>
       ${tl.bio ? `<p class="job-desc">${esc(tl.bio)}</p>` : ''}
       ${tl.skills ? `<div class="job-skills">${tl.skills.split(',').slice(0,5).map(s=>`<span class="skill-pill">${esc(s.trim())}</span>`).join('')}</div>` : ''}
-      <button class="reveal-btn" onclick="event.stopPropagation();openCaptcha(${tl.id},'talent')">${t('card_get_contact')}</button>
+      <button class="reveal-btn" onclick="event.stopPropagation();revealContact(${tl.id},'talent')">${t('card_get_contact')}</button>
     </div>`).join('');
+  retranslate();
 }
 
 async function loadVisits() {
@@ -1452,6 +1405,7 @@ function renderJobs() {
       </div>
       ${j.description ? `<p class="job-desc">${esc(j.description)}</p>` : ''}
       ${j.skills ? `<div class="job-skills">${j.skills.split(',').slice(0,5).map(s=>`<span class="skill-pill">${esc(s.trim())}</span>`).join('')}</div>` : ''}
+      <button class="reveal-btn dc-card-btn" onclick="event.stopPropagation();revealContact(${j.id},'employer')">${t('card_employer_contact')}</button>
     </div>`;
   }).join('');
   retranslate();
@@ -1460,7 +1414,7 @@ function renderJobs() {
 function badgeClass(tp) {
   return {'Full-time':'badge-full','Part-time':'badge-part','Remote':'badge-remote','Contract':'badge-contract'}[tp] || 'badge-part';
 }
-function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
+function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
 
 function openJob(id) {
   const j = allJobs.find(x => x.id === id);
@@ -1494,7 +1448,7 @@ function openJob(id) {
           ${a.skills ? `<div style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);margin-top:3px">${esc(a.skills.split(',').slice(0,3).join(', '))}</div>` : ''}
         </div>
         ${actionBadge}
-        <button class="reveal-btn" style="margin-top:0;font-size:0.7rem;padding:5px 12px" onclick="openCaptcha(${a.id},'applicant')">${t('card_get_contact_mini')}</button>
+        <button class="reveal-btn" style="margin-top:0;font-size:0.7rem;padding:5px 12px" onclick="revealContact(${a.id},'applicant')">${t('card_get_contact_mini')}</button>
       </div>`;
     }).join('');
   } else {
@@ -1531,95 +1485,80 @@ function clearApplyForm() {
     .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
 }
 
-let captchaCorrect = null, captchaTargetId = null, captchaTargetType = null;
-function _newCaptchaQuestion() {
-  const a = Math.floor(Math.random()*12)+1, b = Math.floor(Math.random()*12)+1;
-  const ops = [ {q:`${a} + ${b}`,ans:a+b}, {q:`${a} × ${b}`,ans:a*b}, {q:`${Math.max(a,b)} − ${Math.min(a,b)}`,ans:Math.max(a,b)-Math.min(a,b)} ];
-  return ops[Math.floor(Math.random()*ops.length)];
+// ═══════════════════════════════════════════════════
+//  INSTANT CONTACT — employer + employee (no email, no form, no captcha)
+//  type: 'talent' | 'applicant' | 'employer'  (employer id = job id)
+// ═══════════════════════════════════════════════════
+function _dcRow(label, valueHtml, copyText) {
+  return `<div class="dc-row"><label>${label}</label><span class="dc-val">${valueHtml}</span>` +
+    (copyText ? `<button class="dc-copy" data-copy="${esc(copyText)}">${t('dc_copy')}</button>` : '') + `</div>`;
 }
 
-function openCaptcha(id, type) {
-  captchaTargetId = id; captchaTargetType = type; captchaCorrect = null;
-  document.getElementById('captcha-step-email').style.display  = 'block';
-  document.getElementById('captcha-step-puzzle').style.display = 'none';
-  document.getElementById('captcha-step-done').style.display   = 'none';
-  ['captcha-requester-name','captcha-requester-email','captcha-requester-location','captcha-requester-purpose','captcha-answer'].forEach(id => { document.getElementById(id).value = ''; });
-  document.getElementById('captcha-email-error').textContent = '';
-  document.getElementById('captcha-error').textContent = '';
-  document.getElementById('captcha-modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  setTimeout(() => document.getElementById('captcha-requester-email').focus(), 280);
-}
-
-function proceedToCaptcha() {
-  const name     = document.getElementById('captcha-requester-name').value.trim();
-  const email    = document.getElementById('captcha-requester-email').value.trim();
-  const location = document.getElementById('captcha-requester-location').value.trim();
-  const purpose  = document.getElementById('captcha-requester-purpose').value;
-  const errEl    = document.getElementById('captcha-email-error');
-  if (!name)    { errEl.textContent = t('err_name_req'); return; }
-  if (!email)   { errEl.textContent = t('err_email_req'); return; }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent = t('err_email_invalid'); return; }
-  if (!location){ errEl.textContent = t('err_location_req'); return; }
-  if (!purpose) { errEl.textContent = t('err_purpose_req'); return; }
-  errEl.textContent = '';
-  const chosen = _newCaptchaQuestion();
-  captchaCorrect = chosen.ans;
-  document.getElementById('captcha-question').textContent = `${t('captcha_what_is')}  ${chosen.q} ?`;
-  document.getElementById('captcha-answer').value = '';
-  document.getElementById('captcha-error').textContent = '';
-  document.getElementById('captcha-step-email').style.display  = 'none';
-  document.getElementById('captcha-step-puzzle').style.display = 'block';
-  setTimeout(() => document.getElementById('captcha-answer').focus(), 200);
-}
-
-function backToEmail() {
-  document.getElementById('captcha-step-email').style.display  = 'block';
-  document.getElementById('captcha-step-puzzle').style.display = 'none';
-  captchaCorrect = null;
-  setTimeout(() => document.getElementById('captcha-requester-email').focus(), 200);
-}
-
-async function verifyCaptcha() {
-  const val = parseInt(document.getElementById('captcha-answer').value, 10);
-  if (isNaN(val) || val !== captchaCorrect) {
-    document.getElementById('captcha-error').textContent = t('err_captcha');
-    document.getElementById('captcha-answer').value = ''; document.getElementById('captcha-answer').focus();
-    const chosen = _newCaptchaQuestion(); captchaCorrect = chosen.ans;
-    document.getElementById('captcha-question').textContent = `${t('captcha_what_is')}  ${chosen.q} ?`;
-    return;
+function _renderContact(c) {
+  const phoneDigits = (c.phone || '').replace(/\D/g, '');
+  let h = '';
+  h += _dcRow(t('dc_name'), esc(c.name) || '—');
+  if (c.role) h += _dcRow(t('dc_role'), esc(c.role));
+  h += c.email
+    ? _dcRow(t('dc_email'), `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>`, c.email)
+    : _dcRow(t('dc_email'), '—');
+  h += c.phone
+    ? _dcRow(t('dc_phone'), `<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>`, c.phone)
+    : _dcRow(t('dc_phone'), '—');
+  if (c.location) h += _dcRow(t('dc_location'), esc(c.location));
+  if (c.resume_link) {
+    const safe = /^https?:\/\//i.test(c.resume_link) ? c.resume_link : '#';
+    h += _dcRow(t('dc_cv'), `<a href="${esc(safe)}" target="_blank" rel="noopener noreferrer">${esc(c.resume_link)}</a>`);
   }
-  document.getElementById('captcha-error').textContent = '';
-  const requesterEmail = document.getElementById('captcha-requester-email').value.trim();
-  const btn = document.querySelector('#captcha-step-puzzle .btn-primary');
-  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  h += '<div class="dc-actions">';
+  if (c.email) h += `<a class="btn btn-primary" href="mailto:${esc(c.email)}">${t('dc_btn_email')}</a>`;
+  if (phoneDigits) {
+    h += `<a class="btn btn-outline" href="tel:${esc(c.phone)}">${t('dc_btn_call')}</a>`;
+    h += `<a class="btn dc-wa" href="https://wa.me/${phoneDigits}" target="_blank" rel="noopener noreferrer">${t('dc_btn_wa')}</a>`;
+  }
+  h += '</div>';
+  const body = document.getElementById('dc-body');
+  body.innerHTML = h;
+  body.querySelectorAll('.dc-copy').forEach(b => b.addEventListener('click', () => {
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(b.dataset.copy).then(() => {
+      b.textContent = t('dc_copied'); setTimeout(() => (b.textContent = t('dc_copy')), 1500);
+    });
+  }));
+}
+
+async function revealContact(id, type) {
+  if (!id) return;
+  const subs = { talent: 'Candidate', applicant: 'Applicant', employer: 'Employer' };
+  document.getElementById('dc-sub').textContent = subs[type] || '';
+  document.getElementById('dc-body').innerHTML =
+    '<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  document.getElementById('dc-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
   try {
-    const r = await fetch(`${API}/contact/request`, {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        requester_email: requesterEmail, requester_name: document.getElementById('captcha-requester-name').value.trim(),
-        requester_location: document.getElementById('captcha-requester-location').value.trim(),
-        requester_purpose: document.getElementById('captcha-requester-purpose').value, target_id: captchaTargetId, target_type: captchaTargetType
-      }),
+    const r = await fetch(`${API}/contact/direct`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ target_id: id, target_type: type }),
     });
     const d = await r.json();
-    if (r.ok && d.success) {
-      document.getElementById('captcha-step-puzzle').style.display = 'none';
-      document.getElementById('captcha-step-done').style.display   = 'block';
-      document.getElementById('captcha-sent-to').textContent       = requesterEmail;
-    } else {
-      document.getElementById('captcha-error').textContent = d.error || t('err_captcha_send');
-      if (btn) { btn.disabled = false; btn.textContent = t('btn_send_contact'); }
+    if (r.ok && d.success) { _renderContact(d.contact); }
+    else {
+      document.getElementById('dc-body').innerHTML =
+        `<div class="empty"><div class="empty-icon">⚠</div><p>${esc(d.error || t('dc_load_fail'))}</p></div>`;
     }
-  } catch(e) {
-    document.getElementById('captcha-error').textContent = t('err_captcha_net');
-    if (btn) { btn.disabled = false; btn.textContent = t('btn_send_contact'); }
+  } catch (e) {
+    document.getElementById('dc-body').innerHTML =
+      `<div class="empty"><div class="empty-icon">⚠</div><p>${t('server_err')}</p></div>`;
   }
-  captchaCorrect = null; captchaTargetId = null; captchaTargetType = null;
 }
 
-function closeCaptcha() { document.getElementById('captcha-modal').classList.remove('open'); document.body.style.overflow = ''; }
-function closeCaptchaOnBg(e) { if (e.target.id === 'captcha-modal') closeCaptcha(); }
+function closeContact() {
+  document.getElementById('dc-modal').classList.remove('open');
+  // keep page locked if the job modal is still open underneath
+  if (!document.getElementById('job-modal').classList.contains('open')) document.body.style.overflow = '';
+}
+function closeContactOnBg(e) { if (e.target.id === 'dc-modal') closeContact(); }
 
 const _submitting = {};
 function setSubmitting(key, btn, loading) {
@@ -1728,7 +1667,7 @@ function resetRoleForm() {
   document.getElementById('r-country').value = ''; document.getElementById('r-availability').value = '';
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeJobModal(); closeCaptcha(); closeGTModal(); closeMobileNav(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeContact(); closeJobModal(); closeGTModal(); closeMobileNav(); } });
 
 loadJobs(); loadVisits(); loadApplicants();
 // Initialize UI text from English dict
