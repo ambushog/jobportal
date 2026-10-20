@@ -43,8 +43,8 @@ nav button.on{color:#fff;background:rgba(255,255,255,.12)}
 .menu small{display:block;font-weight:400;color:var(--mut);font-size:.72rem}
 #scrim{position:fixed;inset:0;z-index:6;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:.3s}#scrim.on{opacity:1;pointer-events:auto}
 /* deck */
-#v-discover.on{display:flex;flex-direction:column;gap:16px}
-#deck{position:relative;flex:1;min-height:340px;touch-action:pan-y;margin-bottom:4px}
+#v-discover.on{display:flex;flex-direction:column;gap:16px;max-width:460px}
+#deck{position:relative;flex:1;min-height:340px;max-height:640px;touch-action:pan-y;margin-bottom:4px}
 .card{position:absolute;inset:0;border-radius:var(--r);padding:24px;display:flex;flex-direction:column;gap:12px;cursor:grab;user-select:none;will-change:transform;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 .card.drag{transition:none;cursor:grabbing}
 .av{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font:700 1.1rem inherit;color:#e9ecf0;background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.06));border:1px solid var(--line)}
@@ -52,7 +52,204 @@ nav button.on{color:#fff;background:rgba(255,255,255,.12)}
 .sub{color:var(--mut);font-size:.9rem;font-weight:500}
 .meta{display:flex;flex-wrap:wrap;gap:6px}
 .meta span,.chip{padding:3px 10px;border-radius:99px;font-size:.75rem;background:rgba(255,255,255,.07);border:1px solid var(--line);color:#d5d9df}
-.txt{font-size:.9rem;line-height:1.6;color:#c9cdd4;overflow:hidden;flex:1;-webkit-mask-image:linear-gradient(#000 78%,transparent);mask-image:linear-gradient(#000 78%,transparent)}
+.card.top{background:rgba(27,29,34,.8)}
+.card.ghost{background:rgba(255,255,255,.035);pointer-events:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 8px 20px rgba(0,0,0,.3)}
+.card.ghost::before{display:none}
+.hd{display:flex;gap:14px;align-items:center}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:8px 20px;padding:14px 0;margin:4px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.kv dt{color:var(--mut);font-size:.78rem}.kv dd{font-weight:500;font-size:.9rem}
+.sec{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);font-weight:600}
+.txt{font-size:.92rem;line-height:1.65;color:#cfd3d9;display:-webkit-box;-webkit-line-clamp:9;-webkit-box-orient:vertical;overflow:hidden}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.stamp{position:absolute;top:24px;padding:3px 12px;border:2px solid;border-radius:8px;font:700 1.1rem inherit;opacity:0;letter-spacing:.12em}
+.stamp.l{right:24px;color:var(--ok);transform:rotate(8deg)}.stamp.n{left:24px;color:var(--no);transform:rotate(-8deg)}
+.acts{position:relative;flex:none;display:flex;justify-content:center;gap:14px;align-items:center;padding:2px 0 6px}
+.rb{width:58px;height:58px;border-radius:50%;border:0;color:#fff;cursor:pointer;display:grid;place-items:center;transition:transform .15s}
+.rb svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.rb:active{transform:scale(.9)}.rb.s{width:44px;height:44px}.rb.s svg{width:18px;height:18px}.rb.y{color:var(--ok)}.rb.x{color:var(--no)}
+.empty{text-align:center;color:var(--mut);padding:5rem 1rem;line-height:1.7}
+.row{padding:16px 18px;margin-bottom:12px;display:flex;flex-direction:column;gap:6px;border-radius:18px}
+.row h3{font-size:1rem;font-weight:650}
+.btn{border:1px solid var(--line);cursor:pointer;font:600 .82rem inherit;color:var(--ink);padding:10px 18px;border-radius:99px;text-decoration:none;display:inline-flex;gap:6px;align-items:center;justify-content:center;background:rgba(255,255,255,.06)}
+.btn.g{background:var(--acc);color:#111;border-color:transparent}.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+h1.t{font-size:1.3rem;margin:4px 4px 14px;letter-spacing:-.02em;font-weight:650}
+.form{padding:20px;display:flex;flex-direction:column;gap:12px;border-radius:20px}
+label{font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:var(--mut);display:flex;flex-direction:column;gap:5px;font-weight:600}
+input,select,textarea{font:.9rem inherit;color:var(--ink);background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:12px;padding:10px 12px;outline:none;width:100%}
+input:focus,select:focus,textarea:focus{border-color:rgba(255,255,255,.45)}textarea{min-height:80px;resize:vertical}
+option{background:#1a1c20}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.search{margin-bottom:12px;border-radius:99px!important;padding:12px 18px!important}
+.ov{position:fixed;inset:0;z-index:40;display:none;place-items:center;background:rgba(6,7,9,.86);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);padding:14px;overflow-y:auto}.ov.on{display:grid}
+.box{width:100%;max-width:460px;padding:26px;display:flex;flex-direction:column;gap:12px;border-radius:24px;margin:auto}
+.box h2{font-size:1.4rem;font-weight:650;letter-spacing:-.02em;text-align:center}.box p{color:var(--mut);text-align:center}
+.rc{border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--ink);cursor:pointer;padding:18px;border-radius:18px;font:650 1rem inherit;text-align:left;transition:.2s}
+.rc:hover{background:rgba(255,255,255,.1)}.rc small{display:block;font:400 .8rem inherit;color:var(--mut);margin-top:2px}
+#match{z-index:45}#mbody{text-align:center;display:flex;flex-direction:column;gap:6px}
+#toast{position:fixed;top:72px;left:50%;transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;gap:8px;align-items:center}
+.tt{padding:9px 18px;border-radius:99px;font-size:.82rem;animation:in .3s both}@keyframes in{from{opacity:0;transform:translateY(-8px)}}
+@media(max-width:480px){.two{grid-template-columns:1fr}nav button.t{padding:8px 10px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><filter id="lens" x="0" y="0" width="100%" height="100%">
+<feTurbulence type="fractalNoise" baseFrequency=".008 .012" numOctaves="2" seed="7" result="n"/>
+<feGaussianBlur in="n" stdDeviation="4" result="b"/>
+<feDisplacementMap in="SourceGraphic" in2="b" scale="30" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+<div class="bg"></div>
+
+<header class="lg"><div class="logo"><b>W</b>WorkBridge</div><button class="who" id="who" onclick="askRole()">Select role</button></header>
+
+<main>
+ <section class="view on" id="v-discover">
+  <div id="deck"></div>
+  <div class="acts">
+   <button class="rb s lg" id="bUndo" aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></button>
+   <button class="rb x lg" id="bNo" aria-label="Pass"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+   <button class="rb y lg" id="bYes" aria-label="Like"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+  </div>
+ </section>
+ <section class="view" id="v-browse"><h1 class="t" id="bt">Browse</h1>
+  <input class="search lg" id="q" placeholder="Search title, company, skill, city…"><div id="list"></div></section>
+ <section class="view" id="v-matches"><h1 class="t">Saved &amp; contacts</h1><div id="mlist"></div></section>
+ <section class="view" id="v-me"><h1 class="t">My profile</h1>
+  <div class="form lg">
+   <label>I am<select id="p-kind"><option value="talent">Employee — looking for work</option><option value="employer">Employer — hiring</option></select></label>
+   <div class="two"><label>Name *<input id="p-name"></label><label>Headline / role<input id="p-headline" placeholder="Full-stack developer"></label></div>
+   <div class="two"><label>Email<input id="p-email" type="email"></label><label>Mobile<input id="p-phone" type="tel" placeholder="+34 600 000 000"></label></div>
+   <div class="two"><label>Company<input id="p-company"></label><label>Location<input id="p-location" placeholder="Barcelona"></label></div>
+   <label>About<textarea id="p-bio"></textarea></label>
+   <label>Experience<textarea id="p-experience"></textarea></label>
+   <div class="two"><label>Skills<input id="p-skills" placeholder="comma separated"></label>
+   <label>Availability<select id="p-availability"><option value="">—</option><option>Immediately</option><option>Within 2 weeks</option><option>Within 1 month</option><option>Negotiable</option></select></label></div>
+   <label>CV / portfolio link<input id="p-link" type="url" placeholder="https://"></label>
+   <button class="btn g" onclick="saveProfile()">Save profile</button>
+   <p style="font-size:.75rem;color:var(--mut)">No login. Saved on this device; saving again with the same email or mobile updates it instead of creating a new one.</p>
+  </div></section>
+</main>
+
+<div id="scrim" onclick="closeMenu()"></div>
+<div class="menu" id="menu">
+ <a class="lg" onclick="openSheet('job')">Add job vacancy<small>Publish a position</small></a>
+ <a class="lg" onclick="openSheet('cand')">Add candidate<small>Add a person looking for work</small></a>
+</div>
+<nav class="lg">
+ <button class="t on" data-v="discover"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 3h8"/></svg>Swipe</button>
+ <button class="t" data-v="browse"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/></svg>Browse</button>
+ <button id="fab" class="lg" onclick="toggleMenu()" aria-label="Add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+ <button class="t" data-v="matches"><svg viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4z"/></svg>Saved</button>
+ <button class="t" data-v="me"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Me</button>
+</nav>
+
+<div class="ov" id="role"><div class="box lg"><h2>Welcome to WorkBridge</h2><p>Who are you?</p>
+ <button class="rc" onclick="pickRole('employer')">Employer<small>I want to hire — show me candidates</small></button>
+ <button class="rc" onclick="pickRole('employee')">Employee<small>I am looking for work — show me jobs</small></button></div></div>
+
+<div class="ov" id="sheet" onclick="if(event.target.id==='sheet')closeSheet()"><div class="box lg" style="max-width:520px">
+ <h2 id="sh-t"></h2>
+ <div id="sh-job">
+  <div class="form" style="padding:0">
+   <label>Job title *<input id="j-title"></label>
+   <label>Description *<textarea id="j-description"></textarea></label>
+   <div class="two"><label>Location *<input id="j-location"></label><label>Type<select id="j-job_type"><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Remote</option><option>Internship</option></select></label></div>
+   <div class="two"><label>Salary<input id="j-salary"></label><label>Deadline<input id="j-deadline"></label></div>
+   <label>Skills<input id="j-skills" placeholder="comma separated"></label>
+   <div class="two"><label>Company<input id="j-company"></label><label>Contact name *<input id="j-name"></label></div>
+   <div class="two"><label>Email *<input id="j-email" type="email"></label><label>Phone<input id="j-phone"></label></div>
+   <button class="btn g" onclick="postJob()">Publish vacancy</button></div></div>
+ <div id="sh-cand">
+  <div class="form" style="padding:0">
+   <div class="two"><label>Full name *<input id="c-name"></label><label>Role *<input id="c-headline" placeholder="Electrician"></label></div>
+   <div class="two"><label>Email *<input id="c-email" type="email"></label><label>Mobile<input id="c-phone"></label></div>
+   <div class="two"><label>Location *<input id="c-location"></label><label>Availability<select id="c-availability"><option>Immediately</option><option>Within 2 weeks</option><option>Within 1 month</option><option>Negotiable</option></select></label></div>
+   <label>Skills<input id="c-skills" placeholder="comma separated"></label>
+   <label>About<textarea id="c-bio"></textarea></label>
+   <label>CV / link<input id="c-link" type="url" placeholder="https://"></label>
+   <button class="btn g" onclick="postCand()">Add candidate</button></div></div>
+ <button class="btn" onclick="closeSheet()">Cancel</button></div></div>
+
+<div class="ov" id="match" onclick="if(event.target.id==='match')this.classList.remove('on')"><div class="box lg"><h2>Contact details</h2><div id="mbody"></div><button class="btn g" onclick="$('#match').classList.remove('on')">Close</button></div></div>
+<div id="toast"></div>
+
+<script>
+/* Uses the EXISTING backend: /jobs /roles /jobs/post /roles/post /jobs/:id/apply /contact/direct */
+const API='https://backdata.amriksinghspain.com';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const LS=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},SV=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+let me=LS('wb_me',null),sw=LS('wb_sw',{job:{},talent:{}}),hist=LS('wb_hist',[]),saved=LS('wb_saved',[]);
+let role=me?(me.kind==='employer'?'employer':'employee'):localStorage.getItem('wb_role');
+let deck=[],all={jobs:[],talent:[]},busy=false;
+const mode=()=>role==='employer'?'talent':'jobs',tt=()=>role==='employer'?'talent':'job';
+const FALLBACK='https://jobs.amriksinghspain.com';
+
+async function api(p,body){
+  try{const r=await fetch(API+p,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{});
+   const d=await r.json();d._ok=r.ok;return d}catch(e){return{_ok:false,error:'Cannot reach server'}}
+}
+function toast(m,bad){const e=document.createElement('div');e.className='tt lg';e.style.color=bad?'var(--no)':'var(--ink)';e.textContent=m;$('#toast').append(e);setTimeout(()=>e.remove(),4000)}
+addEventListener('pointermove',e=>{const el=e.target.closest?.('.lg');if(el){const r=el.getBoundingClientRect();el.style.setProperty('--mx',e.clientX-r.left+'px');el.style.setProperty('--my',e.clientY-r.top+'px')}});
+
+/* role: employee -> jobs, employer -> candidates */
+function applyRole(){
+  $('#who').textContent=role==='employer'?'Employer · switch':'Employee · switch';
+  $('#bt').textContent=role==='employer'?'Browse candidates':'Browse jobs';
+  if(me){me.kind=role==='employer'?'employer':'talent';SV('wb_me',me)}
+  loadDeck();loadList();
+}
+function askRole(){$('#role').classList.add('on')}
+function pickRole(r){role=r;localStorage.setItem('wb_role',r);$('#role').classList.remove('on');
+  $('#p-kind').value=r==='employer'?'employer':'talent';applyRole();if(!me)go('me')}
+
+function go(v){closeMenu();$$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));$$('nav .t').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+ if(v==='discover')loadDeck();if(v==='browse')loadList();if(v==='matches')loadMatches();if(v==='me')fillProfile()}
+$$('nav .t').forEach(b=>b.onclick=()=>go(b.dataset.v));
+
+/* + menu */
+function toggleMenu(){const o=!$('#menu').classList.contains('open');$('#menu').classList.toggle('open',o);$('#fab').classList.toggle('open',o);$('#scrim').classList.toggle('on',o)}
+function closeMenu(){$('#menu').classList.remove('open');$('#fab').classList.remove('open');$('#scrim').classList.remove('on')}
+function openSheet(w){closeMenu();$('#sh-t').textContent=w==='job'?'Add job vacancy':'Add candidate';
+  $('#sh-job').style.display=w==='job'?'block':'none';$('#sh-cand').style.display=w==='cand'?'block':'none';
+  if(me){const m={'j-name':me.name,'j-email':me.email,'j-phone':me.phone,'j-company':me.company};Object.entries(m).forEach(([k,v])=>{if(v&&!$('#'+k).value)$('#'+k).value=v})}
+  $('#sheet').classList.add('on')}
+function closeSheet(){$('#sheet').classList.remove('on')}
+
+/* data */
+async function fetchAll(){
+  const [j,r]=await Promise.all([api('/jobs'),api('/roles')]);
+  all.jobs=(j.jobs||[]).map(x=>({...x,company:x.company||x.employer_name}));
+  all.talent=(r.roles||[]).map(x=>({id:x.id,name:x.full_name,headline:x.role_title,location:x.country,bio:x.bio,experience:x.experience,skills:x.skills,availability:x.availability}));
+}
+const ini=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const chips=s=>s?`<div class="chips">${s.split(',').slice(0,6).map(x=>`<span class="chip">${esc(x.trim())}</span>`).join('')}</div>`:'';
+const kv=r=>{r=r.filter(x=>x[1]);return r.length?`<dl class="kv">${r.map(x=>`<dt>${x[0]}</dt><dd>${esc(x[1])}</dd>`).join('')}</dl>`:''};
+const sec=(t,h)=>h?`<div class="sec">${t}</div>${h}`:'';
+function cardHTML(it){
+  if(mode()==='jobs')return`<div class="hd"><div class="av">${ini(it.company)}</div><div><h2>${esc(it.title)}</h2><div class="sub">${esc(it.company)}</div></div></div>
+   ${kv([['Location',it.location],['Type',it.job_type],['Salary',it.salary],['Apply by',it.deadline]])}
+   ${sec('About the role',it.description?`<div class="txt">${esc(it.description)}</div>`:'')}${sec('Skills',chips(it.skills))}`;
+  return`<div class="hd"><div class="av">${ini(it.name)}</div><div><h2>${esc(it.name)}</h2><div class="sub">${esc(it.headline||'Open to work')}</div></div></div>
+   ${kv([['Location',it.location],['Available',it.availability]])}
+   ${sec('About',(it.bio||it.experience)?`<div class="txt">${esc(it.bio||it.experience)}</div>`:'')}${sec('Skills',chips(it.skills))}`;
+}
+
+/* deck */
+#v-discover.on{display:flex;flex-direction:column;gap:16px;max-width:460px}
+#deck{position:relative;flex:1;min-height:340px;max-height:640px;touch-action:pan-y;margin-bottom:4px}
+.card{position:absolute;inset:0;border-radius:var(--r);padding:24px;display:flex;flex-direction:column;gap:12px;cursor:grab;user-select:none;will-change:transform;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.card.drag{transition:none;cursor:grabbing}
+.av{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font:700 1.1rem inherit;color:#e9ecf0;background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.06));border:1px solid var(--line)}
+.card h2{font-size:1.4rem;letter-spacing:-.02em;line-height:1.2;font-weight:650}
+.sub{color:var(--mut);font-size:.9rem;font-weight:500}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.meta span,.chip{padding:3px 10px;border-radius:99px;font-size:.75rem;background:rgba(255,255,255,.07);border:1px solid var(--line);color:#d5d9df}
+.card.top{background:rgba(27,29,34,.8)}
+.card.ghost{background:rgba(255,255,255,.035);pointer-events:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 8px 20px rgba(0,0,0,.3)}
+.card.ghost::before{display:none}
+.hd{display:flex;gap:14px;align-items:center}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:8px 20px;padding:14px 0;margin:4px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.kv dt{color:var(--mut);font-size:.78rem}.kv dd{font-weight:500;font-size:.9rem}
+.sec{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);font-weight:600}
+.txt{font-size:.92rem;line-height:1.65;color:#cfd3d9;display:-webkit-box;-webkit-line-clamp:9;-webkit-box-orient:vertical;overflow:hidden}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .stamp{position:absolute;top:24px;padding:3px 12px;border:2px solid;border-radius:8px;font:700 1.1rem inherit;opacity:0;letter-spacing:.12em}
 .stamp.l{right:24px;color:var(--ok);transform:rotate(8deg)}.stamp.n{left:24px;color:var(--no);transform:rotate(-8deg)}
@@ -231,7 +428,7 @@ function refill(){const src=mode()==='jobs'?all.jobs:all.talent;deck=src.filter(
 function renderDeck(){
   const el=$('#deck');
   if(!deck.length){el.innerHTML=`<div class="empty">You're all caught up.<br>${mode()==='jobs'?'New jobs appear here as they are added.':'New candidates appear here as they are added.'}</div>`;return}
-  el.innerHTML=deck.slice(0,3).map((it,i)=>`<div class="card lg" style="z-index:${3-i};transform:translateY(${i*12}px) scale(${1-i*.04})">${cardHTML(it)}<span class="stamp l">SELECT</span><span class="stamp n">REJECT</span></div>`).reverse().join('');
+  el.innerHTML=deck.slice(0,3).map((it,i)=>`<div class="card lg ${i?'ghost':'top'}" style="z-index:${3-i};transform:translateY(${i*10}px) scale(${1-i*.04})">${i?'':cardHTML(it)+'<span class="stamp l">SELECT</span><span class="stamp n">REJECT</span>'}</div>`).reverse().join('');
   attach($('#deck .card:last-child'));
 }
 function attach(c){
