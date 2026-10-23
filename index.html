@@ -108,6 +108,20 @@ nav button.on{color:#fff;background:rgba(255,255,255,.12)}
 .tt{padding:9px 18px;border-radius:99px;font-size:.82rem;animation:in .3s both}@keyframes in{from{opacity:0;transform:translateY(-8px)}}
 @media(max-width:560px){.two{grid-template-columns:1fr}nav button.t{padding:8px 11px}.search{max-width:none}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* deeper frozen bars: header + bottom nav (solid dark + heavy blur so scrolling cards don't mix in) */
+header.lg,
+nav.lg{
+  background:rgba(16,17,21,.88);
+  -webkit-backdrop-filter:blur(24px) saturate(1.5);
+  backdrop-filter:blur(24px) saturate(1.5); /* no #lens here, it distorts what's behind */
+}
+header.lg{
+  box-shadow:
+    inset 1px 1px 0 -.5px rgba(255,255,255,.5),
+    inset -1px -1px 0 -.5px rgba(255,255,255,.2),
+    0 10px 28px rgba(0,0,0,.6);
+}
 </style>
 </head>
 <body>
